@@ -1,8 +1,17 @@
+# Foundry build output and local cache
 out/
 cache/
 lib/
+
+# Local environment and editor files
 .env
 .env.*
 .vscode/
 .idea/
+
+# Editor tool metadata
 .video_agent/
+
+# OS files
+.DS_Store
+Thumbs.db
