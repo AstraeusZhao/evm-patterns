@@ -12,3 +12,9 @@ The first milestone is a security-oriented pattern library covering:
 - explicit access control and least-privilege roles;
 - checks-effects-interactions and reentrancy-resistant value flows;
 - pull payments, pausing, and emergency recovery paths;
+- custom errors, events, invariants, and gas-aware data structures;
+- adversarial tests for authorization, accounting, and failure behavior.
+
+The project is a technical demonstration. It is not an audited protocol and must
+not be used to custody real funds without an independent review and deployment
+process.
