@@ -18,3 +18,7 @@ The first milestone is a security-oriented pattern library covering:
 The project is a technical demonstration. It is not an audited protocol and must
 not be used to custody real funds without an independent review and deployment
 process.
+
+## Layout
+
+```text
