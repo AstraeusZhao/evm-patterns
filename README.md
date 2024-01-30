@@ -22,3 +22,6 @@ process.
 ## Layout
 
 ```text
+docs/                  Written records
+  design/              Design notes, threat models, trust assumptions
+  poc/                 Proof-of-concept / vulnerability reproduction write-ups
