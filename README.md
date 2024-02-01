@@ -25,3 +25,7 @@ process.
 docs/                  Written records
   design/              Design notes, threat models, trust assumptions
   poc/                 Proof-of-concept / vulnerability reproduction write-ups
+  reports/             Test reports, findings, and status write-ups
+src/                   One directory per independent contract family
+  <contract>/          Interfaces, implementations, and libraries of one pattern
+test/                  Mirrors src/ one-to-one
