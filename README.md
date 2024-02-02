@@ -29,3 +29,10 @@ docs/                  Written records
 src/                   One directory per independent contract family
   <contract>/          Interfaces, implementations, and libraries of one pattern
 test/                  Mirrors src/ one-to-one
+  <contract>/          Unit, invariant, fuzz, and adversarial tests
+script/                Reproducible local deployment and demonstration scripts
+```
+
+`src/` and `test/` are organized one folder per contract family, so adding a new
+pattern means adding one directory on each side plus a design note.
+
