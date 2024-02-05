@@ -36,3 +36,6 @@ script/                Reproducible local deployment and demonstration scripts
 `src/` and `test/` are organized one folder per contract family, so adding a new
 pattern means adding one directory on each side plus a design note.
 
+## Tooling
+
+This repository uses [Foundry](https://book.getfoundry.sh/) for compilation,
