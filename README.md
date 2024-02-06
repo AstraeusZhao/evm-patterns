@@ -39,3 +39,6 @@ pattern means adding one directory on each side plus a design note.
 ## Tooling
 
 This repository uses [Foundry](https://book.getfoundry.sh/) for compilation,
+testing, formatting, and local execution.
+
+```bash
