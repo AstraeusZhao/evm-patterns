@@ -42,3 +42,10 @@ This repository uses [Foundry](https://book.getfoundry.sh/) for compilation,
 testing, formatting, and local execution.
 
 ```bash
+forge build
+forge test
+forge fmt --check
+```
+
+Before a pattern is marked complete, document its assumptions, trust boundaries,
+known limitations, and test coverage under `docs/`.
