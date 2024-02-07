@@ -49,3 +49,7 @@ forge fmt --check
 
 Before a pattern is marked complete, document its assumptions, trust boundaries,
 known limitations, and test coverage under `docs/`.
+
+## Status
+
+The repository currently holds 23 contract families, each with its own `src/`
