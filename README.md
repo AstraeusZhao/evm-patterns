@@ -53,3 +53,9 @@ known limitations, and test coverage under `docs/`.
 ## Status
 
 The repository currently holds 23 contract families, each with its own `src/`
+directory, a mirroring `test/` suite, and a design note under `docs/design/`.
+
+### Core contracts
+
+| Contract | What it demonstrates |
+| --- | --- |
