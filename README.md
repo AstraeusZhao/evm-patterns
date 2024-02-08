@@ -59,3 +59,7 @@ directory, a mirroring `test/` suite, and a design note under `docs/design/`.
 
 | Contract | What it demonstrates |
 | --- | --- |
+| `MultiSigWallet` | multi-sig confirmations, threshold management, CEI execution |
+| `TimelockController` | role-based governance timelock, operation state machine, predecessors |
+| `EscrowVault` | three-party escrow, state transitions, dispute resolution |
+| `PullPaymentVault` | pull payments, pausing, CEI ordering, reentrancy protection |
