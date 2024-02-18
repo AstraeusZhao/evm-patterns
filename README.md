@@ -63,3 +63,10 @@ directory, a mirroring `test/` suite, and a design note under `docs/design/`.
 | `TimelockController` | role-based governance timelock, operation state machine, predecessors |
 | `EscrowVault` | three-party escrow, state transitions, dispute resolution |
 | `PullPaymentVault` | pull payments, pausing, CEI ordering, reentrancy protection |
+
+### Pattern library
+
+| Contract | What it demonstrates |
+| --- | --- |
+| `Ownable` | ownership transfer and two-step renounce patterns |
+| `Pausable` | emergency pause/unpause with owner-only control |
