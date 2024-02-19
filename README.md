@@ -77,3 +77,9 @@ directory, a mirroring `test/` suite, and a design note under `docs/design/`.
 | `SignatureReplay` | EIP-712 typed signatures, nonce replay and malleability protection |
 | `SafeERC20Wrapper` | safe-transfer wrappers for silent/odd tokens |
 | `Whitelist` | allowlist gating and a gated sale with owner withdrawals |
+| `StorageCollision` | proxy storage-slot collision (slot 0) demo |
+| `MerkleAirdrop` | gas-efficient Merkle-proof claims, double-claim protection |
+| `StakingVault` | rate-change-safe reward accounting, CEI payouts |
+| `Multicall` | batched delegatecalls with atomic rollback |
+| `FactoryClone` | EIP-1167 minimal proxies deployed via CREATE2 |
+| `UUPSProxy` | EIP-1967 proxy with owner-only upgrades |
