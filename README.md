@@ -70,3 +70,10 @@ directory, a mirroring `test/` suite, and a design note under `docs/design/`.
 | --- | --- |
 | `Ownable` | ownership transfer and two-step renounce patterns |
 | `Pausable` | emergency pause/unpause with owner-only control |
+| `ReentrancyGuard` | reentrancy lock plus a malicious re-entry attack demo |
+| `ERC20Token` | ERC-20 mint/burn/allowance semantics |
+| `ERC721NFT` | ERC-721 approvals and transfers |
+| `PullPayment` | async payment ledger decoupled from transfer |
+| `SignatureReplay` | EIP-712 typed signatures, nonce replay and malleability protection |
+| `SafeERC20Wrapper` | safe-transfer wrappers for silent/odd tokens |
+| `Whitelist` | allowlist gating and a gated sale with owner withdrawals |
