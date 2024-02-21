@@ -83,3 +83,10 @@ directory, a mirroring `test/` suite, and a design note under `docs/design/`.
 | `Multicall` | batched delegatecalls with atomic rollback |
 | `FactoryClone` | EIP-1167 minimal proxies deployed via CREATE2 |
 | `UUPSProxy` | EIP-1967 proxy with owner-only upgrades |
+| `PriceOracle` | admin-posted feeds with staleness protection |
+| `EnglishAuction` | CEI-ordered ascending bids, reentrancy-safe refunds |
+| `DutchAuction` | descending price, first-accept wins |
+| `BondingCurve` | quadratic price curve, integer square root |
+
+`forge test` runs 117 tests across 23 suites; `forge build` and
+`forge fmt --check` are part of the CI pipeline. The source tree compiles with
