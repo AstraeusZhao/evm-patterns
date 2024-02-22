@@ -90,3 +90,7 @@ directory, a mirroring `test/` suite, and a design note under `docs/design/`.
 
 `forge test` runs 117 tests across 23 suites; `forge build` and
 `forge fmt --check` are part of the CI pipeline. The source tree compiles with
+zero lint warnings (see `foundry.toml` for the lint profile with per-rule
+rationale); remaining lint findings live in `test/` as intentional attack
+demonstrations.
+
