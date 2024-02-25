@@ -94,3 +94,6 @@ zero lint warnings (see `foundry.toml` for the lint profile with per-rule
 rationale); remaining lint findings live in `test/` as intentional attack
 demonstrations.
 
+## License
+
+AGPL-3.0. See [LICENSE](LICENSE).
