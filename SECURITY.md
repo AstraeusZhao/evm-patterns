@@ -7,3 +7,5 @@ Do not report secrets, private keys, seed phrases, or live credentials in an
 issue. Revoke exposed credentials immediately, then report the repository impact
 without including the secret.
 
+For a suspected vulnerability, open a private report through the repository's
+GitHub security contact when available. Include the affected file, impact,
