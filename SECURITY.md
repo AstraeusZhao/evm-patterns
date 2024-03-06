@@ -9,3 +9,4 @@ without including the secret.
 
 For a suspected vulnerability, open a private report through the repository's
 GitHub security contact when available. Include the affected file, impact,
+reproduction steps, and a suggested severity. Do not disclose an exploit
