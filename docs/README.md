@@ -10,3 +10,5 @@ proof-of-concept write-ups, and reports.
 | [reports/](reports/) | Test reports, audit-style findings, and status write-ups for review or reporting. |
 
 ## Conventions
+
+- One subdirectory per contract family, matching `src/` and `test/` where applicable.
