@@ -9,3 +9,4 @@ proof-of-concept write-ups, and reports.
 | [poc/](poc/) | Proof-of-concept write-ups: vulnerability reproductions, adversarial scenarios, and exploit walk-throughs. |
 | [reports/](reports/) | Test reports, audit-style findings, and status write-ups for review or reporting. |
 
+## Conventions
