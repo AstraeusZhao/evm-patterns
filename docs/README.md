@@ -12,3 +12,4 @@ proof-of-concept write-ups, and reports.
 ## Conventions
 
 - One subdirectory per contract family, matching `src/` and `test/` where applicable.
+- Every document states its scope, date, and the contract(s) it covers.
