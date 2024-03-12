@@ -13,3 +13,5 @@ proof-of-concept write-ups, and reports.
 
 - One subdirectory per contract family, matching `src/` and `test/` where applicable.
 - Every document states its scope, date, and the contract(s) it covers.
+- A pattern is only marked complete when its design note and test coverage are
+  present.
