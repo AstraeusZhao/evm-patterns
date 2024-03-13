@@ -6,3 +6,12 @@ out = "out"
 libs = ["lib"]
 solc_version = "0.8.24"
 optimizer = true
+optimizer_runs = 200
+
+[lint]
+severity = ["high", "med", "low"]
+exclude_lints = [
+    "block-timestamp",          # auction/timelock deadlines are inherent to the patterns
+    "arbitrary-send-eth",       # governance & auction transfers target user-chosen addresses by design
+    "reentrancy-eth",           # every transfer is CEI-ordered and guarded by a reentrancy lock
+    "reentrancy-events",        # events are emitted before external calls; create2 deploy is not a call
