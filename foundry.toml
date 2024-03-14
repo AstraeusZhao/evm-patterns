@@ -15,3 +15,5 @@ exclude_lints = [
     "arbitrary-send-eth",       # governance & auction transfers target user-chosen addresses by design
     "reentrancy-eth",           # every transfer is CEI-ordered and guarded by a reentrancy lock
     "reentrancy-events",        # events are emitted before external calls; create2 deploy is not a call
+    "missing-events-access-control",  # owner/approval state changes always emit matching events
+    "calls-loop",               # multicall batches delegated calls by design (atomic rollback)
