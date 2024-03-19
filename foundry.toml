@@ -20,3 +20,6 @@ exclude_lints = [
     "delegatecall-loop",        # same as above; msg.value applies to the whole batch
     "require-revert-in-loop",   # multicall failure must revert the whole batch
     "missing-zero-check",       # StorageCollision is a deliberate anti-pattern demo
+    "uninitialized-state",      # ImplValueSlot1.other is deliberately unused (slot layout demo)
+    "locked-ether",             # Multicall forwards ETH via delegatecall; WhitelistSale now withdrawable
+]
