@@ -50,3 +50,13 @@ contract ERC20Token {
     function transferFrom(address from, address to, uint256 value) external returns (bool) {
         uint256 allowed = allowance[from][msg.sender];
         if (allowed < value) revert InsufficientAllowance(allowed, value);
+        if (allowed != type(uint256).max) {
+            allowance[from][msg.sender] = allowed - value;
+        }
+        _transfer(from, to, value);
+        return true;
+    }
+
+    /// @notice Owner-only minting, used for demonstrations and tests.
+    function mint(address to, uint256 amount) external onlyOwner {
+        if (to == address(0)) revert ZeroAddress();
