@@ -81,3 +81,13 @@ contract ERC20Token {
         balanceOf[from] = available - value;
         balanceOf[to] += value;
         emit Transfer(from, to, value);
+    }
+
+    function _burn(address from, uint256 amount) internal {
+        uint256 available = balanceOf[from];
+        if (available < amount) revert InsufficientBalance(available, amount);
+        balanceOf[from] = available - amount;
+        totalSupply -= amount;
+        emit Transfer(from, address(0), amount);
+    }
+}
