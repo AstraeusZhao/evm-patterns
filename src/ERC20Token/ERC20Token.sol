@@ -60,3 +60,24 @@ contract ERC20Token {
     /// @notice Owner-only minting, used for demonstrations and tests.
     function mint(address to, uint256 amount) external onlyOwner {
         if (to == address(0)) revert ZeroAddress();
+        if (amount == 0) revert ZeroAmount();
+        totalSupply += amount;
+        balanceOf[to] += amount;
+        emit Transfer(address(0), to, amount);
+    }
+
+    /// @notice Burn tokens from the caller.
+    function burn(uint256 amount) external {
+        if (amount == 0) revert ZeroAmount();
+        _burn(msg.sender, amount);
+    }
+
+    function _transfer(address from, address to, uint256 value) internal {
+        if (to == address(0)) revert ZeroAddress();
+        if (value == 0) revert ZeroAmount();
+        uint256 available = balanceOf[from];
+        if (available < value) revert InsufficientBalance(available, value);
+
+        balanceOf[from] = available - value;
+        balanceOf[to] += value;
+        emit Transfer(from, to, value);
