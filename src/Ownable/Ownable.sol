@@ -15,3 +15,12 @@ contract Ownable {
 
     constructor() {
         owner = msg.sender;
+        emit OwnershipTransferred(address(0), msg.sender);
+    }
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) revert NotOwner(msg.sender);
+        _;
+    }
+
+    /// @notice Transfer ownership to a new account.
