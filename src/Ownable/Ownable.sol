@@ -24,3 +24,7 @@ contract Ownable {
     }
 
     /// @notice Transfer ownership to a new account.
+    function transferOwnership(address newOwner) external onlyOwner {
+        if (newOwner == address(0)) revert ZeroAddress();
+        if (newOwner == owner) revert NoChange();
+        emit OwnershipTransferred(owner, newOwner);
