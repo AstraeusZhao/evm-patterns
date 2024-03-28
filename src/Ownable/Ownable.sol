@@ -28,3 +28,8 @@ contract Ownable {
         if (newOwner == address(0)) revert ZeroAddress();
         if (newOwner == owner) revert NoChange();
         emit OwnershipTransferred(owner, newOwner);
+        owner = newOwner;
+    }
+
+    /// @notice Renounce ownership; the contract becomes ungovernable.
+    function renounceOwnership() external onlyOwner {
