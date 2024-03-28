@@ -33,3 +33,7 @@ contract Ownable {
 
     /// @notice Renounce ownership; the contract becomes ungovernable.
     function renounceOwnership() external onlyOwner {
+        emit OwnershipTransferred(owner, address(0));
+        owner = address(0);
+    }
+}
