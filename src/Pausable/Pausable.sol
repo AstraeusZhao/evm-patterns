@@ -3,3 +3,13 @@ pragma solidity ^0.8.24;
 
 /// @title Pausable
 /// @notice Owner-controlled pause switch for emergency stops.
+/// @dev Works as an operational stop, not a recovery mechanism. Not audited.
+contract Pausable {
+    error NotOwner(address caller);
+    error Paused();
+    error NotPaused();
+
+    event PausedStateChanged(bool isPaused);
+
+    address public immutable owner;
+    bool public paused;
