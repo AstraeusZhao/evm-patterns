@@ -18,3 +18,8 @@ contract Pausable {
         owner = msg.sender;
     }
 
+    modifier onlyOwner() {
+        if (msg.sender != owner) revert NotOwner(msg.sender);
+        _;
+    }
+
