@@ -13,3 +13,8 @@ contract Pausable {
 
     address public immutable owner;
     bool public paused;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
