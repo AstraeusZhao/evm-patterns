@@ -23,3 +23,13 @@ contract Pausable {
         _;
     }
 
+    modifier whenNotPaused() {
+        if (paused) revert Paused();
+        _;
+    }
+
+    modifier whenPaused() {
+        if (!paused) revert NotPaused();
+        _;
+    }
+
