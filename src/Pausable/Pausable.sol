@@ -38,3 +38,8 @@ contract Pausable {
         emit PausedStateChanged(true);
     }
 
+    function unpause() external onlyOwner whenPaused {
+        paused = false;
+        emit PausedStateChanged(false);
+    }
+}
