@@ -6,3 +6,8 @@ pragma solidity ^0.8.24;
 /// @dev Guard pattern: set the lock before external calls, restore after.
 ///      Not audited.
 contract ReentrancyGuard {
+    error Reentrancy();
+
+    uint256 private _lock = 1;
+
+    modifier nonReentrant() {
