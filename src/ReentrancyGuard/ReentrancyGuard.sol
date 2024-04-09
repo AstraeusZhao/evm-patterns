@@ -11,3 +11,5 @@ contract ReentrancyGuard {
     uint256 private _lock = 1;
 
     modifier nonReentrant() {
+        if (_lock != 1) revert Reentrancy();
+        _lock = 2;
