@@ -15,3 +15,5 @@ contract ReentrancyGuard {
         _lock = 2;
         _;
         _lock = 1;
+    }
+}
