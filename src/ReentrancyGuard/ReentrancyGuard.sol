@@ -13,3 +13,5 @@ contract ReentrancyGuard {
     modifier nonReentrant() {
         if (_lock != 1) revert Reentrancy();
         _lock = 2;
+        _;
+        _lock = 1;
