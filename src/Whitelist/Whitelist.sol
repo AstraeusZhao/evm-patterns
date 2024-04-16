@@ -30,3 +30,14 @@ contract Whitelist {
         if (!whitelisted[msg.sender]) revert NotWhitelisted(msg.sender);
         _;
     }
+
+    function addToWhitelist(address account) external onlyOwner {
+        if (account == address(0)) revert ZeroAddress();
+        if (whitelisted[account]) revert AlreadyWhitelisted(account);
+        whitelisted[account] = true;
+        emit Whitelisted(account);
+    }
+
+    function removeFromWhitelist(address account) external onlyOwner {
+        if (!whitelisted[account]) revert NotWhitelisted(account);
+        whitelisted[account] = false;
