@@ -41,3 +41,25 @@ contract Whitelist {
     function removeFromWhitelist(address account) external onlyOwner {
         if (!whitelisted[account]) revert NotWhitelisted(account);
         whitelisted[account] = false;
+        emit WhitelistRemoved(account);
+    }
+}
+
+/// @notice A tiny sale that accepts ETH only from whitelisted accounts.
+contract WhitelistSale {
+    error NotOwner(address caller);
+    error SaleClosed();
+    error AlreadyPurchased();
+    error NoFunds();
+    error TransferFailed();
+
+    event Purchased(address indexed buyer, uint256 amount);
+    event ProceedsWithdrawn(address indexed owner, uint256 amount);
+
+    address public owner;
+    Whitelist public whitelist;
+    bool public closed;
+    mapping(address buyer => bool purchased) public purchased;
+
+    constructor(Whitelist whitelist_) {
+        owner = msg.sender;
