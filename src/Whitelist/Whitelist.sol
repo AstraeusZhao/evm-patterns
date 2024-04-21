@@ -73,3 +73,14 @@ contract WhitelistSale {
 
     function buy() external payable {
         if (closed) revert SaleClosed();
+        if (purchased[msg.sender]) revert AlreadyPurchased();
+        if (!whitelist.whitelisted(msg.sender)) revert Whitelist.NotWhitelisted(msg.sender);
+
+        purchased[msg.sender] = true;
+        emit Purchased(msg.sender, msg.value);
+    }
+
+    /// @notice Owner collects the proceeds collected by the sale.
+    function withdrawProceeds() external onlyOwner {
+        uint256 amount = address(this).balance;
+        if (amount == 0) revert NoFunds();
