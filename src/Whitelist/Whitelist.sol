@@ -63,3 +63,13 @@ contract WhitelistSale {
 
     constructor(Whitelist whitelist_) {
         owner = msg.sender;
+        whitelist = whitelist_;
+    }
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) revert NotOwner(msg.sender);
+        _;
+    }
+
+    function buy() external payable {
+        if (closed) revert SaleClosed();
