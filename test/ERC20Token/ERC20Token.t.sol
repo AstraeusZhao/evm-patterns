@@ -26,3 +26,12 @@ contract ERC20TokenTest {
         ERC20Token t = _token();
         vm.prank(ALICE);
         t.transfer(BOB, 100 ether);
+        require(t.balanceOf(BOB) == 100 ether, "recipient balance wrong");
+        require(t.balanceOf(ALICE) == 900 ether, "sender balance wrong");
+    }
+
+    function testTransferFromUsesAllowance() external {
+        ERC20Token t = _token();
+        vm.prank(ALICE);
+        t.approve(BOB, 50 ether);
+        vm.prank(BOB);
