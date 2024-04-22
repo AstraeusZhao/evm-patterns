@@ -7,3 +7,22 @@ interface Vm {
     function prank(address sender) external;
     function expectRevert() external;
 }
+
+contract ERC20TokenTest {
+    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+
+    address private constant ALICE = address(0xA11CE);
+    address private constant BOB = address(0xB0B);
+
+    function _token() internal returns (ERC20Token) {
+        vm.prank(ALICE);
+        ERC20Token t = new ERC20Token("Test", "TST");
+        vm.prank(ALICE);
+        t.mint(ALICE, 1000 ether);
+        return t;
+    }
+
+    function testMintAndTransfer() external {
+        ERC20Token t = _token();
+        vm.prank(ALICE);
+        t.transfer(BOB, 100 ether);
