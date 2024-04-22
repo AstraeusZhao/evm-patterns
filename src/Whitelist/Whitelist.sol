@@ -84,3 +84,14 @@ contract WhitelistSale {
     function withdrawProceeds() external onlyOwner {
         uint256 amount = address(this).balance;
         if (amount == 0) revert NoFunds();
+
+        emit ProceedsWithdrawn(msg.sender, amount);
+
+        (bool ok,) = payable(msg.sender).call{value: amount}("");
+        if (!ok) revert TransferFailed();
+    }
+
+    function close() external onlyOwner {
+        closed = true;
+    }
+}
