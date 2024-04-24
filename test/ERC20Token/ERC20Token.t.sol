@@ -35,3 +35,12 @@ contract ERC20TokenTest {
         vm.prank(ALICE);
         t.approve(BOB, 50 ether);
         vm.prank(BOB);
+        t.transferFrom(ALICE, BOB, 50 ether);
+        require(t.balanceOf(BOB) == 50 ether, "transferFrom failed");
+        require(t.allowance(ALICE, BOB) == 0, "allowance not consumed");
+    }
+
+    function testInfiniteAllowanceNotConsumed() external {
+        ERC20Token t = _token();
+        vm.prank(ALICE);
+        t.approve(BOB, type(uint256).max);
