@@ -44,3 +44,13 @@ contract ERC20TokenTest {
         ERC20Token t = _token();
         vm.prank(ALICE);
         t.approve(BOB, type(uint256).max);
+        vm.prank(BOB);
+        t.transferFrom(ALICE, BOB, 30 ether);
+        require(t.allowance(ALICE, BOB) == type(uint256).max, "infinite allowance reduced");
+    }
+
+    function testCannotTransferMoreThanBalance() external {
+        ERC20Token t = _token();
+        vm.expectRevert();
+        vm.prank(ALICE);
+        t.transfer(BOB, 1001 ether);
