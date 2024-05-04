@@ -54,3 +54,12 @@ contract ERC20TokenTest {
         vm.expectRevert();
         vm.prank(ALICE);
         t.transfer(BOB, 1001 ether);
+    }
+
+    function testBurnReducesSupply() external {
+        ERC20Token t = _token();
+        vm.prank(ALICE);
+        t.burn(200 ether);
+        require(t.totalSupply() == 800 ether, "supply not reduced");
+        require(t.balanceOf(ALICE) == 800 ether, "burner balance wrong");
+    }
