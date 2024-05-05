@@ -63,3 +63,12 @@ contract ERC20TokenTest {
         require(t.totalSupply() == 800 ether, "supply not reduced");
         require(t.balanceOf(ALICE) == 800 ether, "burner balance wrong");
     }
+
+    function testOnlyOwnerCanMint() external {
+        vm.prank(ALICE);
+        ERC20Token t = new ERC20Token("Test", "TST");
+        vm.expectRevert();
+        vm.prank(BOB);
+        t.mint(BOB, 1 ether);
+    }
+}
