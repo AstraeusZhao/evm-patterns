@@ -20,3 +20,17 @@ contract OwnableTest {
     }
 
     function testDeployerIsOwner() external {
+        vm.prank(OWNER);
+        Ownable o = new Ownable();
+        require(o.owner() == OWNER, "deployer not owner");
+    }
+
+    function testTransferOwnership() external {
+        Ownable o = _ownable();
+        vm.prank(OWNER);
+        o.transferOwnership(OTHER);
+        require(o.owner() == OTHER, "ownership not transferred");
+    }
+
+    function testNonOwnerCannotTransfer() external {
+        Ownable o = _ownable();
