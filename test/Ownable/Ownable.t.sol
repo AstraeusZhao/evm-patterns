@@ -34,3 +34,11 @@ contract OwnableTest {
 
     function testNonOwnerCannotTransfer() external {
         Ownable o = _ownable();
+        vm.expectRevert();
+        vm.prank(OTHER);
+        o.transferOwnership(OTHER);
+    }
+
+    function testCannotTransferToZeroAddress() external {
+        Ownable o = _ownable();
+        vm.expectRevert();
