@@ -42,3 +42,10 @@ contract OwnableTest {
     function testCannotTransferToZeroAddress() external {
         Ownable o = _ownable();
         vm.expectRevert();
+        vm.prank(OWNER);
+        o.transferOwnership(address(0));
+    }
+
+    function testRenounceOwnership() external {
+        Ownable o = _ownable();
+        vm.prank(OWNER);
