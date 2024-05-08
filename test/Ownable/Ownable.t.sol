@@ -49,3 +49,10 @@ contract OwnableTest {
     function testRenounceOwnership() external {
         Ownable o = _ownable();
         vm.prank(OWNER);
+        o.renounceOwnership();
+        require(o.owner() == address(0), "owner not renounced");
+        vm.expectRevert();
+        vm.prank(OWNER);
+        o.transferOwnership(OTHER);
+    }
+}
