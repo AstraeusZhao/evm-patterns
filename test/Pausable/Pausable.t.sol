@@ -25,3 +25,16 @@ contract PausableTest {
         p.pause();
         require(p.paused(), "not paused");
         vm.prank(OWNER);
+        p.unpause();
+        require(!p.paused(), "not unpaused");
+    }
+
+    function testCannotPauseTwice() external {
+        Pausable p = _pausable();
+        vm.prank(OWNER);
+        p.pause();
+        vm.expectRevert();
+        vm.prank(OWNER);
+        p.pause();
+    }
+
