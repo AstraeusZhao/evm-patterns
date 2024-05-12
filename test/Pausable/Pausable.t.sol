@@ -38,3 +38,17 @@ contract PausableTest {
         p.pause();
     }
 
+    function testCannotUnpauseWhenActive() external {
+        Pausable p = _pausable();
+        vm.expectRevert();
+        vm.prank(OWNER);
+        p.unpause();
+    }
+
+    function testNonOwnerCannotPause() external {
+        Pausable p = _pausable();
+        vm.expectRevert();
+        vm.prank(OTHER);
+        p.pause();
+    }
+}
