@@ -8,3 +8,35 @@ interface Vm {
     function prank(address sender) external;
     function expectRevert() external;
 }
+
+contract GuardedBank is ReentrancyGuard {
+    error ZeroAmount();
+    error InsufficientBalance(uint256 available, uint256 requested);
+    error TransferFailed();
+
+    mapping(address => uint256) public balances;
+
+    function deposit() external payable {
+        if (msg.value == 0) revert ZeroAmount();
+        balances[msg.sender] += msg.value;
+    }
+
+    function withdraw(uint256 amount) external nonReentrant {
+        if (amount == 0) revert ZeroAmount();
+        uint256 available = balances[msg.sender];
+        if (amount > available) revert InsufficientBalance(available, amount);
+
+        balances[msg.sender] = available - amount;
+        (bool ok,) = payable(msg.sender).call{value: amount}("");
+        if (!ok) revert TransferFailed();
+    }
+}
+
+contract ReentrancyAttack {
+    GuardedBank public bank;
+    uint256 public attempts;
+
+    constructor(GuardedBank bank_) {
+        bank = bank_;
+    }
+
