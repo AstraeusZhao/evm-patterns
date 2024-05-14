@@ -50,3 +50,25 @@ contract ReentrancyAttack {
     function attack() external payable {
         bank.deposit{value: msg.value}();
         bank.withdraw(msg.value);
+    }
+}
+
+contract ReentrancyGuardTest {
+    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+
+    receive() external payable {}
+
+    function testWithdrawWithGuard() external {
+        GuardedBank bank = new GuardedBank();
+        vm.deal(address(this), 3 ether);
+        bank.deposit{value: 3 ether}();
+        bank.withdraw(1 ether);
+        require(bank.balances(address(this)) == 2 ether, "balance not reduced");
+        require(address(this).balance >= 1 ether, "withdrawal not paid");
+    }
+
+    function testReentrancyAttackIsBlocked() external {
+        GuardedBank bank = new GuardedBank();
+
+        // Seed the target account through a normal deposit.
+        vm.deal(address(0xA77A), 5 ether);
