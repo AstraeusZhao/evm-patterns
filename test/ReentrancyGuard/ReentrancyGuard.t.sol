@@ -72,3 +72,13 @@ contract ReentrancyGuardTest {
 
         // Seed the target account through a normal deposit.
         vm.deal(address(0xA77A), 5 ether);
+        vm.prank(address(0xA77A));
+        bank.deposit{value: 5 ether}();
+
+        ReentrancyAttack attacker = new ReentrancyAttack(bank);
+        vm.deal(address(attacker), 5 ether);
+
+        vm.expectRevert();
+        attacker.attack{value: 5 ether}();
+    }
+}
