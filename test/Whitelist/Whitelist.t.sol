@@ -36,3 +36,15 @@ contract WhitelistTest {
 
     function testOnlyOwnerManages() external {
         Whitelist w = _whitelist();
+        vm.expectRevert();
+        vm.prank(ALICE);
+        w.addToWhitelist(ALICE);
+    }
+
+    function testCannotAddTwice() external {
+        Whitelist w = _whitelist();
+        vm.prank(OWNER);
+        w.addToWhitelist(ALICE);
+        vm.expectRevert();
+        vm.prank(OWNER);
+        w.addToWhitelist(ALICE);
