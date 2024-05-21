@@ -48,3 +48,16 @@ contract WhitelistTest {
         vm.expectRevert();
         vm.prank(OWNER);
         w.addToWhitelist(ALICE);
+    }
+
+    function testSaleAcceptsOnlyWhitelisted() external {
+        Whitelist w = _whitelist();
+        vm.prank(OWNER);
+        w.addToWhitelist(ALICE);
+
+        vm.prank(OWNER);
+        WhitelistSale sale = new WhitelistSale(w);
+
+        vm.expectRevert();
+        vm.prank(BOB);
+        sale.buy{value: 1 ether}();
