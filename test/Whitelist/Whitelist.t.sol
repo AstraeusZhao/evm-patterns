@@ -61,3 +61,16 @@ contract WhitelistTest {
         vm.expectRevert();
         vm.prank(BOB);
         sale.buy{value: 1 ether}();
+
+        vm.prank(ALICE);
+        sale.buy{value: 1 ether}();
+        require(sale.purchased(ALICE), "purchase not recorded");
+    }
+
+    function testSaleRejectsRepeatPurchase() external {
+        Whitelist w = _whitelist();
+        vm.prank(OWNER);
+        w.addToWhitelist(ALICE);
+        vm.prank(OWNER);
+        WhitelistSale sale = new WhitelistSale(w);
+
