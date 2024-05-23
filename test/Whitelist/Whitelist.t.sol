@@ -74,3 +74,15 @@ contract WhitelistTest {
         vm.prank(OWNER);
         WhitelistSale sale = new WhitelistSale(w);
 
+        vm.prank(ALICE);
+        sale.buy{value: 1 ether}();
+
+        vm.expectRevert();
+        vm.prank(ALICE);
+        sale.buy{value: 1 ether}();
+    }
+
+    function testOwnerWithdrawsProceeds() external {
+        Whitelist w = _whitelist();
+        vm.prank(OWNER);
+        w.addToWhitelist(ALICE);
