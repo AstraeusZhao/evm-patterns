@@ -86,3 +86,16 @@ contract WhitelistTest {
         Whitelist w = _whitelist();
         vm.prank(OWNER);
         w.addToWhitelist(ALICE);
+        vm.prank(OWNER);
+        WhitelistSale sale = new WhitelistSale(w);
+
+        vm.prank(ALICE);
+        sale.buy{value: 1 ether}();
+
+        uint256 before = OWNER.balance;
+        vm.prank(OWNER);
+        sale.withdrawProceeds();
+        require(OWNER.balance - before == 1 ether, "proceeds not withdrawn");
+        require(address(sale).balance == 0, "funds stuck after withdrawal");
+    }
+}
