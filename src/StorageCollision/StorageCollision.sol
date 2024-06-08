@@ -1,0 +1,8 @@
+// SPDX-License-Identifier: AGPL-3.0
+pragma solidity ^0.8.24;
+
+/// @title StorageCollision
+/// @notice Demonstrates the classic proxy storage-collision pitfall: when a
+///         proxy stores its implementation address at slot 0 and an
+///         implementation also uses slot 0 for a variable, delegatecall
+///         overwrites the proxy's own storage.
