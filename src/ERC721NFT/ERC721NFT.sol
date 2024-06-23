@@ -51,3 +51,29 @@ contract ERC721NFT {
     function approve(address to, uint256 tokenId) external {
         address owner = ownerOf(tokenId);
         if (to == owner) revert ApprovalCallerNotOwnerOrApproved(msg.sender, tokenId);
+        if (msg.sender != owner && !_operatorApprovals[owner][msg.sender]) {
+            revert ApprovalCallerNotOwnerOrApproved(msg.sender, tokenId);
+        }
+        _tokenApprovals[tokenId] = to;
+        emit Approval(owner, to, tokenId);
+    }
+
+    function getApproved(uint256 tokenId) external view returns (address) {
+        _requireExists(tokenId);
+        return _tokenApprovals[tokenId];
+    }
+
+    function setApprovalForAll(address operator, bool approved) external {
+        if (operator == address(0)) revert ZeroAddress();
+        _operatorApprovals[msg.sender][operator] = approved;
+        emit ApprovalForAll(msg.sender, operator, approved);
+    }
+
+    function isApprovedForAll(address owner, address operator) external view returns (bool) {
+        return _operatorApprovals[owner][operator];
+    }
+
+    function transferFrom(address from, address to, uint256 tokenId) external {
+        _checkTransfer(from, to, tokenId);
+        _transfer(from, to, tokenId);
+    }
