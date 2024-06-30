@@ -77,3 +77,17 @@ contract ERC721NFT {
         _checkTransfer(from, to, tokenId);
         _transfer(from, to, tokenId);
     }
+
+    function safeTransferFrom(address from, address to, uint256 tokenId) external {
+        _checkTransfer(from, to, tokenId);
+        _transfer(from, to, tokenId);
+    }
+
+    /// @notice Mint a token to an account; owner-only.
+    function mint(address to, uint256 tokenId) external onlyMinter {
+        if (to == address(0)) revert ZeroAddress();
+        if (_owners[tokenId] != address(0)) revert AlreadyMinted(tokenId);
+        _mint(to, tokenId);
+    }
+
+    function _requireExists(uint256 tokenId) internal view {
