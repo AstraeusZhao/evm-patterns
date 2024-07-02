@@ -91,3 +91,29 @@ contract ERC721NFT {
     }
 
     function _requireExists(uint256 tokenId) internal view {
+        if (_owners[tokenId] == address(0)) revert TokenDoesNotExist(tokenId);
+    }
+
+    function _checkTransfer(address from, address to, uint256 tokenId) internal view {
+        if (to == address(0)) revert ZeroAddress();
+        address owner = ownerOf(tokenId);
+        if (from != owner) revert NotOwnerOrApproved(msg.sender, tokenId);
+        if (msg.sender != owner && _tokenApprovals[tokenId] != msg.sender && !_operatorApprovals[owner][msg.sender]) {
+            revert NotOwnerOrApproved(msg.sender, tokenId);
+        }
+    }
+
+    function _mint(address to, uint256 tokenId) internal {
+        _balances[to] += 1;
+        _owners[tokenId] = to;
+        emit Transfer(address(0), to, tokenId);
+    }
+
+    function _transfer(address from, address to, uint256 tokenId) internal {
+        _balances[from] -= 1;
+        _balances[to] += 1;
+        _owners[tokenId] = to;
+        delete _tokenApprovals[tokenId];
+        emit Transfer(from, to, tokenId);
+    }
+}
