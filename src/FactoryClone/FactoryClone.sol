@@ -35,3 +35,9 @@ contract FactoryClone {
     }
 
     /// @notice Deterministic address a clone would get for a salt.
+    function getAddress(bytes32 salt) public view returns (address) {
+        bytes32 hash = keccak256(
+            abi.encodePacked(
+                bytes1(0xff),
+                address(this),
+                salt,
