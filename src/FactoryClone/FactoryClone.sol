@@ -41,3 +41,15 @@ contract FactoryClone {
                 bytes1(0xff),
                 address(this),
                 salt,
+                keccak256(
+                    abi.encodePacked(
+                        hex"3d602d80600a3d3981f3363d3d373d3d3d363d73",
+                        implementation,
+                        hex"5af43d82803e903d91602b57fd5bf3"
+                    )
+                )
+            )
+        );
+        return address(uint160(uint256(hash)));
+    }
+}
