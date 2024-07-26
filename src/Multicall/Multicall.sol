@@ -10,3 +10,10 @@ pragma solidity ^0.8.24;
 contract Multicall {
     error CallFailed(uint256 index);
 
+    /// @notice Execute several calls to this contract in sequence.
+    /// @dev Each delegated call shares the msg.value of the whole batch.
+    /// @param calls Encoded self-calls to execute.
+    function multicall(Call[] calldata calls) external payable returns (bytes[] memory results) {
+        results = new bytes[](calls.length);
+        for (uint256 i = 0; i < calls.length; i++) {
+            (bool ok, bytes memory ret) = address(this).delegatecall(calls[i].data);
