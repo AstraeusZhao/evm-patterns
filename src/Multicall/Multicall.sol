@@ -7,3 +7,6 @@ pragma solidity ^0.8.24;
 ///      Calls are executed in order under the value sent with the whole
 ///      transaction; a failure reverts the entire batch (atomic rollback).
 ///      A variant could collect per-call results instead. Not audited.
+contract Multicall {
+    error CallFailed(uint256 index);
+
