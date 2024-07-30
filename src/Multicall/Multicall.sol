@@ -17,3 +17,6 @@ contract Multicall {
         results = new bytes[](calls.length);
         for (uint256 i = 0; i < calls.length; i++) {
             (bool ok, bytes memory ret) = address(this).delegatecall(calls[i].data);
+            if (!ok) revert CallFailed(i);
+            results[i] = ret;
+        }
