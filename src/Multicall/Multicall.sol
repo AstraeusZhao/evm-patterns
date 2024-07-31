@@ -20,3 +20,9 @@ contract Multicall {
             if (!ok) revert CallFailed(i);
             results[i] = ret;
         }
+    }
+
+    struct Call {
+        bytes data;
+    }
+}
