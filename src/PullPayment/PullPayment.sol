@@ -17,3 +17,9 @@ contract PullPayment {
 
     mapping(address account => uint256 credit) public credits;
 
+    uint256 private _lock = 1;
+
+    modifier nonReentrant() {
+        if (_lock != 1) revert Reentrancy();
+        _lock = 2;
+        _;
