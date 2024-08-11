@@ -10,3 +10,10 @@ contract PullPayment {
     error ZeroAmount();
     error InsufficientCredit(uint256 available, uint256 requested);
     error TransferFailed();
+    error Reentrancy();
+
+    event PaymentReceived(address indexed account, uint256 amount);
+    event PaymentWithdrawn(address indexed account, uint256 amount);
+
+    mapping(address account => uint256 credit) public credits;
+
