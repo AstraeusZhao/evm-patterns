@@ -23,3 +23,28 @@ contract PullPayment {
         if (_lock != 1) revert Reentrancy();
         _lock = 2;
         _;
+        _lock = 1;
+    }
+
+    /// @notice Record any received ETH as credit for the sender.
+    receive() external payable {
+        if (msg.value == 0) revert ZeroAmount();
+        credits[msg.sender] += msg.value;
+        emit PaymentReceived(msg.sender, msg.value);
+    }
+
+    /// @notice Withdraw part of the caller's recorded credit.
+    /// @dev Balance is reduced before the transfer (CEI).
+    function withdrawCredits(uint256 amount) external nonReentrant {
+        if (amount == 0) revert ZeroAmount();
+
+        uint256 available = credits[msg.sender];
+        if (amount > available) revert InsufficientCredit(available, amount);
+
+        credits[msg.sender] = available - amount;
+
+        emit PaymentWithdrawn(msg.sender, amount);
+
+        (bool ok,) = payable(msg.sender).call{value: amount}("");
+        if (!ok) revert TransferFailed();
+    }
