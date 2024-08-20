@@ -48,3 +48,9 @@ contract PullPayment {
         (bool ok,) = payable(msg.sender).call{value: amount}("");
         if (!ok) revert TransferFailed();
     }
+
+    /// @notice Outstanding credit for an account.
+    function pendingCredits(address account) external view returns (uint256) {
+        return credits[account];
+    }
+}
