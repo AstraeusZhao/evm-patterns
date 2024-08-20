@@ -10,3 +10,26 @@ contract PullPaymentVault {
     error NoChange();
     error NotOwner(address caller);
     error Paused();
+    error Reentrancy();
+    error TransferFailed();
+    error ZeroAddress();
+    error ZeroAmount();
+
+    event CreditDeposited(address indexed account, uint256 amount);
+    event CreditWithdrawn(address indexed account, uint256 amount);
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    event PausedStateChanged(bool isPaused);
+
+    address public owner;
+    bool public paused;
+    mapping(address account => uint256 credit) public credits;
+
+    uint256 private _lock = 1;
+
+    constructor() {
+        owner = msg.sender;
+        emit OwnershipTransferred(address(0), msg.sender);
+    }
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) revert NotOwner(msg.sender);
