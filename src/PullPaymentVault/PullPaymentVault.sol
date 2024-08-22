@@ -56,3 +56,27 @@ contract PullPaymentVault {
     /// @notice Withdraw only the caller's previously deposited credit.
     /// @dev State is updated before the external call (CEI), and the lock
     ///      blocks a recipient contract from re-entering this function.
+    function withdraw(uint256 amount) external nonReentrant whenNotPaused {
+        if (amount == 0) revert ZeroAmount();
+
+        uint256 available = credits[msg.sender];
+        if (amount > available) {
+            revert InsufficientCredit(available, amount);
+        }
+
+        credits[msg.sender] = available - amount;
+
+        emit CreditWithdrawn(msg.sender, amount);
+
+        (bool sent,) = payable(msg.sender).call{value: amount}("");
+        if (!sent) revert TransferFailed();
+    }
+
+    function pause() external onlyOwner {
+        if (paused) revert NoChange();
+        paused = true;
+        emit PausedStateChanged(true);
+    }
+
+    function unpause() external onlyOwner {
+        if (!paused) revert NoChange();
