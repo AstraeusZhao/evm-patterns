@@ -45,3 +45,14 @@ contract PullPaymentVault {
         if (_lock != 1) revert Reentrancy();
         _lock = 2;
         _;
+        _lock = 1;
+    }
+
+    /// @notice Add ETH credit that the sender can withdraw later.
+    function deposit() external payable whenNotPaused {
+        _credit(msg.sender, msg.value);
+    }
+
+    /// @notice Withdraw only the caller's previously deposited credit.
+    /// @dev State is updated before the external call (CEI), and the lock
+    ///      blocks a recipient contract from re-entering this function.
