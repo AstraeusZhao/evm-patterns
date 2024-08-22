@@ -33,3 +33,15 @@ contract PullPaymentVault {
 
     modifier onlyOwner() {
         if (msg.sender != owner) revert NotOwner(msg.sender);
+        _;
+    }
+
+    modifier whenNotPaused() {
+        if (paused) revert Paused();
+        _;
+    }
+
+    modifier nonReentrant() {
+        if (_lock != 1) revert Reentrancy();
+        _lock = 2;
+        _;
