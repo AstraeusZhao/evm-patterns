@@ -80,3 +80,26 @@ contract PullPaymentVault {
 
     function unpause() external onlyOwner {
         if (!paused) revert NoChange();
+        paused = false;
+        emit PausedStateChanged(false);
+    }
+
+    function transferOwnership(address newOwner) external onlyOwner {
+        if (newOwner == address(0)) revert ZeroAddress();
+        if (newOwner == owner) revert NoChange();
+
+        address previousOwner = owner;
+        owner = newOwner;
+        emit OwnershipTransferred(previousOwner, newOwner);
+    }
+
+    receive() external payable whenNotPaused {
+        _credit(msg.sender, msg.value);
+    }
+
+    function _credit(address account, uint256 amount) internal {
+        if (amount == 0) revert ZeroAmount();
+        credits[account] += amount;
+        emit CreditDeposited(account, amount);
+    }
+}
