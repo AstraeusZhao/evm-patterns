@@ -24,3 +24,23 @@ library SafeTransfer {
         _callAndVerify(token, abi.encodeCall(IERC20Minimal.transferFrom, (from, to, amount)));
     }
 
+    function safeApprove(IERC20Minimal token, address spender, uint256 amount) internal {
+        _callAndVerify(token, abi.encodeCall(IERC20Minimal.approve, (spender, amount)));
+    }
+
+    function _callAndVerify(IERC20Minimal token, bytes memory data) private {
+        (bool ok, bytes memory ret) = address(token).call(data);
+        if (!ok) revert TransferFailed();
+        if (ret.length > 0 && !abi.decode(ret, (bool))) {
+            revert TransferFailed();
+        }
+    }
+}
+
+/// @notice Demonstration contract using the safe library for token sweeps.
+contract TokenSweeper {
+    error NotOwner(address caller);
+
+    address public owner;
+
+    constructor() {
