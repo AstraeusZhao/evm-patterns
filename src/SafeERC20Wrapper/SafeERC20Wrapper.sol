@@ -44,3 +44,9 @@ contract TokenSweeper {
     address public owner;
 
     constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) revert NotOwner(msg.sender);
+        _;
