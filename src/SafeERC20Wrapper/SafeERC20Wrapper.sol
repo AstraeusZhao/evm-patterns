@@ -50,3 +50,10 @@ contract TokenSweeper {
     modifier onlyOwner() {
         if (msg.sender != owner) revert NotOwner(msg.sender);
         _;
+    }
+
+    function sweep(IERC20Minimal token, address to) external onlyOwner {
+        uint256 amount = token.balanceOf(address(this));
+        SafeTransfer.safeTransfer(token, to, amount);
+    }
+}
