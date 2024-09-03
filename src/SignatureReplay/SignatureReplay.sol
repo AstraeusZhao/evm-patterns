@@ -17,3 +17,21 @@ contract SignatureReplay {
     bytes32 private constant LOW_S_MAX =
         0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0;
 
+    bytes32 public immutable DOMAIN_SEPARATOR;
+    bytes32 public constant CLAIM_TYPEHASH =
+        keccak256("Claim(address account,uint256 amount,uint256 nonce,uint256 deadline)");
+
+    mapping(address account => uint256 nonce) public nonces;
+    address public immutable signer;
+
+    constructor(address signer_) {
+        if (signer_ == address(0)) revert ZeroAddress();
+        signer = signer_;
+        DOMAIN_SEPARATOR = keccak256(
+            abi.encode(
+                keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+                keccak256("SignatureReplay"),
+                keccak256("1"),
+                block.chainid,
+                address(this)
+            )
