@@ -35,3 +35,22 @@ contract SignatureReplay {
                 block.chainid,
                 address(this)
             )
+        );
+    }
+
+    /// @notice Claim an amount authorized by an off-chain signature.
+    /// @dev Each claim burns one nonce, so a captured signature cannot be
+    ///      replayed against a later nonce. Recovery additionally rejects
+    ///      malleable signatures (s must be in the low half of the curve and
+    ///      v must be 27 or 28) so a captured signature cannot be rewritten.
+    function claim(uint256 amount, uint256 deadline, bytes calldata signature) external {
+        if (block.timestamp > deadline) revert SignatureExpired(deadline);
+        if (signature.length != 65) revert InvalidSignature();
+
+        uint8 v = uint8(signature[64]);
+        bytes32 r = bytes32(signature[0:32]);
+        bytes32 s = bytes32(signature[32:64]);
+        if (uint256(s) > uint256(LOW_S_MAX)) revert InvalidSignature();
+        if (v != 27 && v != 28) revert InvalidSignature();
+
+        uint256 nonce = nonces[msg.sender];
