@@ -54,3 +54,12 @@ contract SignatureReplay {
         if (v != 27 && v != 28) revert InvalidSignature();
 
         uint256 nonce = nonces[msg.sender];
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                "\x19\x01", DOMAIN_SEPARATOR, keccak256(abi.encode(CLAIM_TYPEHASH, msg.sender, amount, nonce, deadline))
+            )
+        );
+
+        address recovered = ecrecover(digest, v, r, s);
+        if (recovered == address(0)) revert InvalidSignature();
+        if (recovered != signer) revert NotSigner(recovered, signer);
