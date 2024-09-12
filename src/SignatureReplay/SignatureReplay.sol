@@ -63,3 +63,13 @@ contract SignatureReplay {
         address recovered = ecrecover(digest, v, r, s);
         if (recovered == address(0)) revert InvalidSignature();
         if (recovered != signer) revert NotSigner(recovered, signer);
+
+        nonces[msg.sender] = nonce + 1;
+
+        emit Claimed(msg.sender, amount, nonce);
+    }
+
+    /// @notice Compute the digest a signer must produce for a claim.
+    function getDigest(address account, uint256 amount, uint256 nonce, uint256 deadline)
+        external
+        view
