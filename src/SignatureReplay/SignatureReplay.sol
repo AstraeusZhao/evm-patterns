@@ -73,3 +73,12 @@ contract SignatureReplay {
     function getDigest(address account, uint256 amount, uint256 nonce, uint256 deadline)
         external
         view
+        returns (bytes32)
+    {
+        return keccak256(
+            abi.encodePacked(
+                "\x19\x01", DOMAIN_SEPARATOR, keccak256(abi.encode(CLAIM_TYPEHASH, account, amount, nonce, deadline))
+            )
+        );
+    }
+}
