@@ -13,3 +13,11 @@ contract StorageCollisionProxy {
     address public implementation;
 
     address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) revert NotOwner(msg.sender);
+        _;
