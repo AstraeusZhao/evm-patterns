@@ -6,3 +6,10 @@ pragma solidity ^0.8.24;
 ///         proxy stores its implementation address at slot 0 and an
 ///         implementation also uses slot 0 for a variable, delegatecall
 ///         overwrites the proxy's own storage.
+/// @dev Educational demo of an anti-pattern; do not copy.
+contract StorageCollisionProxy {
+    error NotOwner(address caller);
+
+    address public implementation;
+
+    address public owner;
