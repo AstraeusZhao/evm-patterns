@@ -43,3 +43,26 @@ contract StorageCollisionProxy {
             switch result
             case 0 { revert(0, returndatasize()) }
             default { return(0, returndatasize()) }
+        }
+    }
+}
+
+/// @notice Implementation A stores `value` at slot 0 -> collides with the
+///         proxy's `implementation` slot.
+contract ImplValueSlot0 {
+    uint256 public value; // slot 0
+
+    function setValue(uint256 v) external {
+        value = v;
+    }
+}
+
+/// @notice Implementation B stores the value at a fixed non-colliding slot.
+contract ImplValueSlot1 {
+    uint256 public other; // slot 0, deliberately unused
+    uint256 public value; // slot 1
+
+    function setValue(uint256 v) external {
+        value = v;
+    }
+}
