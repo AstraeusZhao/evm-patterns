@@ -17,3 +17,9 @@ contract UUPSProxy {
 
     constructor(address initialImpl) {
         owner = msg.sender;
+        _setImplementation(initialImpl);
+    }
+
+    fallback() external payable {
+        _delegate(_getImplementation());
+    }
