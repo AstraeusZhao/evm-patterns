@@ -23,3 +23,9 @@ contract UUPSProxy {
     fallback() external payable {
         _delegate(_getImplementation());
     }
+
+    /// @notice Upgrade the implementation (owner only).
+    function upgradeTo(address newImpl) external {
+        if (msg.sender != owner) revert NotOwner(msg.sender);
+        if (newImpl.code.length == 0) revert EmptyImplementation(newImpl);
+        _setImplementation(newImpl);
