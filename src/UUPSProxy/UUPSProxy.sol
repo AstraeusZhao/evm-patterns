@@ -29,3 +29,9 @@ contract UUPSProxy {
         if (msg.sender != owner) revert NotOwner(msg.sender);
         if (newImpl.code.length == 0) revert EmptyImplementation(newImpl);
         _setImplementation(newImpl);
+    }
+
+    function _setImplementation(address impl) internal {
+        assembly {
+            sstore(IMPLEMENTATION_SLOT, impl)
+        }
