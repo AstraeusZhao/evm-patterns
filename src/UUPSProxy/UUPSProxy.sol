@@ -35,3 +35,22 @@ contract UUPSProxy {
         assembly {
             sstore(IMPLEMENTATION_SLOT, impl)
         }
+    }
+
+    function _getImplementation() internal view returns (address impl) {
+        assembly {
+            impl := sload(IMPLEMENTATION_SLOT)
+        }
+    }
+
+    function _delegate(address impl) internal {
+        assembly {
+            calldatacopy(0, 0, calldatasize())
+            let result := delegatecall(gas(), impl, 0, calldatasize(), 0, 0)
+            returndatacopy(0, 0, returndatasize())
+            switch result
+            case 0 { revert(0, returndatasize()) }
+            default { return(0, returndatasize()) }
+        }
+    }
+}
