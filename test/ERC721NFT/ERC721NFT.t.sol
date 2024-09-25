@@ -8,3 +8,13 @@ interface Vm {
     function expectRevert() external;
 }
 
+contract ERC721NFTTest {
+    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+
+    address private constant ALICE = address(0xA11CE);
+    address private constant BOB = address(0xB0B);
+
+    function _nft() internal returns (ERC721NFT) {
+        vm.prank(ALICE);
+        ERC721NFT n = new ERC721NFT("NFT", "NFT");
+        vm.prank(ALICE);
