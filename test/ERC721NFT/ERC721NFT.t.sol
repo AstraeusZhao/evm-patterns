@@ -38,3 +38,13 @@ contract ERC721NFTTest {
 
     function testApproveThenTransferByOperator() external {
         ERC721NFT n = _nft();
+        vm.prank(ALICE);
+        n.approve(BOB, 1);
+        require(n.getApproved(1) == BOB, "approval not recorded");
+        vm.prank(BOB);
+        n.transferFrom(ALICE, BOB, 1);
+        require(n.ownerOf(1) == BOB, "operator transfer failed");
+        require(n.getApproved(1) == address(0), "approval not cleared");
+    }
+
+    function testNonOwnerCannotTransfer() external {
