@@ -28,3 +28,13 @@ contract ERC721NFTTest {
         require(n.balanceOf(ALICE) == 1, "balance wrong");
     }
 
+    function testTransferFrom() external {
+        ERC721NFT n = _nft();
+        vm.prank(ALICE);
+        n.transferFrom(ALICE, BOB, 1);
+        require(n.ownerOf(1) == BOB, "not transferred");
+        require(n.balanceOf(ALICE) == 0, "sender balance not cleared");
+    }
+
+    function testApproveThenTransferByOperator() external {
+        ERC721NFT n = _nft();
