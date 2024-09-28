@@ -18,3 +18,13 @@ contract ERC721NFTTest {
         vm.prank(ALICE);
         ERC721NFT n = new ERC721NFT("NFT", "NFT");
         vm.prank(ALICE);
+        n.mint(ALICE, 1);
+        return n;
+    }
+
+    function testMintAndOwnerOf() external {
+        ERC721NFT n = _nft();
+        require(n.ownerOf(1) == ALICE, "owner wrong");
+        require(n.balanceOf(ALICE) == 1, "balance wrong");
+    }
+
