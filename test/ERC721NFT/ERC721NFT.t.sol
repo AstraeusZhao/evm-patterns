@@ -48,3 +48,13 @@ contract ERC721NFTTest {
     }
 
     function testNonOwnerCannotTransfer() external {
+        ERC721NFT n = _nft();
+        vm.expectRevert();
+        vm.prank(BOB);
+        n.transferFrom(ALICE, BOB, 1);
+    }
+
+    function testCannotMintTwice() external {
+        ERC721NFT n = _nft();
+        vm.expectRevert();
+        vm.prank(ALICE);
