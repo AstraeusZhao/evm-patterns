@@ -58,3 +58,23 @@ contract ERC721NFTTest {
         ERC721NFT n = _nft();
         vm.expectRevert();
         vm.prank(ALICE);
+        n.mint(BOB, 1);
+    }
+
+    function testOnlyMinterCanMint() external {
+        ERC721NFT n = _nft();
+        vm.expectRevert();
+        vm.prank(BOB);
+        n.mint(BOB, 2);
+    }
+
+    function testSetApprovalForAll() external {
+        ERC721NFT n = _nft();
+        vm.prank(ALICE);
+        n.setApprovalForAll(BOB, true);
+        require(n.isApprovedForAll(ALICE, BOB), "operator approval missing");
+        vm.prank(BOB);
+        n.transferFrom(ALICE, BOB, 1);
+        require(n.ownerOf(1) == BOB, "operator transfer failed");
+    }
+}
