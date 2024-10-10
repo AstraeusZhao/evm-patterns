@@ -19,3 +19,10 @@ contract FactoryCloneTest {
     Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
 
     function testDeployCloneAndInteract() external {
+        CloneCounter impl = new CloneCounter();
+        FactoryClone factory = new FactoryClone(address(impl));
+
+        bytes32 salt = keccak256("clone-1");
+        address predicted = factory.getAddress(salt);
+        address clone = factory.deploy(salt);
+        require(clone == predicted, "CREATE2 address mismatch");
