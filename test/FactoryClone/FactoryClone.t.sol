@@ -26,3 +26,9 @@ contract FactoryCloneTest {
         address predicted = factory.getAddress(salt);
         address clone = factory.deploy(salt);
         require(clone == predicted, "CREATE2 address mismatch");
+
+        CloneCounter c = CloneCounter(payable(clone));
+        require(c.count() == 0, "clone initial state wrong");
+        c.increment();
+        c.increment();
+        require(c.count() == 2, "clone state not independent");
