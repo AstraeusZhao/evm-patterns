@@ -39,3 +39,17 @@ contract FactoryCloneTest {
         CloneCounter impl = new CloneCounter();
         FactoryClone factory = new FactoryClone(address(impl));
 
+        factory.deploy(keccak256("dup"));
+        vm.expectRevert();
+        factory.deploy(keccak256("dup"));
+    }
+
+    function testCloneIsIndependent() external {
+        CloneCounter impl = new CloneCounter();
+        FactoryClone factory = new FactoryClone(address(impl));
+
+        address cloneA = factory.deploy(keccak256("a"));
+        address cloneB = factory.deploy(keccak256("b"));
+        require(cloneA != cloneB, "clones share address");
+    }
+}
