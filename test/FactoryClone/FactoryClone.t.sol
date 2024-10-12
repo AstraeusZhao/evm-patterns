@@ -32,3 +32,10 @@ contract FactoryCloneTest {
         c.increment();
         c.increment();
         require(c.count() == 2, "clone state not independent");
+        require(impl.count() == 0, "implementation polluted by clone");
+    }
+
+    function testCannotDeployTwiceWithSameSalt() external {
+        CloneCounter impl = new CloneCounter();
+        FactoryClone factory = new FactoryClone(address(impl));
+
