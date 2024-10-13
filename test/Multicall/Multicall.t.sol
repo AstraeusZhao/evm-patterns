@@ -11,3 +11,16 @@ contract Counter is Multicall {
     uint256 public count;
 
     function increment(uint256 by) external {
+        count += by;
+    }
+
+    function set(uint256 v) external {
+        count = v;
+    }
+
+    function fail() external pure {
+        revert("boom");
+    }
+}
+
+contract MulticallTest {
