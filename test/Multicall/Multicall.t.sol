@@ -5,3 +5,9 @@ import {Multicall} from "../../src/Multicall/Multicall.sol";
 
 interface Vm {
     function expectRevert() external;
+}
+
+contract Counter is Multicall {
+    uint256 public count;
+
+    function increment(uint256 by) external {
