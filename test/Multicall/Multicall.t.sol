@@ -24,3 +24,10 @@ contract Counter is Multicall {
 }
 
 contract MulticallTest {
+    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+
+    function testBatchIncrements() external {
+        Counter c = new Counter();
+
+        Multicall.Call[] memory calls = new Multicall.Call[](3);
+        calls[0].data = abi.encodeCall(Counter.increment, (1));
