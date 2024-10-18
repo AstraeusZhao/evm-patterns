@@ -31,3 +31,23 @@ contract MulticallTest {
 
         Multicall.Call[] memory calls = new Multicall.Call[](3);
         calls[0].data = abi.encodeCall(Counter.increment, (1));
+        calls[1].data = abi.encodeCall(Counter.increment, (2));
+        calls[2].data = abi.encodeCall(Counter.set, (10));
+
+        c.multicall(calls);
+        require(c.count() == 10, "batch not applied in order");
+    }
+
+    function testBatchFailureRevertsAll() external {
+        Counter c = new Counter();
+        c.increment(5);
+
+        Multicall.Call[] memory calls = new Multicall.Call[](2);
+        calls[0].data = abi.encodeCall(Counter.increment, (1));
+        calls[1].data = abi.encodeCall(Counter.fail, ());
+
+        vm.expectRevert();
+        c.multicall(calls);
+        require(c.count() == 5, "state must roll back on failure");
+    }
+}
