@@ -13,3 +13,10 @@ contract PullPaymentTest {
     Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
 
     address private constant ALICE = address(0xA11CE);
+
+    receive() external payable {}
+
+    function testReceiveCreditsSender() external {
+        PullPayment p = new PullPayment();
+        vm.deal(ALICE, 5 ether);
+        vm.prank(ALICE);
