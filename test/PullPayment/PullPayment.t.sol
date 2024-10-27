@@ -20,3 +20,11 @@ contract PullPaymentTest {
         PullPayment p = new PullPayment();
         vm.deal(ALICE, 5 ether);
         vm.prank(ALICE);
+        (bool ok,) = address(p).call{value: 2 ether}("");
+        require(ok, "transfer failed");
+        require(p.pendingCredits(ALICE) == 2 ether, "credit not recorded");
+    }
+
+    function testWithdrawCredits() external {
+        PullPayment p = new PullPayment();
+        vm.deal(ALICE, 5 ether);
