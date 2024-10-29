@@ -28,3 +28,25 @@ contract PullPaymentTest {
     function testWithdrawCredits() external {
         PullPayment p = new PullPayment();
         vm.deal(ALICE, 5 ether);
+        vm.prank(ALICE);
+        (bool ok,) = address(p).call{value: 2 ether}("");
+        require(ok, "transfer failed");
+
+        vm.prank(ALICE);
+        p.withdrawCredits(1 ether);
+        require(p.pendingCredits(ALICE) == 1 ether, "credit not reduced");
+        require(ALICE.balance == 4 ether, "withdrawal not paid");
+    }
+
+    function testCannotOverWithdraw() external {
+        PullPayment p = new PullPayment();
+        vm.deal(ALICE, 5 ether);
+        vm.prank(ALICE);
+        (bool ok,) = address(p).call{value: 2 ether}("");
+        require(ok, "transfer failed");
+
+        vm.expectRevert();
+        vm.prank(ALICE);
+        p.withdrawCredits(3 ether);
+    }
+
