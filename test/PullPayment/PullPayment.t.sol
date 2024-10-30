@@ -50,3 +50,10 @@ contract PullPaymentTest {
         p.withdrawCredits(3 ether);
     }
 
+    function testCannotWithdrawZero() external {
+        PullPayment p = new PullPayment();
+        vm.expectRevert();
+        vm.prank(ALICE);
+        p.withdrawCredits(0);
+    }
+}
