@@ -31,3 +31,14 @@ contract PullPaymentVaultTest {
         vault.pause();
         require(vault.paused(), "vault did not pause");
 
+        vault.unpause();
+        require(!vault.paused(), "vault did not unpause");
+    }
+
+    function testNonOwnerCannotPause() external {
+        PullPaymentVault vault = new PullPaymentVault();
+        NonOwner caller = new NonOwner();
+        bool reverted;
+
+        try caller.pause(vault) {
+            reverted = false;
