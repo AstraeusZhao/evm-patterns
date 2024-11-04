@@ -42,3 +42,24 @@ contract PullPaymentVaultTest {
 
         try caller.pause(vault) {
             reverted = false;
+        } catch {
+            reverted = true;
+        }
+
+        require(reverted, "non-owner was allowed to pause");
+    }
+
+    function testPausedVaultRejectsDeposit() external {
+        PullPaymentVault vault = new PullPaymentVault();
+        vm.deal(address(this), 1 ether);
+        vault.pause();
+        bool reverted;
+
+        try vault.deposit{value: 1 ether}() {
+            reverted = false;
+        } catch {
+            reverted = true;
+        }
+
+        require(reverted, "paused vault accepted a deposit");
+    }
