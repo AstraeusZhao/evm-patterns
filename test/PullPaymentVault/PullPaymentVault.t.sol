@@ -63,3 +63,14 @@ contract PullPaymentVaultTest {
 
         require(reverted, "paused vault accepted a deposit");
     }
+
+    function testCannotWithdrawMoreThanCredit() external {
+        PullPaymentVault vault = new PullPaymentVault();
+        vm.deal(address(this), 1 ether);
+        vault.deposit{value: 1 ether}();
+        bool reverted;
+
+        try vault.withdraw(2 ether) {
+            reverted = false;
+        } catch {
+            reverted = true;
