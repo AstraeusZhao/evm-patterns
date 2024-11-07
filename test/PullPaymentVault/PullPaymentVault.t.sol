@@ -74,3 +74,14 @@ contract PullPaymentVaultTest {
             reverted = false;
         } catch {
             reverted = true;
+        }
+
+        require(reverted, "over-withdrawal was allowed");
+    }
+}
+
+contract NonOwner {
+    function pause(PullPaymentVault vault) external {
+        vault.pause();
+    }
+}
