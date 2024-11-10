@@ -51,3 +51,14 @@ contract SafeERC20WrapperTest {
 
     function testSafeTransferHandlesSilentToken() external {
         SilentToken t = new SilentToken();
+        vm.prank(OWNER);
+        t.mint(address(this), 100 ether);
+        require(t.balanceOf(address(this)) == 100 ether, "mint failed");
+
+        // Direct library use.
+        SafeTransfer.safeTransfer(IERC20Minimal(address(t)), RECIPIENT, 40 ether);
+        require(t.balanceOf(RECIPIENT) == 40 ether, "safe transfer failed");
+    }
+
+    function testSweeperUsesSafeTransfer() external {
+        SilentToken t = new SilentToken();
