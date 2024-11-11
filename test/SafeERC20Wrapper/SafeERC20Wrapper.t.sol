@@ -62,3 +62,24 @@ contract SafeERC20WrapperTest {
 
     function testSweeperUsesSafeTransfer() external {
         SilentToken t = new SilentToken();
+        vm.prank(OWNER);
+        t.mint(address(this), 100 ether);
+
+        vm.prank(OWNER);
+        TokenSweeper sweeper = new TokenSweeper();
+        vm.prank(OWNER);
+        t.mint(address(sweeper), 60 ether);
+
+        vm.prank(OWNER);
+        sweeper.sweep(IERC20Minimal(address(t)), RECIPIENT);
+        require(t.balanceOf(RECIPIENT) == 60 ether, "sweep failed for silent token");
+    }
+
+    function testSafeTransferFrom() external {
+        SilentToken t = new SilentToken();
+        t.mint(address(this), 50 ether);
+        SafeTransfer.safeApprove(IERC20Minimal(address(t)), address(this), 50 ether);
+        SafeTransfer.safeTransferFrom(IERC20Minimal(address(t)), address(this), RECIPIENT, 20 ether);
+        require(t.balanceOf(RECIPIENT) == 20 ether, "safeTransferFrom failed");
+    }
+}
