@@ -11,3 +11,16 @@ interface Vm {
 }
 
 contract SignatureReplayTest {
+    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+
+    uint256 private constant SIGNER_KEY = 0xB0B;
+    address private constant CLAIMER = address(0xC1A1);
+
+    function _replay() internal returns (SignatureReplay) {
+        address signer = vm.addr(SIGNER_KEY);
+        vm.prank(signer);
+        return new SignatureReplay(signer);
+    }
+
+    function _signature(SignatureReplay r, uint256 amount, uint256 nonce, uint256 deadline)
+        internal
