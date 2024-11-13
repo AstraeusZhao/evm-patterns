@@ -24,3 +24,17 @@ contract SignatureReplayTest {
 
     function _signature(SignatureReplay r, uint256 amount, uint256 nonce, uint256 deadline)
         internal
+        returns (bytes memory sig)
+    {
+        bytes32 digest = r.getDigest(CLAIMER, amount, nonce, deadline);
+        (uint8 v, bytes32 r_, bytes32 s_) = vm.sign(SIGNER_KEY, digest);
+        sig = abi.encodePacked(r_, s_, v);
+    }
+
+    function testClaimWithValidSignature() external {
+        SignatureReplay r = _replay();
+        uint256 deadline = block.timestamp + 1 days;
+        bytes memory sig = _signature(r, 100, 0, deadline);
+
+        vm.prank(CLAIMER);
+        r.claim(100, deadline, sig);
