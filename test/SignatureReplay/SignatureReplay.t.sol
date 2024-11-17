@@ -38,3 +38,16 @@ contract SignatureReplayTest {
 
         vm.prank(CLAIMER);
         r.claim(100, deadline, sig);
+        require(r.nonces(CLAIMER) == 1, "nonce not incremented");
+    }
+
+    function testReplayedSignatureRejected() external {
+        SignatureReplay r = _replay();
+        uint256 deadline = block.timestamp + 1 days;
+        bytes memory sig = _signature(r, 100, 0, deadline);
+
+        vm.prank(CLAIMER);
+        r.claim(100, deadline, sig);
+
+        // Same signature now hashes a stale nonce; recovery yields a
+        // different signer, so the claim must revert.
