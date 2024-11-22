@@ -51,3 +51,30 @@ contract SignatureReplayTest {
 
         // Same signature now hashes a stale nonce; recovery yields a
         // different signer, so the claim must revert.
+        vm.expectRevert();
+        vm.prank(CLAIMER);
+        r.claim(100, deadline, sig);
+    }
+
+    function testExpiredSignatureRejected() external {
+        SignatureReplay r = _replay();
+        uint256 deadline = block.timestamp - 1;
+        bytes memory sig = _signature(r, 100, 0, deadline);
+
+        vm.expectRevert();
+        vm.prank(CLAIMER);
+        r.claim(100, deadline, sig);
+    }
+
+    function testSignatureFromWrongSignerRejected() external {
+        SignatureReplay r = _replay();
+        uint256 deadline = block.timestamp + 1 days;
+        bytes32 digest = r.getDigest(CLAIMER, 100, 0, deadline);
+        (uint8 v, bytes32 r_, bytes32 s_) = vm.sign(0x0AA, digest);
+        bytes memory sig = abi.encodePacked(r_, s_, v);
+
+        vm.expectRevert();
+        vm.prank(CLAIMER);
+        r.claim(100, deadline, sig);
+    }
+
