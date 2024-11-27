@@ -78,3 +78,16 @@ contract SignatureReplayTest {
         r.claim(100, deadline, sig);
     }
 
+    function testMalleableSignatureRejected() external {
+        SignatureReplay r = _replay();
+        uint256 deadline = block.timestamp + 1 days;
+        bytes memory sig = _signature(r, 100, 0, deadline);
+
+        // Classic ECDSA malleability: (r, n - s) with the flipped recovery
+        // byte recovers the same signer. The low-s check must reject it.
+        uint256 n = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141;
+        (bytes32 rPart, bytes32 sPart, uint8 v) = _sigParts(sig);
+        bytes32 sMalleable = bytes32(n - uint256(sPart));
+        bytes memory malleable = abi.encodePacked(rPart, sMalleable, v == 27 ? 28 : 27);
+
+        vm.expectRevert();
