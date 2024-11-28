@@ -91,3 +91,16 @@ contract SignatureReplayTest {
         bytes memory malleable = abi.encodePacked(rPart, sMalleable, v == 27 ? 28 : 27);
 
         vm.expectRevert();
+        vm.prank(CLAIMER);
+        r.claim(100, deadline, malleable);
+    }
+
+    /// @dev Unpack a memory-encoded (r, s, v) signature without calldata slicing.
+    function _sigParts(bytes memory sig) internal pure returns (bytes32 r, bytes32 s, uint8 v) {
+        assembly {
+            r := mload(add(sig, 0x20))
+            s := mload(add(sig, 0x40))
+            v := mload(add(sig, 0x60))
+        }
+    }
+}
