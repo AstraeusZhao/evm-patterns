@@ -15,3 +15,9 @@ contract StorageCollisionTest {
         return new StorageCollisionProxy();
     }
 
+    function testSlot0CollisionOverwritesImplementation() external {
+        StorageCollisionProxy proxy = _proxy();
+        ImplValueSlot0 impl = new ImplValueSlot0();
+        vm.prank(address(0xB055));
+        proxy.setImplementation(address(impl));
+
