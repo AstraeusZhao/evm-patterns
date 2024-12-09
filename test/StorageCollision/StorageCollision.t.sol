@@ -21,3 +21,9 @@ contract StorageCollisionTest {
         vm.prank(address(0xB055));
         proxy.setImplementation(address(impl));
 
+        // Call setValue(42) through the proxy: delegatecall writes slot 0,
+        // which is the proxy's own `implementation` slot.
+        (bool ok,) = address(proxy).call(abi.encodeCall(ImplValueSlot0.setValue, (42)));
+        require(ok, "call failed");
+
+        // The implementation address was destroyed by the write.
