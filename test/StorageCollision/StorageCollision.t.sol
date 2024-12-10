@@ -27,3 +27,20 @@ contract StorageCollisionTest {
         require(ok, "call failed");
 
         // The implementation address was destroyed by the write.
+        require(proxy.implementation() == address(42), "implementation slot corrupted");
+    }
+
+    function testNonCollidingSlotPreservesProxyStorage() external {
+        StorageCollisionProxy proxy = _proxy();
+        ImplValueSlot1 impl = new ImplValueSlot1();
+        vm.prank(address(0xB055));
+        proxy.setImplementation(address(impl));
+
+        address implBefore = proxy.implementation();
+
+        (bool ok,) = address(proxy).call(abi.encodeCall(ImplValueSlot1.setValue, (7)));
+        require(ok, "call failed");
+
+        require(proxy.implementation() == implBefore, "implementation slot changed");
+    }
+}
