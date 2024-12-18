@@ -7,3 +7,12 @@ interface Vm {
     function prank(address sender) external;
     function expectRevert() external;
 }
+
+contract CounterV1 {
+    uint256 public count;
+
+    function increment() external {
+        count += 1;
+    }
+}
+
