@@ -16,3 +16,22 @@ contract CounterV1 {
     }
 }
 
+contract CounterV2 {
+    uint256 public count;
+
+    function increment() external {
+        count += 1;
+    }
+
+    function double() external {
+        count *= 2;
+    }
+}
+
+contract UUPSProxyTest {
+    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+
+    address private constant ATTACKER = address(0xB0B);
+
+    function testCallsThroughProxy() external {
+        CounterV1 impl = new CounterV1();
