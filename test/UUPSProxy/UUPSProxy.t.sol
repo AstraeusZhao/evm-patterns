@@ -35,3 +35,12 @@ contract UUPSProxyTest {
 
     function testCallsThroughProxy() external {
         CounterV1 impl = new CounterV1();
+        UUPSProxy proxy = new UUPSProxy(address(impl));
+
+        CounterV1(address(proxy)).increment();
+        require(CounterV1(address(proxy)).count() == 1, "proxy call failed");
+        require(impl.count() == 0, "implementation state polluted");
+    }
+
+    function testUpgradePreservesState() external {
+        CounterV1 impl = new CounterV1();
