@@ -44,3 +44,13 @@ contract UUPSProxyTest {
 
     function testUpgradePreservesState() external {
         CounterV1 impl = new CounterV1();
+        UUPSProxy proxy = new UUPSProxy(address(impl));
+
+        CounterV1(address(proxy)).increment();
+        CounterV2 impl2 = new CounterV2();
+        proxy.upgradeTo(address(impl2));
+
+        CounterV2(address(proxy)).double();
+        require(CounterV2(address(proxy)).count() == 2, "state lost across upgrade");
+    }
+
