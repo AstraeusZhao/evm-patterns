@@ -63,3 +63,12 @@ contract UUPSProxyTest {
         vm.prank(ATTACKER);
         proxy.upgradeTo(address(impl2));
     }
+
+    function testCannotUpgradeToCodeLessAddress() external {
+        CounterV1 impl = new CounterV1();
+        UUPSProxy proxy = new UUPSProxy(address(impl));
+
+        vm.expectRevert();
+        proxy.upgradeTo(address(0xC0DE));
+    }
+}
