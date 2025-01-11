@@ -56,3 +56,11 @@ contract BondingCurve {
     }
 
     /// @notice Current marginal price per token.
+    function price() external view returns (uint256) {
+        return _supply;
+    }
+
+    /// @notice Integer square root (Babylonian method).
+    function _sqrt(uint256 x) internal pure returns (uint256) {
+        if (x == 0) return 0;
+        uint256 z = (x + 1) / 2;
