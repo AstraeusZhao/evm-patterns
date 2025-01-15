@@ -6,3 +6,18 @@ pragma solidity ^0.8.24;
 /// @dev The first bidder who accepts the current price wins; excess payment
 ///      is refunded. Not audited.
 contract DutchAuction {
+    error NotOwner(address caller);
+    error AuctionNotEnded();
+    error AuctionEnded();
+    error BidBelowPrice(uint256 price, uint256 bid);
+    error TransferFailed();
+
+    event Bid(address indexed bidder, uint256 amount);
+
+    address public immutable seller;
+    uint256 public immutable startAt;
+    uint256 public immutable endAt;
+    uint256 public immutable startPrice;
+    uint256 public immutable endPrice;
+
+    bool public ended;
