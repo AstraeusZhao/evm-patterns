@@ -21,3 +21,10 @@ contract DutchAuction {
     uint256 public immutable endPrice;
 
     bool public ended;
+
+    constructor(uint256 startPrice_, uint256 endPrice_, uint256 duration) {
+        seller = msg.sender;
+        startAt = block.timestamp;
+        endAt = block.timestamp + duration;
+        startPrice = startPrice_;
+        endPrice = endPrice_;
