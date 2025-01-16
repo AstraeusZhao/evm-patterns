@@ -28,3 +28,11 @@ contract DutchAuction {
         endAt = block.timestamp + duration;
         startPrice = startPrice_;
         endPrice = endPrice_;
+    }
+
+    /// @notice Current ask price, linearly interpolated between start and end.
+    function currentPrice() public view returns (uint256) {
+        if (block.timestamp >= endAt) return endPrice;
+        if (block.timestamp < startAt) return startPrice;
+        uint256 elapsed = block.timestamp - startAt;
+        uint256 total = endAt - startAt;
