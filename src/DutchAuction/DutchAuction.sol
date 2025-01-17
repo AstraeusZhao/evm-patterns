@@ -36,3 +36,18 @@ contract DutchAuction {
         if (block.timestamp < startAt) return startPrice;
         uint256 elapsed = block.timestamp - startAt;
         uint256 total = endAt - startAt;
+        uint256 drop = ((startPrice - endPrice) * elapsed) / total;
+        return startPrice - drop;
+    }
+
+    /// @notice Accept the current price; the auction ends immediately.
+    function bid() external payable {
+        if (ended) revert AuctionEnded();
+
+        uint256 price = currentPrice();
+        if (msg.value < price) revert BidBelowPrice(price, msg.value);
+
+        ended = true;
+        emit Bid(msg.sender, msg.value);
+
+        if (msg.value > price) {
