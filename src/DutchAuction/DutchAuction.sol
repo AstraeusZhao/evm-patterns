@@ -51,3 +51,10 @@ contract DutchAuction {
         emit Bid(msg.sender, msg.value);
 
         if (msg.value > price) {
+            (bool ok,) = payable(msg.sender).call{value: msg.value - price}("");
+            if (!ok) revert TransferFailed();
+        }
+    }
+
+    /// @notice Seller collects the accepted bid.
+    function withdraw() external {
