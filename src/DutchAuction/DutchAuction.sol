@@ -58,3 +58,11 @@ contract DutchAuction {
 
     /// @notice Seller collects the accepted bid.
     function withdraw() external {
+        if (msg.sender != seller) revert NotOwner(msg.sender);
+        if (!ended) revert AuctionNotEnded();
+
+        uint256 amount = address(this).balance;
+        (bool ok,) = payable(seller).call{value: amount}("");
+        if (!ok) revert TransferFailed();
+    }
+}
