@@ -13,3 +13,11 @@ contract EnglishAuction {
     error TransferFailed();
 
     event Bid(address indexed bidder, uint256 amount);
+    event AuctionEnded(address indexed winner, uint256 amount);
+
+    address public immutable seller;
+    uint256 public immutable endAt;
+
+    address public highestBidder;
+    uint256 public highestBid;
+    bool public ended;
