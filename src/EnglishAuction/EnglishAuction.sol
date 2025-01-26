@@ -21,3 +21,18 @@ contract EnglishAuction {
     address public highestBidder;
     uint256 public highestBid;
     bool public ended;
+
+    constructor(uint256 biddingTime) {
+        seller = msg.sender;
+        endAt = block.timestamp + biddingTime;
+    }
+
+    /// @notice Place a bid; the previous bidder is refunded immediately.
+    /// @dev Checks-effects-interactions: bidder state is committed before the
+    ///      refund transfer, so a re-entering fallback cannot observe stale
+    ///      state or drain the contract.
+    function bid() external payable {
+        if (block.timestamp >= endAt) revert AuctionClosed();
+        if (msg.value <= highestBid) revert BidTooLow(highestBid, msg.value);
+
+        address previousBidder = highestBidder;
