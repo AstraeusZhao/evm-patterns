@@ -36,3 +36,19 @@ contract EnglishAuction {
         if (msg.value <= highestBid) revert BidTooLow(highestBid, msg.value);
 
         address previousBidder = highestBidder;
+        uint256 refund = highestBid;
+
+        highestBidder = msg.sender;
+        highestBid = msg.value;
+        emit Bid(msg.sender, msg.value);
+
+        if (previousBidder != address(0)) {
+            (bool ok,) = payable(previousBidder).call{value: refund}("");
+            if (!ok) revert TransferFailed();
+        }
+    }
+
+    /// @notice Finalize once the bidding window has closed.
+    function end() external {
+        if (block.timestamp < endAt) revert AuctionNotEnded();
+        if (ended) revert AuctionClosed();
