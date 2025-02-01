@@ -52,3 +52,10 @@ contract EnglishAuction {
     function end() external {
         if (block.timestamp < endAt) revert AuctionNotEnded();
         if (ended) revert AuctionClosed();
+        ended = true;
+        emit AuctionEnded(highestBidder, highestBid);
+    }
+
+    /// @notice Seller collects the winning bid after the auction ends.
+    function withdraw() external {
+        if (msg.sender != seller) revert NotOwner(msg.sender);
