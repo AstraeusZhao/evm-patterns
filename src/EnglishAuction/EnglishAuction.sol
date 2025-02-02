@@ -59,3 +59,11 @@ contract EnglishAuction {
     /// @notice Seller collects the winning bid after the auction ends.
     function withdraw() external {
         if (msg.sender != seller) revert NotOwner(msg.sender);
+        if (!ended) revert AuctionNotEnded();
+
+        uint256 amount = highestBid;
+        highestBid = 0;
+        (bool ok,) = payable(seller).call{value: amount}("");
+        if (!ok) revert TransferFailed();
+    }
+}
