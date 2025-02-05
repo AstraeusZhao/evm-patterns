@@ -15,3 +15,11 @@ contract MerkleAirdrop {
 
     event Claimed(address indexed claimant, uint256 amount);
 
+    bytes32 public immutable merkleRoot;
+    IERC20Like public immutable token;
+    address public owner;
+    mapping(address claimant => bool claimed) public claimed;
+
+    constructor(bytes32 merkleRoot_, IERC20Like token_) {
+        merkleRoot = merkleRoot_;
+        token = token_;
