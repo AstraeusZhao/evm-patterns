@@ -23,3 +23,11 @@ contract MerkleAirdrop {
     constructor(bytes32 merkleRoot_, IERC20Like token_) {
         merkleRoot = merkleRoot_;
         token = token_;
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) revert NotOwner(msg.sender);
+        _;
+    }
+
