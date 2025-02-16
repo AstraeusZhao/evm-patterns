@@ -48,3 +48,11 @@ contract MerkleAirdrop {
         bool ok = token.transfer(msg.sender, amount);
         if (!ok) revert TransferFailed();
     }
+
+    /// @notice Owner can sweep any tokens left after the airdrop.
+    function sweep(IERC20Like recipientToken, address to) external onlyOwner {
+        uint256 balance = recipientToken.balanceOf(address(this));
+        if (balance == 0) revert ZeroAmount();
+        bool ok = recipientToken.transfer(to, balance);
+        if (!ok) revert TransferFailed();
+    }
