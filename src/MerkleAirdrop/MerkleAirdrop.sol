@@ -31,3 +31,20 @@ contract MerkleAirdrop {
         _;
     }
 
+    /// @notice Claim the allocated amount by presenting a Merkle proof.
+    /// @param amount Amount this account is entitled to.
+    /// @param proof Sibling hashes proving inclusion of (account, amount).
+    function claim(uint256 amount, bytes32[] calldata proof) external {
+        if (claimed[msg.sender]) revert AlreadyClaimed(msg.sender);
+        if (amount == 0) revert ZeroAmount();
+
+        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(msg.sender, amount))));
+        if (!_verifyProof(proof, leaf)) revert InvalidProof(msg.sender);
+
+        claimed[msg.sender] = true;
+
+        emit Claimed(msg.sender, amount);
+
+        bool ok = token.transfer(msg.sender, amount);
+        if (!ok) revert TransferFailed();
+    }
