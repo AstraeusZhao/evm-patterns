@@ -56,3 +56,12 @@ contract MerkleAirdrop {
         bool ok = recipientToken.transfer(to, balance);
         if (!ok) revert TransferFailed();
     }
+
+    function _verifyProof(bytes32[] calldata proof, bytes32 leaf) internal view returns (bool) {
+        bytes32 hash = leaf;
+        for (uint256 i = 0; i < proof.length; i++) {
+            bytes32 sibling = proof[i];
+            hash = hash < sibling
+                ? keccak256(abi.encodePacked(hash, sibling))
+                : keccak256(abi.encodePacked(sibling, hash));
+        }
