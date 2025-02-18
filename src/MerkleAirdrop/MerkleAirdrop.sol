@@ -65,3 +65,11 @@ contract MerkleAirdrop {
                 ? keccak256(abi.encodePacked(hash, sibling))
                 : keccak256(abi.encodePacked(sibling, hash));
         }
+        return hash == merkleRoot;
+    }
+}
+
+interface IERC20Like {
+    function transfer(address to, uint256 amount) external returns (bool);
+    function balanceOf(address account) external view returns (uint256);
+}
