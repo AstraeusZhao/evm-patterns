@@ -8,3 +8,7 @@ pragma solidity ^0.8.24;
 contract PriceOracle {
     error NotAdmin(address caller);
     error ZeroPrice();
+    error StalePrice(address token, uint256 updatedAt);
+
+    event PricePosted(address indexed token, uint256 price, uint256 timestamp);
+
