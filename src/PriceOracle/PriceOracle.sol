@@ -12,3 +12,13 @@ contract PriceOracle {
 
     event PricePosted(address indexed token, uint256 price, uint256 timestamp);
 
+    struct Feed {
+        uint256 price;
+        uint256 updatedAt;
+    }
+
+    mapping(address token => Feed feed) public feeds;
+
+    address public admin;
+    uint256 public constant MAX_STALENESS = 24 hours;
+
