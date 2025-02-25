@@ -22,3 +22,8 @@ contract PriceOracle {
     address public admin;
     uint256 public constant MAX_STALENESS = 24 hours;
 
+    constructor() {
+        admin = msg.sender;
+    }
+
+    /// @notice Post or update a price for a token.
