@@ -27,3 +27,7 @@ contract PriceOracle {
     }
 
     /// @notice Post or update a price for a token.
+    function postPrice(address token, uint256 price) external {
+        if (msg.sender != admin) revert NotAdmin(msg.sender);
+        if (price == 0) revert ZeroPrice();
+        feeds[token] = Feed(price, block.timestamp);
