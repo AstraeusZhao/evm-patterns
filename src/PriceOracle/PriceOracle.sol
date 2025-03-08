@@ -31,3 +31,8 @@ contract PriceOracle {
         if (msg.sender != admin) revert NotAdmin(msg.sender);
         if (price == 0) revert ZeroPrice();
         feeds[token] = Feed(price, block.timestamp);
+        emit PricePosted(token, price, block.timestamp);
+    }
+
+    /// @notice Read a fresh price; reverts if the feed is stale.
+    function getPrice(address token) external view returns (uint256 price, uint256 updatedAt) {
