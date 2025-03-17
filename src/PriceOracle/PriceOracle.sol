@@ -36,3 +36,8 @@ contract PriceOracle {
 
     /// @notice Read a fresh price; reverts if the feed is stale.
     function getPrice(address token) external view returns (uint256 price, uint256 updatedAt) {
+        Feed memory f = feeds[token];
+        if (block.timestamp - f.updatedAt > MAX_STALENESS) revert StalePrice(token, f.updatedAt);
+        return (f.price, f.updatedAt);
+    }
+}
