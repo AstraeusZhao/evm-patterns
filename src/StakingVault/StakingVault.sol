@@ -12,3 +12,16 @@ contract StakingVault {
     error TransferFailed();
     error Reentrancy();
     error RewardRateNotSet();
+
+    event Staked(address indexed account, uint256 amount);
+    event Withdrawn(address indexed account, uint256 amount);
+    event RewardClaimed(address indexed account, uint256 amount);
+    event RewardRateSet(uint256 ratePerSecond);
+
+    struct StakeInfo {
+        uint256 amount;
+        uint256 lastUpdate;
+        uint256 accumulatedReward;
+    }
+
+    mapping(address account => StakeInfo stake) public stakes;
