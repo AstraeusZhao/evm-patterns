@@ -52,3 +52,17 @@ contract StakingVault {
         emit RewardRateSet(ratePerSecond);
     }
 
+    function stake() external payable nonReentrant {
+        if (msg.value == 0) revert ZeroAmount();
+        _update(msg.sender);
+
+        if (stakes[msg.sender].amount == 0) {
+            _accounts.push(msg.sender);
+        }
+        stakes[msg.sender].amount += msg.value;
+        stakes[msg.sender].lastUpdate = block.timestamp;
+
+        emit Staked(msg.sender, msg.value);
+    }
+
+    /// @notice Withdraw part of the staked principal; accrued rewards stay.
