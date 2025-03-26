@@ -25,3 +25,30 @@ contract StakingVault {
     }
 
     mapping(address account => StakeInfo stake) public stakes;
+
+    /// @dev Accounts with a non-zero stake; lets reward-rate changes settle
+    ///      every account before the new rate applies.
+    address[] private _accounts;
+
+    /// @notice Reward paid per staked token per second.
+    uint256 public rewardRatePerSecond;
+
+    uint256 private _lock = 1;
+
+    modifier nonReentrant() {
+        if (_lock != 1) revert Reentrancy();
+        _lock = 2;
+        _;
+        _lock = 1;
+    }
+
+    /// @notice Configure the per-second reward rate (owner-less demo: any caller).
+    /// @dev Settles accrued rewards for every staker at the old rate first, so a
+    ///      rate change never rewrites historical reward accrual.
+    function setRewardRate(uint256 ratePerSecond) external {
+        if (ratePerSecond == 0) revert RewardRateNotSet();
+        _updateAll();
+        rewardRatePerSecond = ratePerSecond;
+        emit RewardRateSet(ratePerSecond);
+    }
+
