@@ -66,3 +66,16 @@ contract StakingVault {
     }
 
     /// @notice Withdraw part of the staked principal; accrued rewards stay.
+    function unstake(uint256 amount) external nonReentrant {
+        if (amount == 0) revert ZeroAmount();
+        _update(msg.sender);
+
+        StakeInfo storage s = stakes[msg.sender];
+        if (s.amount < amount) revert InsufficientStake(s.amount, amount);
+
+        s.amount -= amount;
+        s.lastUpdate = block.timestamp;
+
+        emit Withdrawn(msg.sender, amount);
+
+        (bool ok,) = payable(msg.sender).call{value: amount}("");
