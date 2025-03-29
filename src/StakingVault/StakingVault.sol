@@ -79,3 +79,17 @@ contract StakingVault {
         emit Withdrawn(msg.sender, amount);
 
         (bool ok,) = payable(msg.sender).call{value: amount}("");
+        if (!ok) revert TransferFailed();
+    }
+
+    /// @notice Claim accrued rewards without reducing the stake.
+    function claimRewards() external nonReentrant {
+        _update(msg.sender);
+
+        StakeInfo storage s = stakes[msg.sender];
+        uint256 reward = s.accumulatedReward;
+        if (reward == 0) revert ZeroAmount();
+
+        s.accumulatedReward = 0;
+        s.lastUpdate = block.timestamp;
+
