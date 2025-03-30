@@ -106,3 +106,17 @@ contract StakingVault {
 
     function _update(address account) internal {
         StakeInfo storage s = stakes[account];
+        if (s.amount > 0 && rewardRatePerSecond > 0) {
+            uint256 elapsed = block.timestamp - s.lastUpdate;
+            s.accumulatedReward += elapsed * s.amount * rewardRatePerSecond;
+        }
+        s.lastUpdate = block.timestamp;
+    }
+
+    /// @notice Settle accrued rewards for every account with a stake.
+    function _updateAll() internal {
+        for (uint256 i = 0; i < _accounts.length; i++) {
+            _update(_accounts[i]);
+        }
+    }
+}
