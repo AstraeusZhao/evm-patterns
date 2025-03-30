@@ -93,3 +93,16 @@ contract StakingVault {
         s.accumulatedReward = 0;
         s.lastUpdate = block.timestamp;
 
+        emit RewardClaimed(msg.sender, reward);
+
+        (bool ok,) = payable(msg.sender).call{value: reward}("");
+        if (!ok) revert TransferFailed();
+    }
+
+    /// @notice Total staked amount for an account.
+    function stakedOf(address account) external view returns (uint256) {
+        return stakes[account].amount;
+    }
+
+    function _update(address account) internal {
+        StakeInfo storage s = stakes[account];
