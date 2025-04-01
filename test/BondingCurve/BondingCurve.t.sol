@@ -32,3 +32,20 @@ contract BondingCurveTest {
         require(c.reserve() == 1 ether, "reserve mismatch");
     }
 
+    function testPriceRisesWithSupply() external {
+        BondingCurve c = _curve();
+        vm.prank(ALICE);
+        uint256 first = c.buy{value: 1 ether}();
+        vm.prank(BOB);
+        uint256 second = c.buy{value: 1 ether}();
+        require(second < first, "later buys must mint fewer tokens");
+        require(c.price() == c.supply(), "price != supply");
+    }
+
+    function testSellRefundsBelowPaid() external {
+        BondingCurve c = _curve();
+        vm.prank(ALICE);
+        c.buy{value: 1 ether}();
+        uint256 supplyBefore = c.supply();
+
+        uint256 before = ALICE.balance;
