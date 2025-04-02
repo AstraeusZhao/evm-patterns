@@ -49,3 +49,12 @@ contract BondingCurveTest {
         uint256 supplyBefore = c.supply();
 
         uint256 before = ALICE.balance;
+        vm.prank(ALICE);
+        c.sell(supplyBefore / 2);
+        require(ALICE.balance > before, "no refund");
+        require(c.supply() < supplyBefore, "supply not burned");
+        require(c.supply() == supplyBefore - supplyBefore / 2, "supply mismatch");
+    }
+
+    function testCannotSellMoreThanSupply() external {
+        BondingCurve c = _curve();
