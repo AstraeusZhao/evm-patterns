@@ -58,3 +58,11 @@ contract BondingCurveTest {
 
     function testCannotSellMoreThanSupply() external {
         BondingCurve c = _curve();
+        vm.prank(ALICE);
+        c.buy{value: 1 ether}();
+        uint256 s = c.supply();
+        vm.expectRevert();
+        vm.prank(ALICE);
+        c.sell(s + 1);
+    }
+}
