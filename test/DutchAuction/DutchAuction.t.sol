@@ -37,3 +37,10 @@ contract DutchAuctionTest {
         DutchAuction a = _auction();
         vm.expectRevert();
         vm.prank(BUYER);
+        a.bid{value: 9 ether}();
+    }
+
+    function testBidAtPriceWins() external {
+        DutchAuction a = _auction();
+        vm.warp(block.timestamp + 50);
+        vm.prank(BUYER);
