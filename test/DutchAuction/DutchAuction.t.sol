@@ -44,3 +44,19 @@ contract DutchAuctionTest {
         DutchAuction a = _auction();
         vm.warp(block.timestamp + 50);
         vm.prank(BUYER);
+        a.bid{value: 6 ether}();
+        require(a.ended(), "auction not ended");
+        // excess refunded, seller keeps the price
+        require(BUYER.balance == 50 ether - 5.5 ether, "refund wrong");
+    }
+
+    function testSellerWithdrawsAfterBid() external {
+        DutchAuction a = _auction();
+        vm.warp(block.timestamp + 50);
+        vm.prank(BUYER);
+        a.bid{value: 5.5 ether}();
+        vm.prank(SELLER);
+        a.withdraw();
+        require(SELLER.balance == 5.5 ether, "seller not paid");
+    }
+}
