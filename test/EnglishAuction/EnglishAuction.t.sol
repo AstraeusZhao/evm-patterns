@@ -29,3 +29,18 @@ contract EnglishAuctionTest {
         vm.prank(ALICE);
         a.bid{value: 1 ether}();
         require(a.highestBidder() == ALICE, "first bidder not recorded");
+
+        vm.prank(BOB);
+        a.bid{value: 2 ether}();
+        require(a.highestBidder() == BOB, "second bidder not recorded");
+        require(ALICE.balance == 10 ether, "outbid bidder not refunded");
+        require(a.highestBid() == 2 ether, "highest bid wrong");
+    }
+
+    function testLowBidRejected() external {
+        EnglishAuction a = _auction();
+        vm.prank(ALICE);
+        a.bid{value: 2 ether}();
+        vm.expectRevert();
+        vm.prank(BOB);
+        a.bid{value: 1 ether}();
