@@ -76,3 +76,33 @@ contract EnglishAuctionTest {
 
     function testReentrantBidderCannotCorruptState() external {
         EnglishAuction a = _auction();
+
+        // A malicious bidder contract re-enters bid() from its receive()
+        // while being refunded. With checks-effects-interactions the
+        // re-entering bid competes against the already-updated state and
+        // the auction ends with a single consistent winner and balance.
+        ReentrantBidder attacker = new ReentrantBidder();
+        vm.deal(address(attacker), 10 ether);
+
+        vm.prank(ALICE);
+        a.bid{value: 1 ether}();
+        attacker.attack{value: 2 ether}(a);
+
+        vm.prank(BOB);
+        a.bid{value: 3 ether}();
+        require(attacker.reentered(), "attacker never re-entered");
+
+        require(a.highestBidder() == address(attacker), "re-entering bid lost");
+        require(a.highestBid() == 4 ether, "re-entering bid not recorded");
+        require(address(a).balance == 4 ether, "contract balance inconsistent");
+
+        vm.warp(block.timestamp + 1 days);
+        a.end();
+        vm.prank(SELLER);
+        a.withdraw();
+        require(SELLER.balance == 4 ether, "seller underpaid");
+        require(address(a).balance == 0, "funds stuck in contract");
+    }
+}
+
+/// @notice Malicious bidder that re-enters bid() on every refund.
