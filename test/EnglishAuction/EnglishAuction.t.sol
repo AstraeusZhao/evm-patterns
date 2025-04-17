@@ -44,3 +44,35 @@ contract EnglishAuctionTest {
         vm.expectRevert();
         vm.prank(BOB);
         a.bid{value: 1 ether}();
+    }
+
+    function testCannotBidAfterEnd() external {
+        EnglishAuction a = _auction();
+        vm.warp(block.timestamp + 1 days + 1);
+        vm.expectRevert();
+        vm.prank(ALICE);
+        a.bid{value: 1 ether}();
+    }
+
+    function testEndAndWithdraw() external {
+        EnglishAuction a = _auction();
+        vm.prank(ALICE);
+        a.bid{value: 3 ether}();
+        vm.warp(block.timestamp + 1 days);
+        a.end();
+        vm.prank(SELLER);
+        a.withdraw();
+        require(SELLER.balance == 3 ether, "seller not paid");
+    }
+
+    function testCannotWithdrawBeforeEnd() external {
+        EnglishAuction a = _auction();
+        vm.prank(ALICE);
+        a.bid{value: 1 ether}();
+        vm.expectRevert();
+        vm.prank(SELLER);
+        a.withdraw();
+    }
+
+    function testReentrantBidderCannotCorruptState() external {
+        EnglishAuction a = _auction();
