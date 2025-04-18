@@ -106,3 +106,19 @@ contract EnglishAuctionTest {
 }
 
 /// @notice Malicious bidder that re-enters bid() on every refund.
+contract ReentrantBidder {
+    EnglishAuction public auction;
+    bool public reentered;
+
+    receive() external payable {
+        if (!reentered) {
+            reentered = true;
+            auction.bid{value: 4 ether}();
+        }
+    }
+
+    function attack(EnglishAuction a) external payable {
+        auction = a;
+        a.bid{value: msg.value}();
+    }
+}
