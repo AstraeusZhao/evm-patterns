@@ -44,3 +44,15 @@ contract MerkleAirdropTest {
 
         MockToken t = new MockToken();
         t.mint(address(this), 1000 ether);
+
+        MerkleAirdrop a = new MerkleAirdrop(root, MockToken(address(t)));
+        t.transfer(address(a), 185 ether);
+
+        bytes32[] memory proofA = new bytes32[](2);
+        proofA[0] = leafB;
+        proofA[1] = cd;
+
+        bytes32[] memory proofB = new bytes32[](2);
+        proofB[0] = leafA;
+        proofB[1] = cd;
+
