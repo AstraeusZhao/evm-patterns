@@ -56,3 +56,15 @@ contract MerkleAirdropTest {
         proofB[0] = leafA;
         proofB[1] = cd;
 
+        return (a, t, proofA, proofB);
+    }
+
+    function testClaimWithValidProof() external {
+        (MerkleAirdrop a, MockToken t, bytes32[] memory proofA,) = _airdrop();
+        vm.prank(ALICE);
+        a.claim(100, proofA);
+        require(t.balanceOf(ALICE) == 100, "claim not paid");
+        require(a.claimed(ALICE), "claim not recorded");
+    }
+
+    function testCannotClaimTwice() external {
