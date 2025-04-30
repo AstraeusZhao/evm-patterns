@@ -79,3 +79,15 @@ contract MerkleAirdropTest {
     function testInvalidProofRejected() external {
         (MerkleAirdrop a,,, bytes32[] memory proofB) = _airdrop();
         // BOB's proof cannot be used by ALICE with amount 100.
+        vm.expectRevert();
+        vm.prank(ALICE);
+        a.claim(100, proofB);
+    }
+
+    function testWrongAmountRejected() external {
+        (MerkleAirdrop a,, bytes32[] memory proofA,) = _airdrop();
+        vm.expectRevert();
+        vm.prank(ALICE);
+        a.claim(50, proofA);
+    }
+}
