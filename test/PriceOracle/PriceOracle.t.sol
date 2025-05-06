@@ -12,3 +12,23 @@ interface Vm {
 contract PriceOracleTest {
     Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
 
+    address private constant TOKEN = address(0xA11CE);
+    address private constant ADMIN = address(0xB055);
+    address private constant ATTACKER = address(0xB0B);
+
+    function _oracle() internal returns (PriceOracle) {
+        vm.prank(ADMIN);
+        return new PriceOracle();
+    }
+
+    function testPostAndRead() external {
+        PriceOracle o = _oracle();
+        vm.prank(ADMIN);
+        o.postPrice(TOKEN, 1.5 ether);
+        (uint256 price,) = o.getPrice(TOKEN);
+        require(price == 1.5 ether, "price not posted");
+    }
+
+    function testOnlyAdminCanPost() external {
+        PriceOracle o = _oracle();
+        vm.expectRevert();
