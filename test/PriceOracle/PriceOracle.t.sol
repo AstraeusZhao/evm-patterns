@@ -32,3 +32,16 @@ contract PriceOracleTest {
     function testOnlyAdminCanPost() external {
         PriceOracle o = _oracle();
         vm.expectRevert();
+        vm.prank(ATTACKER);
+        o.postPrice(TOKEN, 1 ether);
+    }
+
+    function testStaleFeedReverts() external {
+        PriceOracle o = _oracle();
+        vm.prank(ADMIN);
+        o.postPrice(TOKEN, 1 ether);
+        vm.warp(block.timestamp + 24 hours + 1);
+        vm.expectRevert();
+        o.getPrice(TOKEN);
+    }
+
