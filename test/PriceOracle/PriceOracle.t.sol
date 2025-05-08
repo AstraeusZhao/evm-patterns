@@ -45,3 +45,10 @@ contract PriceOracleTest {
         o.getPrice(TOKEN);
     }
 
+    function testZeroPriceRejected() external {
+        PriceOracle o = _oracle();
+        vm.expectRevert();
+        vm.prank(ADMIN);
+        o.postPrice(TOKEN, 0);
+    }
+}
