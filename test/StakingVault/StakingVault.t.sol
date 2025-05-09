@@ -8,3 +8,14 @@ interface Vm {
     function prank(address sender) external;
     function warp(uint256 newTimestamp) external;
     function expectRevert() external;
+}
+
+contract StakingVaultTest {
+    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+
+    address private constant ALICE = address(0xA11CE);
+
+    receive() external payable {}
+
+    function _vault() internal returns (StakingVault) {
+        StakingVault v = new StakingVault();
