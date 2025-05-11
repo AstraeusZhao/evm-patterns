@@ -40,3 +40,24 @@ contract StakingVaultTest {
         (,, uint256 accrued) = v.stakes(ALICE);
         require(accrued == 100 * 1 ether, "reward not accrued");
     }
+
+    function testClaimRewards() external {
+        StakingVault v = _vault();
+        vm.warp(block.timestamp + 100);
+        uint256 before = ALICE.balance;
+        vm.prank(ALICE);
+        v.claimRewards();
+        require(ALICE.balance - before == 100 * 1 ether, "reward not paid");
+        require(v.stakedOf(ALICE) == 1 ether, "principal must stay");
+    }
+
+    function testUnstakeReducesPrincipal() external {
+        StakingVault v = _vault();
+        vm.warp(block.timestamp + 50);
+        vm.prank(ALICE);
+        v.unstake(0.5 ether);
+        require(v.stakedOf(ALICE) == 0.5 ether, "principal not reduced");
+    }
+
+    function testCannotUnstakeMoreThanStake() external {
+        StakingVault v = _vault();
