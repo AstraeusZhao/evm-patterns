@@ -19,3 +19,14 @@ contract StakingVaultTest {
 
     function _vault() internal returns (StakingVault) {
         StakingVault v = new StakingVault();
+        v.setRewardRate(1); // 1 wei per token per second
+        vm.deal(ALICE, 10 ether);
+        vm.deal(address(v), 1000 ether); // fund the rewards pool
+        vm.prank(ALICE);
+        v.stake{value: 1 ether}();
+        return v;
+    }
+
+    function testStakeRecordsPrincipal() external {
+        StakingVault v = _vault();
+        require(v.stakedOf(ALICE) == 1 ether, "stake not recorded");
