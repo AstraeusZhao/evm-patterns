@@ -30,3 +30,13 @@ contract StakingVaultTest {
     function testStakeRecordsPrincipal() external {
         StakingVault v = _vault();
         require(v.stakedOf(ALICE) == 1 ether, "stake not recorded");
+    }
+
+    function testRewardsAccrueOverTime() external {
+        StakingVault v = _vault();
+        vm.warp(block.timestamp + 100);
+        vm.prank(ALICE);
+        v.unstake(1 ether); // triggers _update and keeps rewards in storage
+        (,, uint256 accrued) = v.stakes(ALICE);
+        require(accrued == 100 * 1 ether, "reward not accrued");
+    }
