@@ -61,3 +61,24 @@ contract StakingVaultTest {
 
     function testCannotUnstakeMoreThanStake() external {
         StakingVault v = _vault();
+        vm.expectRevert();
+        vm.prank(ALICE);
+        v.unstake(2 ether);
+    }
+
+    function testRateChangeSettlesHistoricalRewards() external {
+        StakingVault v = _vault();
+
+        // Settle 100s at the old rate (1 wei per token per second) by
+        // changing the rate; the accrued amount must not be recomputed
+        // at the new rate afterwards.
+        vm.warp(block.timestamp + 100);
+        v.setRewardRate(2);
+
+        vm.warp(block.timestamp + 100);
+        uint256 before = ALICE.balance;
+        vm.prank(ALICE);
+        v.claimRewards();
+        require(ALICE.balance - before == (100 + 200) * 1 ether, "historical reward mis-accrued");
+    }
+}
