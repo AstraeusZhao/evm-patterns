@@ -15,3 +15,21 @@ contract EscrowVault {
     error WrongState(EscrowVault.State state);
     error ZeroAddress();
     error ZeroAmount();
+    error TransferFailed();
+    error Reentrancy();
+
+    enum State {
+        Active,
+        Disputed,
+        Released,
+        Refunded
+    }
+
+    event Deposited(address indexed depositor, uint256 amount);
+    event Released(address indexed beneficiary, uint256 amount);
+    event Refunded(address indexed depositor, uint256 amount);
+    event DisputeRaised(address indexed raiser);
+    event DisputeResolved(bool releaseToBeneficiary);
+
+    address public immutable depositor;
+    address public immutable beneficiary;
