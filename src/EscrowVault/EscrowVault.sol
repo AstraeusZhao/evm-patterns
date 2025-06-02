@@ -33,3 +33,20 @@ contract EscrowVault {
 
     address public immutable depositor;
     address public immutable beneficiary;
+    address public immutable agent;
+
+    State public state;
+
+    uint256 private _lock = 1;
+
+    modifier onlyDepositor() {
+        if (msg.sender != depositor) revert NotDepositor(msg.sender);
+        _;
+    }
+
+    modifier onlyBeneficiary() {
+        if (msg.sender != beneficiary) revert NotBeneficiary(msg.sender);
+        _;
+    }
+
+    modifier onlyAgent() {
