@@ -50,3 +50,21 @@ contract EscrowVault {
     }
 
     modifier onlyAgent() {
+        if (msg.sender != agent) revert NotAgent(msg.sender);
+        _;
+    }
+
+    modifier onlyParticipants() {
+        if (msg.sender != depositor && msg.sender != beneficiary) {
+            revert NotParticipant(msg.sender);
+        }
+        _;
+    }
+
+    modifier inState(State expected) {
+        if (state != expected) revert WrongState(state);
+        _;
+    }
+
+    modifier nonReentrant() {
+        if (_lock != 1) revert Reentrancy();
