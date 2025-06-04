@@ -68,3 +68,20 @@ contract EscrowVault {
 
     modifier nonReentrant() {
         if (_lock != 1) revert Reentrancy();
+        _lock = 2;
+        _;
+        _lock = 1;
+    }
+
+    /// @param depositor_ Buyer who funds the escrow.
+    /// @param beneficiary_ Seller who receives the funds on release.
+    /// @param agent_ Trusted third party that arbitrates release and refunds.
+    constructor(address depositor_, address beneficiary_, address agent_) {
+        if (depositor_ == address(0) || beneficiary_ == address(0) || agent_ == address(0)) {
+            revert ZeroAddress();
+        }
+        depositor = depositor_;
+        beneficiary = beneficiary_;
+        agent = agent_;
+        state = State.Active;
+    }
