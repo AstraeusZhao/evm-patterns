@@ -85,3 +85,38 @@ contract EscrowVault {
         agent = agent_;
         state = State.Active;
     }
+
+    /// @notice Fund the escrow. Only the depositor can deposit.
+    function deposit() external payable onlyDepositor inState(State.Active) {
+        if (msg.value == 0) revert ZeroAmount();
+        emit Deposited(msg.sender, msg.value);
+    }
+
+    /// @notice Release the full balance to the beneficiary.
+    /// @dev Balance is zeroed before the external call (CEI) and the lock
+    ///      prevents re-entering during the transfer.
+    function release() external nonReentrant onlyAgent inState(State.Active) {
+        uint256 amount = address(this).balance;
+        if (amount == 0) revert ZeroAmount();
+
+        state = State.Released;
+        emit Released(beneficiary, amount);
+
+        (bool ok,) = payable(beneficiary).call{value: amount}("");
+        if (!ok) revert TransferFailed();
+    }
+
+    /// @notice Refund the full balance to the depositor.
+    function refund() external nonReentrant onlyAgent inState(State.Active) {
+        uint256 amount = address(this).balance;
+        if (amount == 0) revert ZeroAmount();
+
+        state = State.Refunded;
+        emit Refunded(depositor, amount);
+
+        (bool ok,) = payable(depositor).call{value: amount}("");
+        if (!ok) revert TransferFailed();
+    }
+
+    /// @notice Freeze the escrow pending arbitration.
+    function raiseDispute() external onlyParticipants inState(State.Active) {
