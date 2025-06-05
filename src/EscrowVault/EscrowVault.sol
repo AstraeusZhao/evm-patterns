@@ -120,3 +120,21 @@ contract EscrowVault {
 
     /// @notice Freeze the escrow pending arbitration.
     function raiseDispute() external onlyParticipants inState(State.Active) {
+        state = State.Disputed;
+        emit DisputeRaised(msg.sender);
+    }
+
+    /// @notice Resolve a dispute by choosing the final outcome.
+    /// @param releaseToBeneficiary true sends funds to the beneficiary,
+    ///        false refunds the depositor.
+    function resolveDispute(bool releaseToBeneficiary) external nonReentrant onlyAgent inState(State.Disputed) {
+        uint256 amount = address(this).balance;
+        if (amount == 0) revert ZeroAmount();
+
+        emit DisputeResolved(releaseToBeneficiary);
+
+        if (releaseToBeneficiary) {
+            state = State.Released;
+            emit Released(beneficiary, amount);
+            (bool ok,) = payable(beneficiary).call{value: amount}("");
+            if (!ok) revert TransferFailed();
