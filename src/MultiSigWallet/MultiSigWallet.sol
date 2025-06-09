@@ -47,3 +47,27 @@ contract MultiSigWallet {
     uint256 private _lock = 1;
 
     modifier onlyOwner() {
+        if (!isOwner[msg.sender]) revert NotOwner(msg.sender);
+        _;
+    }
+
+    modifier nonReentrant() {
+        if (_lock != 1) revert Reentrancy();
+        _lock = 2;
+        _;
+        _lock = 1;
+    }
+
+    /// @param initialOwners The initial set of wallet owners.
+    /// @param requiredConfirmations Number of confirmations needed to execute.
+    constructor(address[] memory initialOwners, uint256 requiredConfirmations) {
+        if (initialOwners.length == 0) revert InvalidRequired(requiredConfirmations);
+        if (requiredConfirmations == 0 || requiredConfirmations > initialOwners.length) {
+            revert InvalidRequired(requiredConfirmations);
+        }
+        for (uint256 i = 0; i < initialOwners.length; i++) {
+            _addOwner(initialOwners[i]);
+        }
+        required = requiredConfirmations;
+        emit RequiredChanged(required);
+    }
