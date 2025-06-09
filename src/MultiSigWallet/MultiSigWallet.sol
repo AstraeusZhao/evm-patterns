@@ -22,3 +22,28 @@ contract MultiSigWallet {
 
     event TransactionSubmitted(uint256 indexed txId, address indexed proposer, address to, uint256 value, bytes data);
     event ConfirmationAdded(uint256 indexed txId, address indexed owner);
+    event ConfirmationRevoked(uint256 indexed txId, address indexed owner);
+    event TransactionExecuted(uint256 indexed txId, address indexed executor);
+    event OwnerAdded(address indexed owner);
+    event OwnerRemoved(address indexed owner);
+    event OwnerReplaced(address indexed oldOwner, address indexed newOwner);
+    event RequiredChanged(uint256 required);
+
+    struct Transaction {
+        address to;
+        uint256 value;
+        bytes data;
+        bool executed;
+        uint256 confirmationCount;
+        mapping(address owner => bool confirmed) confirmed;
+    }
+
+    address[] public owners;
+    mapping(address owner => bool isOwner) public isOwner;
+    uint256 public required;
+
+    Transaction[] public transactions;
+
+    uint256 private _lock = 1;
+
+    modifier onlyOwner() {
