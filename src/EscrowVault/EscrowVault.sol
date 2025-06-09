@@ -138,3 +138,20 @@ contract EscrowVault {
             emit Released(beneficiary, amount);
             (bool ok,) = payable(beneficiary).call{value: amount}("");
             if (!ok) revert TransferFailed();
+        } else {
+            state = State.Refunded;
+            emit Refunded(depositor, amount);
+            (bool ok,) = payable(depositor).call{value: amount}("");
+            if (!ok) revert TransferFailed();
+        }
+    }
+
+    /// @notice Current escrow balance.
+    function getBalance() external view returns (uint256) {
+        return address(this).balance;
+    }
+
+    receive() external payable {
+        revert();
+    }
+}
