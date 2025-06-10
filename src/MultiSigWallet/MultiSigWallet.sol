@@ -71,3 +71,28 @@ contract MultiSigWallet {
         required = requiredConfirmations;
         emit RequiredChanged(required);
     }
+
+    receive() external payable {}
+
+    /// @notice Propose a new transaction; the proposer auto-confirms it.
+    /// @return txId Index of the newly submitted transaction.
+    function submitTransaction(address to, uint256 value, bytes calldata data)
+        external
+        onlyOwner
+        returns (uint256 txId)
+    {
+        if (to == address(0)) revert ZeroAddress();
+
+        txId = transactions.length;
+        Transaction storage t = transactions.push();
+        t.to = to;
+        t.value = value;
+        t.data = data;
+        t.confirmed[msg.sender] = true;
+        t.confirmationCount = 1;
+
+        emit TransactionSubmitted(txId, msg.sender, to, value, data);
+        emit ConfirmationAdded(txId, msg.sender);
+    }
+
+    /// @notice Confirm a pending transaction.
