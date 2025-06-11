@@ -96,3 +96,52 @@ contract MultiSigWallet {
     }
 
     /// @notice Confirm a pending transaction.
+    function confirmTransaction(uint256 txId) external onlyOwner {
+        Transaction storage t = _getTransaction(txId);
+        if (t.executed) revert AlreadyExecuted(txId);
+        if (t.confirmed[msg.sender]) revert AlreadyConfirmed(txId);
+
+        t.confirmed[msg.sender] = true;
+        t.confirmationCount += 1;
+        emit ConfirmationAdded(txId, msg.sender);
+    }
+
+    /// @notice Revoke the caller's own confirmation while the tx is pending.
+    function revokeConfirmation(uint256 txId) external onlyOwner {
+        Transaction storage t = _getTransaction(txId);
+        if (t.executed) revert AlreadyExecuted(txId);
+        if (!t.confirmed[msg.sender]) revert NotConfirmedByCaller(msg.sender, txId);
+
+        t.confirmed[msg.sender] = false;
+        t.confirmationCount -= 1;
+        emit ConfirmationRevoked(txId, msg.sender);
+    }
+
+    /// @notice Execute a transaction once it has enough confirmations.
+    /// @dev The executed flag is set before the external call (CEI) and the
+    ///      reentrancy lock prevents a malicious callee from re-entering.
+    function executeTransaction(uint256 txId) external nonReentrant onlyOwner {
+        Transaction storage t = _getTransaction(txId);
+        if (t.executed) revert AlreadyExecuted(txId);
+        if (t.confirmationCount < required) {
+            revert NotEnoughConfirmations(t.confirmationCount, required);
+        }
+
+        t.executed = true;
+        emit TransactionExecuted(txId, msg.sender);
+
+        (bool ok,) = t.to.call{value: t.value}(t.data);
+        if (!ok) revert TransactionFailed(txId);
+    }
+
+    /// @notice Total number of transactions ever submitted.
+    function transactionCount() external view returns (uint256) {
+        return transactions.length;
+    }
+
+    /// @notice Number of confirmations collected for a transaction.
+    function getConfirmationCount(uint256 txId) external view returns (uint256) {
+        return _getTransaction(txId).confirmationCount;
+    }
+
+    /// @notice Whether an owner has confirmed a transaction.
