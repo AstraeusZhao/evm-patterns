@@ -145,3 +145,27 @@ contract MultiSigWallet {
     }
 
     /// @notice Whether an owner has confirmed a transaction.
+    function isConfirmed(uint256 txId, address owner) external view returns (bool) {
+        return _getTransaction(txId).confirmed[owner];
+    }
+
+    /// @notice The owner at a given index of the owners array.
+    function getOwner(uint256 index) external view returns (address) {
+        return owners[index];
+    }
+
+    // --- Owner management ---
+
+    function addOwner(address newOwner) external onlyOwner {
+        if (newOwner == address(0)) revert ZeroAddress();
+        _addOwner(newOwner);
+        emit OwnerAdded(newOwner);
+    }
+
+    /// @notice Remove an owner; the required threshold is clamped downwards
+    ///         so the wallet can never become ungovernable. The last owner
+    ///         cannot be removed, otherwise the wallet would be locked forever.
+    function removeOwner(address owner) external onlyOwner {
+        if (owners.length <= 1) revert InvalidRequired(0);
+        _removeOwner(owner);
+    }
