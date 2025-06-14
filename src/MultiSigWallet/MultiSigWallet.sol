@@ -169,3 +169,52 @@ contract MultiSigWallet {
         if (owners.length <= 1) revert InvalidRequired(0);
         _removeOwner(owner);
     }
+
+    /// @dev Add the replacement before removing the old owner so the wallet
+    ///      never passes through a zero-owner state.
+    function replaceOwner(address oldOwner, address newOwner) external onlyOwner {
+        if (newOwner == address(0)) revert ZeroAddress();
+        if (oldOwner == newOwner) revert DuplicateOwner(newOwner);
+        _addOwner(newOwner);
+        _removeOwner(oldOwner);
+        emit OwnerReplaced(oldOwner, newOwner);
+    }
+
+    function changeRequired(uint256 newRequired) external onlyOwner {
+        if (newRequired == 0 || newRequired > owners.length) {
+            revert InvalidRequired(newRequired);
+        }
+        required = newRequired;
+        emit RequiredChanged(newRequired);
+    }
+
+    // --- Internals ---
+
+    function _getTransaction(uint256 txId) internal view returns (Transaction storage t) {
+        if (txId >= transactions.length) revert InvalidTransactionId(txId);
+        t = transactions[txId];
+    }
+
+    function _addOwner(address owner) internal {
+        if (isOwner[owner]) revert DuplicateOwner(owner);
+        isOwner[owner] = true;
+        owners.push(owner);
+    }
+
+    function _removeOwner(address owner) internal {
+        if (!isOwner[owner]) revert NotOwner(owner);
+        if (owners.length <= 1) revert InvalidRequired(0);
+        isOwner[owner] = false;
+        for (uint256 i = 0; i < owners.length; i++) {
+            if (owners[i] == owner) {
+                owners[i] = owners[owners.length - 1];
+                owners.pop();
+                break;
+            }
+        }
+        if (required > owners.length) {
+            required = owners.length;
+            emit RequiredChanged(required);
+        }
+    }
+}
