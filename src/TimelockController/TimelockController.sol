@@ -23,3 +23,53 @@ contract TimelockController {
     error CallFailed(address target);
 
     event CallScheduled(
+        bytes32 indexed id,
+        uint256 indexed index,
+        address target,
+        uint256 value,
+        bytes data,
+        bytes32 predecessor,
+        uint256 delay
+    );
+    event CallExecuted(bytes32 indexed id, uint256 indexed index, address target, uint256 value, bytes data);
+    event CallCancelled(bytes32 indexed id);
+    event MinDelayChange(uint256 oldDelay, uint256 newDelay);
+    event RoleGranted(bytes32 indexed role, address indexed account);
+    event RoleRevoked(bytes32 indexed role, address indexed account);
+
+    enum OperationState {
+        Unset,
+        Waiting,
+        Ready,
+        Expired
+    }
+
+    struct Operation {
+        bool scheduled;
+        uint256 timestamp;
+    }
+
+    /// @notice Grace period after which a scheduled operation expires.
+    uint256 public constant GRACE_PERIOD = 14 days;
+
+    mapping(bytes32 role => mapping(address account => bool granted)) public roles;
+    mapping(bytes32 id => Operation) public operations;
+
+    address public admin;
+    uint256 public minDelay;
+
+    /// @param initialMinDelay Minimum delay enforced on every schedule.
+    /// @param initialProposers Accounts allowed to schedule and cancel.
+    /// @param initialExecutors Accounts allowed to execute ready operations.
+    /// @param initialAdmin Account that manages roles and the delay.
+    constructor(
+        uint256 initialMinDelay,
+        address[] memory initialProposers,
+        address[] memory initialExecutors,
+        address initialAdmin
+    ) {
+        if (initialAdmin == address(0)) revert ZeroAddress();
+
+        admin = initialAdmin;
+        minDelay = initialMinDelay;
+
