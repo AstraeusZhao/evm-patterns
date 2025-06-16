@@ -73,3 +73,28 @@ contract TimelockController {
         admin = initialAdmin;
         minDelay = initialMinDelay;
 
+        _grantRole(PROPOSER_ROLE, initialAdmin);
+        _grantRole(EXECUTOR_ROLE, initialAdmin);
+
+        for (uint256 i = 0; i < initialProposers.length; i++) {
+            _grantRole(PROPOSER_ROLE, initialProposers[i]);
+        }
+        for (uint256 i = 0; i < initialExecutors.length; i++) {
+            _grantRole(EXECUTOR_ROLE, initialExecutors[i]);
+        }
+    }
+
+    modifier onlyAdmin() {
+        if (msg.sender != admin) revert NotAdmin(msg.sender);
+        _;
+    }
+
+    modifier onlyRole(bytes32 role) {
+        if (!roles[role][msg.sender]) revert NotRole(role, msg.sender);
+        _;
+    }
+
+    /// @notice Queue a call for execution after the configured delay.
+    /// @param predecessor id of a previous operation that must be done, or 0.
+    function schedule(address target, uint256 value, bytes calldata data, bytes32 predecessor, bytes32 salt)
+        external
