@@ -123,3 +123,53 @@ contract TimelockController {
 
         emit CallExecuted(id, 0, target, value, data);
 
+        (bool ok,) = target.call{value: value}(data);
+        if (!ok) revert CallFailed(target);
+    }
+
+    /// @notice Cancel a scheduled operation before it becomes ready.
+    function cancel(address target, uint256 value, bytes calldata data, bytes32 predecessor, bytes32 salt)
+        external
+        onlyRole(PROPOSER_ROLE)
+    {
+        bytes32 id = hashOperation(target, value, data, predecessor, salt);
+        if (!operations[id].scheduled) revert OperationNotScheduled(id);
+
+        delete operations[id];
+        emit CallCancelled(id);
+    }
+
+    // --- Views ---
+
+    function hashOperation(address target, uint256 value, bytes calldata data, bytes32 predecessor, bytes32 salt)
+        public
+        pure
+        returns (bytes32)
+    {
+        return keccak256(abi.encode(target, value, data, predecessor, salt));
+    }
+
+    function getOperationState(bytes32 id) public view returns (OperationState) {
+        Operation storage op = operations[id];
+        if (!op.scheduled) {
+            return OperationState.Unset;
+        }
+        if (op.timestamp > block.timestamp) {
+            return OperationState.Waiting;
+        }
+        if (block.timestamp > op.timestamp + GRACE_PERIOD) {
+            return OperationState.Expired;
+        }
+        return OperationState.Ready;
+    }
+
+    function isOperationPending(bytes32 id) external view returns (bool) {
+        OperationState s = getOperationState(id);
+        return s == OperationState.Waiting || s == OperationState.Ready;
+    }
+
+    function isOperationReady(bytes32 id) external view returns (bool) {
+        return getOperationState(id) == OperationState.Ready;
+    }
+
+    // --- Admin ---
