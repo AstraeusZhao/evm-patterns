@@ -98,3 +98,28 @@ contract TimelockController {
     /// @param predecessor id of a previous operation that must be done, or 0.
     function schedule(address target, uint256 value, bytes calldata data, bytes32 predecessor, bytes32 salt)
         external
+        onlyRole(PROPOSER_ROLE)
+    {
+        bytes32 id = hashOperation(target, value, data, predecessor, salt);
+        _schedule(id, target, value, data, predecessor, minDelay);
+    }
+
+    /// @notice Execute a previously scheduled operation once its delay elapsed.
+    /// @dev Reverts if the operation is missing, not ready, or beyond grace.
+    function execute(address target, uint256 value, bytes calldata data, bytes32 predecessor, bytes32 salt)
+        external
+        onlyRole(EXECUTOR_ROLE)
+    {
+        if (target == address(0)) revert ZeroAddress();
+
+        bytes32 id = hashOperation(target, value, data, predecessor, salt);
+
+        OperationState state = getOperationState(id);
+        if (state == OperationState.Unset) revert OperationNotScheduled(id);
+        if (state == OperationState.Waiting) revert OperationNotReady(id);
+        if (state == OperationState.Expired) revert OperationExpired(id);
+
+        delete operations[id];
+
+        emit CallExecuted(id, 0, target, value, data);
+
