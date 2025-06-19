@@ -173,3 +173,28 @@ contract TimelockController {
     }
 
     // --- Admin ---
+
+    /// @notice Change the minimum delay; only applies to future schedules.
+    function updateDelay(uint256 newDelay) external onlyAdmin {
+        if (newDelay > 30 days) revert InvalidDelay(newDelay);
+        emit MinDelayChange(minDelay, newDelay);
+        minDelay = newDelay;
+    }
+
+    function grantRole(bytes32 role, address account) external onlyAdmin {
+        if (account == address(0)) revert ZeroAddress();
+        _grantRole(role, account);
+    }
+
+    function revokeRole(bytes32 role, address account) external onlyAdmin {
+        _revokeRole(role, account);
+    }
+
+    // --- Internals ---
+
+    function _schedule(bytes32 id, address target, uint256 value, bytes memory data, bytes32 predecessor, uint256 delay)
+        internal
+    {
+        if (operations[id].scheduled) revert OperationAlreadyScheduled(id);
+        _checkPredecessor(predecessor);
+
