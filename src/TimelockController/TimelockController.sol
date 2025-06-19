@@ -198,3 +198,28 @@ contract TimelockController {
         if (operations[id].scheduled) revert OperationAlreadyScheduled(id);
         _checkPredecessor(predecessor);
 
+        operations[id] = Operation({scheduled: true, timestamp: block.timestamp + delay});
+
+        emit CallScheduled(id, 0, target, value, data, predecessor, delay);
+    }
+
+    /// @dev A predecessor is acceptable only when it was never set or already
+    ///      executed (deleted). Pending, ready or expired predecessors block.
+    function _checkPredecessor(bytes32 predecessor) internal view {
+        if (predecessor != bytes32(0) && getOperationState(predecessor) != OperationState.Unset) {
+            revert PredecessorNotDone(predecessor);
+        }
+    }
+
+    function _grantRole(bytes32 role, address account) internal {
+        if (roles[role][account]) return;
+        roles[role][account] = true;
+        emit RoleGranted(role, account);
+    }
+
+    function _revokeRole(bytes32 role, address account) internal {
+        if (!roles[role][account]) return;
+        roles[role][account] = false;
+        emit RoleRevoked(role, account);
+    }
+}
