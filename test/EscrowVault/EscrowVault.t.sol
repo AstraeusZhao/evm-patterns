@@ -15,3 +15,20 @@ contract EscrowVaultTest {
     address private constant BUYER = address(0xBABE);
     address private constant SELLER = address(0xCAFE);
     address private constant AGENT = address(0xACE);
+
+    function _escrow() internal returns (EscrowVault) {
+        EscrowVault v = new EscrowVault(BUYER, SELLER, AGENT);
+        vm.deal(BUYER, 10 ether);
+        vm.deal(SELLER, 10 ether);
+        return v;
+    }
+
+    function _funded() internal returns (EscrowVault) {
+        EscrowVault v = _escrow();
+        vm.prank(BUYER);
+        v.deposit{value: 3 ether}();
+        return v;
+    }
+
+    function testDepositRecordsBalance() external {
+        EscrowVault v = _escrow();
