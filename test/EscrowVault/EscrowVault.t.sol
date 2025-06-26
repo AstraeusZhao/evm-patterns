@@ -32,3 +32,20 @@ contract EscrowVaultTest {
 
     function testDepositRecordsBalance() external {
         EscrowVault v = _escrow();
+
+        vm.prank(BUYER);
+        v.deposit{value: 3 ether}();
+
+        require(v.getBalance() == 3 ether, "balance not recorded");
+        require(v.state() == EscrowVault.State.Active, "state changed on deposit");
+    }
+
+    function testOnlyDepositorCanDeposit() external {
+        EscrowVault v = _escrow();
+
+        vm.expectRevert();
+        vm.prank(SELLER);
+        v.deposit{value: 1 ether}();
+    }
+
+    function testReleasePaysBeneficiaryAndCloses() external {
