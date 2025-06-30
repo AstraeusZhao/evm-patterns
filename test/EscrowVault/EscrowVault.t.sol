@@ -83,3 +83,37 @@ contract EscrowVaultTest {
         vm.prank(SELLER);
         v.raiseDispute();
         require(v.state() == EscrowVault.State.Disputed, "not disputed");
+
+        vm.expectRevert();
+        vm.prank(AGENT);
+        v.release();
+    }
+
+    function testResolveDisputeToBeneficiary() external {
+        EscrowVault v = _funded();
+
+        vm.prank(SELLER);
+        v.raiseDispute();
+
+        vm.prank(AGENT);
+        v.resolveDispute(true);
+
+        require(v.state() == EscrowVault.State.Released, "not released after resolve");
+        require(SELLER.balance == 13 ether, "beneficiary not paid on resolve");
+    }
+
+    function testResolveDisputeRefund() external {
+        EscrowVault v = _funded();
+
+        vm.prank(BUYER);
+        v.raiseDispute();
+
+        vm.prank(AGENT);
+        v.resolveDispute(false);
+
+        require(v.state() == EscrowVault.State.Refunded, "not refunded after resolve");
+        require(BUYER.balance == 10 ether, "depositor not refunded on resolve");
+    }
+
+    function testCannotReleaseTwice() external {
+        EscrowVault v = _funded();
