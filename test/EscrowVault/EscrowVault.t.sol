@@ -117,3 +117,20 @@ contract EscrowVaultTest {
 
     function testCannotReleaseTwice() external {
         EscrowVault v = _funded();
+
+        vm.prank(AGENT);
+        v.release();
+
+        vm.expectRevert();
+        vm.prank(AGENT);
+        v.release();
+    }
+
+    function testCannotRefundActiveWithoutBalance() external {
+        EscrowVault v = _escrow();
+
+        vm.expectRevert();
+        vm.prank(AGENT);
+        v.refund();
+    }
+}
