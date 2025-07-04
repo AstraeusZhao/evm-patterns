@@ -24,3 +24,28 @@ contract MultiSigWalletTest {
         vm.deal(CAROL, 10 ether);
         MultiSigWallet w = new MultiSigWallet(owners, req);
         return w;
+    }
+
+    function _defaultWallet() internal returns (MultiSigWallet) {
+        address[] memory owners = new address[](3);
+        owners[0] = ALICE;
+        owners[1] = BOB;
+        owners[2] = CAROL;
+        return _wallet(owners, 2);
+    }
+
+    function testSubmitAutoConfirmsAndExecutesWithThreshold() external {
+        MultiSigWallet w = _defaultWallet();
+        vm.deal(address(w), 5 ether);
+        vm.prank(ALICE);
+        uint256 txId = w.submitTransaction(ALICE, 1 ether, "");
+
+        require(w.getConfirmationCount(txId) == 1, "proposer did not auto-confirm");
+        require(w.transactionCount() == 1, "transaction count wrong");
+
+        vm.prank(BOB);
+        w.confirmTransaction(txId);
+        require(w.getConfirmationCount(txId) == 2, "second confirmation missing");
+
+        vm.prank(CAROL);
+        w.executeTransaction(txId);
