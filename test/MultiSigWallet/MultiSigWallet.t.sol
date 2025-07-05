@@ -49,3 +49,29 @@ contract MultiSigWalletTest {
 
         vm.prank(CAROL);
         w.executeTransaction(txId);
+        require(ALICE.balance == 11 ether, "payment was not executed");
+    }
+
+    function testCannotExecuteBelowThreshold() external {
+        MultiSigWallet w = _defaultWallet();
+        vm.prank(ALICE);
+        uint256 txId = w.submitTransaction(ALICE, 1 ether, "");
+
+        vm.expectRevert();
+        vm.prank(ALICE);
+        w.executeTransaction(txId);
+    }
+
+    function testNonOwnerCannotSubmit() external {
+        MultiSigWallet w = _defaultWallet();
+        vm.expectRevert();
+        w.submitTransaction(ALICE, 1 ether, "");
+    }
+
+    function testRevokeDropsConfirmationAndBlocksExecution() external {
+        MultiSigWallet w = _defaultWallet();
+        vm.prank(ALICE);
+        uint256 txId = w.submitTransaction(ALICE, 1 ether, "");
+
+        vm.prank(BOB);
+        w.confirmTransaction(txId);
