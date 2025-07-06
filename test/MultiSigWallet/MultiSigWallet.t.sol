@@ -75,3 +75,28 @@ contract MultiSigWalletTest {
 
         vm.prank(BOB);
         w.confirmTransaction(txId);
+
+        vm.prank(BOB);
+        w.revokeConfirmation(txId);
+        require(w.getConfirmationCount(txId) == 1, "revoke did not drop count");
+
+        vm.expectRevert();
+        vm.prank(ALICE);
+        w.executeTransaction(txId);
+    }
+
+    function testCannotConfirmTwice() external {
+        MultiSigWallet w = _defaultWallet();
+        vm.prank(ALICE);
+        uint256 txId = w.submitTransaction(ALICE, 1 ether, "");
+
+        vm.expectRevert();
+        vm.prank(ALICE);
+        w.confirmTransaction(txId);
+    }
+
+    function testCannotExecuteTwice() external {
+        MultiSigWallet w = _defaultWallet();
+        vm.deal(address(w), 5 ether);
+        vm.prank(ALICE);
+        uint256 txId = w.submitTransaction(ALICE, 1 ether, "");
