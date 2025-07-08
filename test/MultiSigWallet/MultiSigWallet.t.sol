@@ -100,3 +100,29 @@ contract MultiSigWalletTest {
         vm.deal(address(w), 5 ether);
         vm.prank(ALICE);
         uint256 txId = w.submitTransaction(ALICE, 1 ether, "");
+        vm.prank(BOB);
+        w.confirmTransaction(txId);
+        vm.prank(CAROL);
+        w.executeTransaction(txId);
+
+        vm.expectRevert();
+        vm.prank(CAROL);
+        w.executeTransaction(txId);
+    }
+
+    function testAddReplaceRemoveOwner() external {
+        MultiSigWallet w = _defaultWallet();
+        address dave = address(0xD4E);
+
+        vm.prank(ALICE);
+        w.addOwner(dave);
+        require(w.isOwner(dave), "new owner not recorded");
+
+        vm.prank(BOB);
+        w.replaceOwner(CAROL, address(0xE0C0));
+        require(!w.isOwner(CAROL), "old owner still active");
+        require(w.isOwner(address(0xE0C0)), "replacement missing");
+
+        vm.prank(ALICE);
+        w.removeOwner(BOB);
+        require(!w.isOwner(BOB), "removed owner still active");
