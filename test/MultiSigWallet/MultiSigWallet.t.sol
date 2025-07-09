@@ -126,3 +126,54 @@ contract MultiSigWalletTest {
         vm.prank(ALICE);
         w.removeOwner(BOB);
         require(!w.isOwner(BOB), "removed owner still active");
+        require(w.required() == 2, "threshold changed while owners remain");
+
+        vm.prank(ALICE);
+        w.removeOwner(dave);
+        vm.prank(ALICE);
+        w.removeOwner(address(0xE0C0));
+        require(w.required() == 1, "threshold was not clamped after removal");
+    }
+
+    function testChangeRequired() external {
+        MultiSigWallet w = _defaultWallet();
+        vm.prank(ALICE);
+        w.changeRequired(3);
+        require(w.required() == 3, "required not updated");
+    }
+
+    function testExecutePaysContractRecipient() external {
+        MultiSigWallet w = _defaultWallet();
+        Recipient r = new Recipient();
+        vm.deal(address(w), 5 ether);
+
+        vm.prank(ALICE);
+        uint256 txId = w.submitTransaction(address(r), 2 ether, "");
+        vm.prank(BOB);
+        w.confirmTransaction(txId);
+        vm.prank(CAROL);
+        w.executeTransaction(txId);
+
+        require(address(r).balance == 2 ether, "recipient was not paid");
+    }
+
+    function testOwnerCannotBeZeroAddress() external {
+        address[] memory owners = new address[](1);
+        owners[0] = ALICE;
+        MultiSigWallet w = _wallet(owners, 1);
+
+        vm.expectRevert();
+        vm.prank(ALICE);
+        w.addOwner(address(0));
+    }
+
+    function testCannotRemoveLastOwner() external {
+        address[] memory owners = new address[](1);
+        owners[0] = ALICE;
+        MultiSigWallet w = _wallet(owners, 1);
+
+        vm.expectRevert();
+        vm.prank(ALICE);
+        w.removeOwner(ALICE);
+        require(w.isOwner(ALICE), "last owner was removed");
+    }
