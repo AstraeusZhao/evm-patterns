@@ -177,3 +177,29 @@ contract MultiSigWalletTest {
         w.removeOwner(ALICE);
         require(w.isOwner(ALICE), "last owner was removed");
     }
+
+    function testReplaceLastOwnerKeepsWalletUsable() external {
+        address[] memory owners = new address[](1);
+        owners[0] = ALICE;
+        MultiSigWallet w = _wallet(owners, 1);
+        address dave = address(0xD4E);
+
+        vm.prank(ALICE);
+        w.replaceOwner(ALICE, dave);
+        require(!w.isOwner(ALICE), "old owner still active");
+        require(w.isOwner(dave), "replacement missing");
+        require(w.required() == 1, "threshold changed during replace");
+
+        // The replacement owner can still run the wallet end to end.
+        vm.deal(address(w), 1 ether);
+        vm.prank(dave);
+        uint256 txId = w.submitTransaction(dave, 1 ether, "");
+        vm.prank(dave);
+        w.executeTransaction(txId);
+        require(dave.balance == 1 ether, "wallet unusable after replace");
+    }
+}
+
+contract Recipient {
+    receive() external payable {}
+}
