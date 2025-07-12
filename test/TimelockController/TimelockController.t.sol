@@ -46,3 +46,26 @@ contract TimelockControllerTest {
     function _setValueData() internal pure returns (bytes memory) {
         return abi.encodeCall(Target.setValue, (42));
     }
+
+    function testScheduleWaitingThenReady() external {
+        TimelockController tl = _timelock();
+        Target target = new Target();
+        bytes32 salt = keccak256("op1");
+
+        vm.prank(PROPOSER);
+        tl.schedule(address(target), 0, _setValueData(), bytes32(0), salt);
+
+        bytes32 id = tl.hashOperation(address(target), 0, _setValueData(), bytes32(0), salt);
+        require(tl.getOperationState(id) == TimelockController.OperationState.Waiting, "should be waiting");
+        require(tl.isOperationPending(id), "pending expected");
+
+        vm.warp(start + DELAY);
+        require(tl.getOperationState(id) == TimelockController.OperationState.Ready, "should be ready");
+
+        vm.prank(EXECUTOR);
+        tl.execute(address(target), 0, _setValueData(), bytes32(0), salt);
+        require(target.value() == 42, "call not executed");
+    }
+
+    function testCannotExecuteBeforeDelay() external {
+        TimelockController tl = _timelock();
