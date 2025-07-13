@@ -69,3 +69,27 @@ contract TimelockControllerTest {
 
     function testCannotExecuteBeforeDelay() external {
         TimelockController tl = _timelock();
+        Target target = new Target();
+        bytes32 salt = keccak256("op2");
+
+        vm.prank(PROPOSER);
+        tl.schedule(address(target), 0, abi.encodeCall(Target.setValue, (42)), bytes32(0), salt);
+
+        vm.expectRevert();
+        vm.prank(EXECUTOR);
+        tl.execute(address(target), 0, abi.encodeCall(Target.setValue, (42)), bytes32(0), salt);
+    }
+
+    function testOnlyProposerCanSchedule() external {
+        TimelockController tl = _timelock();
+        Target target = new Target();
+
+        vm.expectRevert();
+        vm.prank(EXECUTOR);
+        tl.schedule(address(target), 0, abi.encodeCall(Target.setValue, (42)), bytes32(0), keccak256("op3"));
+    }
+
+    function testOnlyExecutorCanExecute() external {
+        TimelockController tl = _timelock();
+        Target target = new Target();
+        bytes32 salt = keccak256("op4");
