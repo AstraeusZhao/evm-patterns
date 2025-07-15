@@ -93,3 +93,98 @@ contract TimelockControllerTest {
         TimelockController tl = _timelock();
         Target target = new Target();
         bytes32 salt = keccak256("op4");
+
+        vm.prank(PROPOSER);
+        tl.schedule(address(target), 0, abi.encodeCall(Target.setValue, (42)), bytes32(0), salt);
+
+        vm.warp(start + DELAY);
+        vm.expectRevert();
+        vm.prank(PROPOSER);
+        tl.execute(address(target), 0, abi.encodeCall(Target.setValue, (42)), bytes32(0), salt);
+    }
+
+    function testCancelScheduledOperation() external {
+        TimelockController tl = _timelock();
+        Target target = new Target();
+        bytes32 salt = keccak256("op5");
+        bytes32 id = tl.hashOperation(address(target), 0, abi.encodeCall(Target.setValue, (42)), bytes32(0), salt);
+
+        vm.prank(PROPOSER);
+        tl.schedule(address(target), 0, abi.encodeCall(Target.setValue, (42)), bytes32(0), salt);
+
+        vm.prank(PROPOSER);
+        tl.cancel(address(target), 0, abi.encodeCall(Target.setValue, (42)), bytes32(0), salt);
+        require(tl.getOperationState(id) == TimelockController.OperationState.Unset, "not unset after cancel");
+
+        vm.warp(start + DELAY);
+        vm.expectRevert();
+        vm.prank(EXECUTOR);
+        tl.execute(address(target), 0, abi.encodeCall(Target.setValue, (42)), bytes32(0), salt);
+    }
+
+    function testPredecessorBlocksSchedulingUntilDone() external {
+        TimelockController tl = _timelock();
+        Target target = new Target();
+        bytes32 saltA = keccak256("opA");
+        bytes32 saltB = keccak256("opB");
+        bytes32 idA = tl.hashOperation(address(target), 0, abi.encodeCall(Target.setValue, (1)), bytes32(0), saltA);
+
+        vm.prank(PROPOSER);
+        tl.schedule(address(target), 0, abi.encodeCall(Target.setValue, (1)), bytes32(0), saltA);
+
+        // opB depends on opA; opA is still waiting -> must revert
+        vm.expectRevert();
+        vm.prank(PROPOSER);
+        tl.schedule(address(target), 0, abi.encodeCall(Target.setValue, (2)), idA, saltB);
+
+        // finish opA, then opB can be scheduled
+        vm.warp(start + DELAY);
+        vm.prank(EXECUTOR);
+        tl.execute(address(target), 0, abi.encodeCall(Target.setValue, (1)), bytes32(0), saltA);
+
+        vm.prank(PROPOSER);
+        tl.schedule(address(target), 0, abi.encodeCall(Target.setValue, (2)), idA, saltB);
+        bytes32 idB = tl.hashOperation(address(target), 0, abi.encodeCall(Target.setValue, (2)), idA, saltB);
+        require(tl.isOperationPending(idB), "opB should be pending");
+    }
+
+    function testOperationExpiresAfterGrace() external {
+        TimelockController tl = _timelock();
+        Target target = new Target();
+        bytes32 salt = keccak256("op6");
+
+        vm.prank(PROPOSER);
+        tl.schedule(address(target), 0, abi.encodeCall(Target.setValue, (42)), bytes32(0), salt);
+
+        vm.warp(start + DELAY + tl.GRACE_PERIOD() + 1);
+        vm.expectRevert();
+        vm.prank(EXECUTOR);
+        tl.execute(address(target), 0, abi.encodeCall(Target.setValue, (42)), bytes32(0), salt);
+    }
+
+    function testUpdateDelay() external {
+        TimelockController tl = _timelock();
+
+        vm.prank(ADMIN);
+        tl.updateDelay(1 days);
+        require(tl.minDelay() == 1 days, "delay not updated");
+
+        vm.expectRevert();
+        vm.prank(PROPOSER);
+        tl.updateDelay(2 days);
+    }
+
+    function testAdminCanGrantAndRevokeRole() external {
+        TimelockController tl = _timelock();
+        address stranger = address(0x57A);
+        bytes32 proposerRole = tl.PROPOSER_ROLE();
+
+        vm.prank(ADMIN);
+        tl.grantRole(proposerRole, stranger);
+        require(tl.roles(proposerRole, stranger), "role not granted");
+
+        vm.prank(ADMIN);
+        tl.revokeRole(proposerRole, stranger);
+        require(!tl.roles(proposerRole, stranger), "role not revoked");
+    }
+}
