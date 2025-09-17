@@ -15,3 +15,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   re-entering bidder test.
 - `SignatureReplay.claim` hardened against ECDSA malleability: signatures
   must be 65 bytes, use recovery id 27/28, and keep `s` in the low half of
+  the curve (`s <= LOW_S_MAX`); the constructor rejects a zero signer.
+  Covered by a malleable-signature test.
