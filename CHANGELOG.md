@@ -20,3 +20,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `MultiSigWallet` can no longer remove the last owner (which would lock
   funds forever); `replaceOwner` adds the replacement before removing the
   old owner so the wallet never passes through a zero-owner state. Covered
+  by two new governance tests.
+- `TimelockController.execute` rejects a zero-address target before
