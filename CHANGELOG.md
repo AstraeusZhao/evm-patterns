@@ -22,3 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   old owner so the wallet never passes through a zero-owner state. Covered
   by two new governance tests.
 - `TimelockController.execute` rejects a zero-address target before
+  scheduling state is deleted.
+- `StakingVault` reward accounting fixed: changing `rewardRatePerSecond`
+  first settles accrued rewards for every staker at the old rate, so
+  historical accrual is never recomputed at a new rate. Covered by a new
+  rate-change test. `WhitelistSale` gained an owner `withdrawProceeds`
+  path so collected ETH is not locked.
+- Emits moved before external calls (CEI ordering) across `PullPayment`,
+  `PullPaymentVault`, `EscrowVault`, `MultiSigWallet`, `MerkleAirdrop`, and
+  `TimelockController`; `nonReentrant` is the first modifier on guarded
+  functions. Removed unused errors and the empty `receive()` on `UUPSProxy`.
+
