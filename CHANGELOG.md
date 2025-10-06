@@ -33,3 +33,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `TimelockController`; `nonReentrant` is the first modifier on guarded
   functions. Removed unused errors and the empty `receive()` on `UUPSProxy`.
 
+### Added
+
