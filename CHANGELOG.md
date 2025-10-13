@@ -35,3 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Adversarial tests for reentrant bidding, malleable signatures, last-owner
+  removal, rate-change accounting, and sale proceeds withdrawal: 117 tests
+  across 23 suites.
+- `foundry.toml` lint profile documents intentional exclusions (auction
