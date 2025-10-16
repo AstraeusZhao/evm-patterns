@@ -41,3 +41,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `foundry.toml` lint profile documents intentional exclusions (auction
   timestamps, governance transfers, multicall batching, anti-pattern demos)
   with per-rule rationale.
+
+### Changed
