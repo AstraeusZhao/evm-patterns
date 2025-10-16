@@ -43,3 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   with per-rule rationale.
 
 ### Changed
+
+- `ReentrancyGuard` ships with a malicious re-entry attack demonstration.
+- Contracts prefer custom errors, events, and gas-aware data structures over
+  silent fallbacks.
+
+## License
+
+Licensed under the GNU Affero General Public License v3.0. See
+[LICENSE](LICENSE).
