@@ -94,3 +94,5 @@ contract ERC20Token {
 
 // add permit function
 
+
+// reviewed, solid
