@@ -12,3 +12,5 @@ A continuous token with `price = supply`, so the reserve held by the curve is
   rounding of the square root.
 
 ## Trust assumptions
+
+- There is no owner; the curve is autonomous once deployed.
