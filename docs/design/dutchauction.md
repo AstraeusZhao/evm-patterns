@@ -9,3 +9,4 @@ to `endPrice` over the bidding window.
 - Excess payment over the accepted price is refunded.
 - The seller withdraws after a successful bid.
 
+## Trust assumptions
