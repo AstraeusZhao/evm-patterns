@@ -10,3 +10,5 @@ to `endPrice` over the bidding window.
 - The seller withdraws after a successful bid.
 
 ## Trust assumptions
+
+- The seller is trusted to deliver the item once the bid is accepted.
