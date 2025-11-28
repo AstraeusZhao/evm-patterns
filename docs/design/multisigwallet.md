@@ -31,3 +31,6 @@ before a transaction can be executed.
   themselves; a compromised majority can drain the wallet.
 - There is no daily limit or whitelist on call targets; production wallets
   usually add spend limits and target allowlists.
+
+## Update 2025-11
+- Reviewed logic, looks solid
