@@ -8,3 +8,4 @@ An ascending-price auction with immediate refunds for outbid bidders.
 - Outbid bidders are refunded at the moment they lose the lead (CEI ordering).
 - The seller can withdraw the winning bid only after the auction ends.
 
+## Trust assumptions
