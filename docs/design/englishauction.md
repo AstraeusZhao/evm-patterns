@@ -9,3 +9,5 @@ An ascending-price auction with immediate refunds for outbid bidders.
 - The seller can withdraw the winning bid only after the auction ends.
 
 ## Trust assumptions
+
+- The seller is trusted to deliver the item off-chain after the auction ends.
