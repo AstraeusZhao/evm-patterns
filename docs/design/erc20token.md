@@ -10,3 +10,4 @@ A minimal ERC20 implementation with owner-only minting.
 
 ## Trust assumptions
 
+- The owner controls minting; a malicious or compromised owner can inflate
