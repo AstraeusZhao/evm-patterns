@@ -6,3 +6,4 @@ operator approvals.
 ## Properties
 
 - Ownership is tracked per token id; balances are counted per account.
+- `transferFrom` requires the caller to be the owner, an approved account or an
