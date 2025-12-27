@@ -8,3 +8,7 @@ operator approvals.
 - Ownership is tracked per token id; balances are counted per account.
 - `transferFrom` requires the caller to be the owner, an approved account or an
   approved operator.
+- Approvals are cleared automatically on transfer.
+
+## Trust assumptions
+
