@@ -54,3 +54,8 @@ Licensed under the GNU Affero General Public License v3.0. See
 [LICENSE](LICENSE).
 
 
+
+## 2025 Year End
+- All 23 contracts implemented
+- Full test coverage
+- Design docs for all patterns
