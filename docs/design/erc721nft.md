@@ -12,3 +12,4 @@ operator approvals.
 
 ## Trust assumptions
 
+- The minter controls supply; a compromised minter can mint arbitrary tokens.
