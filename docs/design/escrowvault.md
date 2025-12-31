@@ -6,3 +6,5 @@ freeze the funds by raising a dispute.
 
 ## Roles
 
+- **Depositor** — funds the escrow; may raise a dispute.
+- **Beneficiary** — receives funds on release; may raise a dispute.
