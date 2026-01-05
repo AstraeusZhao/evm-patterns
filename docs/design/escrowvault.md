@@ -8,3 +8,5 @@ freeze the funds by raising a dispute.
 
 - **Depositor** — funds the escrow; may raise a dispute.
 - **Beneficiary** — receives funds on release; may raise a dispute.
+- **Agent** — trusted third party that releases, refunds, and resolves
+  disputes.
