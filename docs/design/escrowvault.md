@@ -16,3 +16,5 @@ freeze the funds by raising a dispute.
 ```
 Active ──release()──▶ Released
 Active ──refund()───▶ Refunded
+Active ──raiseDispute()──▶ Disputed ──resolveDispute(bool)──▶ Released | Refunded
+```
