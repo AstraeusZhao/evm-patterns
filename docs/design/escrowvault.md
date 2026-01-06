@@ -10,3 +10,9 @@ freeze the funds by raising a dispute.
 - **Beneficiary** — receives funds on release; may raise a dispute.
 - **Agent** — trusted third party that releases, refunds, and resolves
   disputes.
+
+## State machine
+
+```
+Active ──release()──▶ Released
+Active ──refund()───▶ Refunded
