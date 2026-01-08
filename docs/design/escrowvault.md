@@ -18,3 +18,7 @@ Active ──release()──▶ Released
 Active ──refund()───▶ Refunded
 Active ──raiseDispute()──▶ Disputed ──resolveDispute(bool)──▶ Released | Refunded
 ```
+
+Every state-changing call is guarded by `inState`, so the vault can only move
+along the transitions above.
+
