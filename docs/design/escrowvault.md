@@ -22,3 +22,5 @@ Active ──raiseDispute()──▶ Disputed ──resolveDispute(bool)──�
 Every state-changing call is guarded by `inState`, so the vault can only move
 along the transitions above.
 
+## Security properties
+
