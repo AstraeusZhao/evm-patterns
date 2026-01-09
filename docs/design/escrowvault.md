@@ -24,3 +24,5 @@ along the transitions above.
 
 ## Security properties
 
+- **Role separation** — only the named participant can take each action.
+- **CEI ordering** — the state is moved before the ETH transfer.
