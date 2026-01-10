@@ -26,3 +26,5 @@ along the transitions above.
 
 - **Role separation** — only the named participant can take each action.
 - **CEI ordering** — the state is moved before the ETH transfer.
+- **Reentrancy lock** — payout paths are `nonReentrant`.
+- **No forced-funding trap** — `receive()` reverts; the balance is only what
