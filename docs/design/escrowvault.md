@@ -28,3 +28,7 @@ along the transitions above.
 - **CEI ordering** — the state is moved before the ETH transfer.
 - **Reentrancy lock** — payout paths are `nonReentrant`.
 - **No forced-funding trap** — `receive()` reverts; the balance is only what
+  the depositor explicitly deposited, so `release`/`refund` move the exact
+  escrowed amount.
+
+## Trust assumptions
