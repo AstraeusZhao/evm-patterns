@@ -32,3 +32,7 @@ along the transitions above.
   escrowed amount.
 
 ## Trust assumptions
+
+- The agent is fully trusted: they can release or refund at any time while
+  `Active`, and decide the outcome of a dispute. Production escrows often
+  replace the single agent with a multi-sig or an arbitration market.
