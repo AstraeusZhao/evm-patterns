@@ -77,3 +77,5 @@ contract ERC20TokenTest {
 
 
 // tests look good
+
+// test permit
