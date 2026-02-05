@@ -5,3 +5,5 @@ per-account signatures.
 
 ## Properties
 
+- Leaves bind `(account, amount)`; claimants supply a sibling-hash proof.
+- `claimed` mapping prevents double claims.
