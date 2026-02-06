@@ -87,3 +87,5 @@ contract ReentrancyGuardTest {
 
 
 // tests look fine
+
+// test both guards
