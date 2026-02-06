@@ -8,3 +8,4 @@ per-account signatures.
 - Leaves bind `(account, amount)`; claimants supply a sibling-hash proof.
 - `claimed` mapping prevents double claims.
 - The owner can sweep leftover tokens after distribution.
+
