@@ -12,3 +12,4 @@ per-account signatures.
 ## Trust assumptions
 
 - The merkle root is set once at deployment; a leaked root lets anyone claim
+  the full allocation.
