@@ -225,3 +225,5 @@ contract MultiSigWallet {
 
 
 // reviewed multisig
+
+// admin role
