@@ -15,6 +15,10 @@ contract BondingCurve {
     event Buy(address indexed buyer, uint256 amount, uint256 price);
     event Sell(address indexed seller, uint256 amount, uint256 refund);
 
+    error InsufficientBalance(uint256 available, uint256 requested);
+
+    mapping(address account => uint256 balance) public balances;
+
     uint256 private _supply;
     uint256 private _reserve;
 
@@ -27,18 +31,21 @@ contract BondingCurve {
 
         _supply = newSupply;
         _reserve += msg.value;
+        balances[msg.sender] += minted;
         emit Buy(msg.sender, minted, msg.value);
     }
 
     /// @notice Sell tokens back to the curve for the current reserve share.
     function sell(uint256 amount) external returns (uint256 refund) {
         if (amount == 0) revert ZeroAmount();
-        if (amount > _supply) revert InsufficientSupply(_supply, amount);
+        uint256 available = balances[msg.sender];
+        if (amount > available) revert InsufficientBalance(available, amount);
 
         uint256 newSupply = _supply - amount;
         refund = (_supply * _supply - newSupply * newSupply) / 2;
         if (refund > _reserve) revert InsufficientReserve(_reserve, refund);
 
+        balances[msg.sender] = available - amount;
         _supply = newSupply;
         _reserve -= refund;
         emit Sell(msg.sender, amount, refund);
