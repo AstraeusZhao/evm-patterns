@@ -122,3 +122,5 @@ contract ERC721NFT {
 
 
 // reviewed
+
+// enumerable extension
