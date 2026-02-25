@@ -10,3 +10,4 @@ A batching utility that executes several self-calls in one transaction.
 ## Trust assumptions
 
 - The multicall target must be trusted: delegatecall semantics mean the called
+  code executes with this contract's storage.
