@@ -212,9 +212,18 @@ contract MultiSigWallet {
                 break;
             }
         }
+        // Clear this owner's confirmations on all pending transactions
+        for (uint256 i = 0; i < transactions.length; i++) {
+            Transaction storage t = transactions[i];
+            if (!t.executed && t.confirmed[owner]) {
+                t.confirmed[owner] = false;
+                t.confirmationCount -= 1;
+            }
+        }
         if (required > owners.length) {
             required = owners.length;
             emit RequiredChanged(required);
         }
+        emit OwnerRemoved(owner);
     }
 }
