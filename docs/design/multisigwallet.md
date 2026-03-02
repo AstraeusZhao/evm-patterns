@@ -7,3 +7,6 @@ before a transaction can be executed.
 
 - `submitTransaction(to, value, data)` — an owner proposes a call and is
   auto-confirmed as the first confirmator.
+- `confirmTransaction(txId)` / `revokeConfirmation(txId)` — owners build or
+  withdraw confirmations while the transaction is pending.
+- `executeTransaction(txId)` — runs the call once the confirmation threshold
