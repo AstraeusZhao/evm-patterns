@@ -5,3 +5,5 @@ before a transaction can be executed.
 
 ## Functional surface
 
+- `submitTransaction(to, value, data)` — an owner proposes a call and is
+  auto-confirmed as the first confirmator.
