@@ -10,3 +10,5 @@ before a transaction can be executed.
 - `confirmTransaction(txId)` / `revokeConfirmation(txId)` — owners build or
   withdraw confirmations while the transaction is pending.
 - `executeTransaction(txId)` — runs the call once the confirmation threshold
+  is met; only one execution per transaction is allowed.
+- `addOwner` / `removeOwner` / `replaceOwner` / `changeRequired` — owner
