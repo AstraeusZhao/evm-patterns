@@ -12,3 +12,5 @@ before a transaction can be executed.
 - `executeTransaction(txId)` — runs the call once the confirmation threshold
   is met; only one execution per transaction is allowed.
 - `addOwner` / `removeOwner` / `replaceOwner` / `changeRequired` — owner
+  management; removing owners clamps the threshold down so the wallet can
+  never become ungovernable.
