@@ -14,3 +14,4 @@ before a transaction can be executed.
 - `addOwner` / `removeOwner` / `replaceOwner` / `changeRequired` — owner
   management; removing owners clamps the threshold down so the wallet can
   never become ungovernable.
+
