@@ -15,3 +15,5 @@ before a transaction can be executed.
   management; removing owners clamps the threshold down so the wallet can
   never become ungovernable.
 
+## Security properties
+
