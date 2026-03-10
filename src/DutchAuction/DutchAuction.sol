@@ -22,7 +22,10 @@ contract DutchAuction {
 
     bool public ended;
 
+    error InvalidPriceRange(uint256 startPrice, uint256 endPrice);
+
     constructor(uint256 startPrice_, uint256 endPrice_, uint256 duration) {
+        if (startPrice_ <= endPrice_) revert InvalidPriceRange(startPrice_, endPrice_);
         seller = msg.sender;
         startAt = block.timestamp;
         endAt = block.timestamp + duration;
