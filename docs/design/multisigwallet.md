@@ -21,3 +21,4 @@ before a transaction can be executed.
 - **CEI ordering** — `executed` is flagged *before* the external call, so a
   re-entrant attempt sees the transaction already done.
 - **Reentrancy lock** — a `nonReentrant` guard backs the execution path as a
+  second line of defense.
