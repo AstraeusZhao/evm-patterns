@@ -71,3 +71,5 @@ contract ImplValueSlot1 {
 
 
 
+
+// namespaced example
