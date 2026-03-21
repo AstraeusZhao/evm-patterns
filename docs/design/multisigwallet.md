@@ -22,3 +22,5 @@ before a transaction can be executed.
   re-entrant attempt sees the transaction already done.
 - **Reentrancy lock** — a `nonReentrant` guard backs the execution path as a
   second line of defense.
+- **Threshold invariant** — `required` is always clamped to
+  `min(required, owners.length)` after removals.
