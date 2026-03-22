@@ -24,3 +24,5 @@ before a transaction can be executed.
   second line of defense.
 - **Threshold invariant** — `required` is always clamped to
   `min(required, owners.length)` after removals.
+
+## Trust assumptions
