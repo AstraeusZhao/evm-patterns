@@ -26,3 +26,6 @@ before a transaction can be executed.
   `min(required, owners.length)` after removals.
 
 ## Trust assumptions
+
+- The threshold and the owner set are only as trustworthy as the owners
+  themselves; a compromised majority can drain the wallet.
