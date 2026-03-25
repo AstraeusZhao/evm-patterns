@@ -3,8 +3,8 @@ pragma solidity ^0.8.24;
 
 /// @title EnglishAuction
 /// @notice Ascending-price auction with refunds for outbid bidders.
-/// @dev CEI ordering: refund the previous bidder before accepting the new bid.
-///      Not audited.
+/// @dev CEI ordering: update the bid state first, then refund the previous
+///      bidder (checks-effects-interactions). Not audited.
 contract EnglishAuction {
     error NotOwner(address caller);
     error AuctionClosed();

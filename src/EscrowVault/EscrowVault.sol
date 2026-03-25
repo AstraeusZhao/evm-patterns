@@ -151,8 +151,10 @@ contract EscrowVault {
         return address(this).balance;
     }
 
+    error DirectDepositNotAllowed();
+
     receive() external payable {
-        revert();
+        revert DirectDepositNotAllowed();
     }
 }
 

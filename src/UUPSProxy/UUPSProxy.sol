@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity ^0.8.24;
 
-/// @title UUPSProxy
+/// @title SimpleProxy
 /// @notice Minimal EIP-1967 proxy with owner-only upgrades.
-/// @dev Storage for the implementation lives in the EIP-1967 slot, keeping it
-///      out of the implementation's storage namespace. The owner upgrade path
-///      mirrors UUPS-style upgrades where the proxy itself holds no logic.
+/// @dev This is a simplified transparent-style proxy: the owner upgrade
+///      path lives on the proxy itself. True UUPS puts the upgrade logic
+///      in the implementation (via delegatecall); this demo shows the
+///      simpler pattern where the proxy owns its upgrades.
 ///      Not audited.
-contract UUPSProxy {
+contract SimpleProxy {
     error NotOwner(address caller);
     error EmptyImplementation(address impl);
 

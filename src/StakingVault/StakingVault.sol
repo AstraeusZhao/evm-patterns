@@ -4,14 +4,17 @@ pragma solidity ^0.8.24;
 /// @title StakingVault
 /// @notice A simple staking vault with per-account accounting and linear
 ///         rewards accrued over time.
-/// @dev Demonstrates time-based reward accounting and CEI ordering. Not audited.
+/// @dev Demonstrates time-based reward accounting and CEI ordering.
+///      Educational: reward-rate changes settle all stakers up front,
+///      which is fine for small staker counts but would hit block gas
+///      limits at scale. Not audited.
 contract StakingVault {
     error ZeroAmount();
-    error NoStake(address account);
+    error NotOwner(address caller);
     error InsufficientStake(uint256 available, uint256 requested);
     error TransferFailed();
     error Reentrancy();
-    error RewardRateNotSet();
+    error ZeroRate();
 
     event Staked(address indexed account, uint256 amount);
     event Withdrawn(address indexed account, uint256 amount);
@@ -33,7 +36,14 @@ contract StakingVault {
     /// @notice Reward paid per staked token per second.
     uint256 public rewardRatePerSecond;
 
+    address public immutable owner;
+
     uint256 private _lock = 1;
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) revert NotOwner(msg.sender);
+        _;
+    }
 
     modifier nonReentrant() {
         if (_lock != 1) revert Reentrancy();
@@ -42,11 +52,17 @@ contract StakingVault {
         _lock = 1;
     }
 
-    /// @notice Configure the per-second reward rate (owner-less demo: any caller).
-    /// @dev Settles accrued rewards for every staker at the old rate first, so a
-    ///      rate change never rewrites historical reward accrual.
-    function setRewardRate(uint256 ratePerSecond) external {
-        if (ratePerSecond == 0) revert RewardRateNotSet();
+    constructor() {
+        owner = msg.sender;
+    }
+
+    /// @notice Configure the per-second reward rate (owner only).
+    /// @dev Settles accrued rewards for every staker at the old rate first.
+    ///      Note: this loops over all stakers, so it works for small sets
+    ///      but would exceed block gas limits at scale. For a production
+    ///      system, use the reward-per-token snapshot pattern instead.
+    function setRewardRate(uint256 ratePerSecond) external onlyOwner {
+        if (ratePerSecond == 0) revert ZeroRate();
         _updateAll();
         rewardRatePerSecond = ratePerSecond;
         emit RewardRateSet(ratePerSecond);

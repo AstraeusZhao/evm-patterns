@@ -9,6 +9,7 @@ pragma solidity ^0.8.24;
 /// @dev Educational demo of an anti-pattern; do not copy.
 contract StorageCollisionProxy {
     error NotOwner(address caller);
+    error ZeroAddress();
 
     address public implementation;
 
@@ -24,6 +25,7 @@ contract StorageCollisionProxy {
     }
 
     function setImplementation(address impl) external onlyOwner {
+        if (impl == address(0)) revert ZeroAddress();
         implementation = impl;
     }
 

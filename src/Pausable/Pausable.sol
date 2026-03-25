@@ -42,6 +42,4 @@ contract Pausable {
         paused = false;
         emit PausedStateChanged(false);
     }
-}
-
-// only owner can unpause
+}
