@@ -29,3 +29,5 @@ before a transaction can be executed.
 
 - The threshold and the owner set are only as trustworthy as the owners
   themselves; a compromised majority can drain the wallet.
+- There is no daily limit or whitelist on call targets; production wallets
+  usually add spend limits and target allowlists.
