@@ -6,3 +6,5 @@ privileged administrative account.
 ## Properties
 
 - The deploying account becomes `owner`.
+- `transferOwnership` and `renounceOwnership` are owner-only.
+- Renouncing sends ownership to `address(0)`, permanently removing admin paths.
