@@ -9,3 +9,4 @@ privileged administrative account.
 - `transferOwnership` and `renounceOwnership` are owner-only.
 - Renouncing sends ownership to `address(0)`, permanently removing admin paths.
 
+## Trust assumptions
