@@ -11,3 +11,5 @@ privileged administrative account.
 
 ## Trust assumptions
 
+- The owner is trusted with whatever admin powers downstream contracts expose.
+- Losing the owner key means losing admin control (no recovery path).
