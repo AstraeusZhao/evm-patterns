@@ -5,3 +5,4 @@ incidents.
 
 ## Properties
 
+- `pause` and `unpause` are owner-only and idempotent-guarded.
