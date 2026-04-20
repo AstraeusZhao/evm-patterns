@@ -72,3 +72,5 @@ contract BondingCurve {
         return y;
     }
 }
+
+// review math
