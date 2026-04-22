@@ -7,3 +7,5 @@ incidents.
 
 - `pause` and `unpause` are owner-only and idempotent-guarded.
 - `whenNotPaused` / `whenPaused` modifiers gate downstream functions.
+
+## Trust assumptions
