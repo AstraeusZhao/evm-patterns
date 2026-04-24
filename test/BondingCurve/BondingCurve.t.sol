@@ -70,3 +70,5 @@ contract BondingCurveTest {
 
 
 
+
+// test edge cases
