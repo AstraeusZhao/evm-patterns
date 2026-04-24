@@ -9,3 +9,4 @@ incidents.
 - `whenNotPaused` / `whenPaused` modifiers gate downstream functions.
 
 ## Trust assumptions
+
