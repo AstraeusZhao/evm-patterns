@@ -10,3 +10,4 @@ incidents.
 
 ## Trust assumptions
 
+- Pausing is an operational stop, not a recovery path; funds must be
