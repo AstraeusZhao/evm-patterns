@@ -15,3 +15,7 @@ Naming: `poc-<contract>-<issue>.md`, for example `poc-pull-payment-vault-reentra
 ## Oracle staleness attack
 - if oracle doesn't update, stale price can be exploited
 - mitigation: staleness check + twap fallback
+
+## Oracle staleness attack
+- if oracle doesn't update, stale price can be exploited
+- mitigation: staleness check + twap fallback
