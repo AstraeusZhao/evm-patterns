@@ -11,3 +11,4 @@ incidents.
 ## Trust assumptions
 
 - Pausing is an operational stop, not a recovery path; funds must be
+  recoverable through other mechanisms when the contract is paused.
