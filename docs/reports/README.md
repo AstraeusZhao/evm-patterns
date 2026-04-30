@@ -15,3 +15,8 @@ Naming: `report-<topic>-<date>.md`, for example `report-pull-payment-vault-2026-
 - ownable: two-step transfer added
 - erc20: permit support
 - reentrancy: planning transient storage version
+
+## 2026 Q1 review
+- ownable: two-step transfer added
+- erc20: permit support
+- reentrancy: transient storage version
