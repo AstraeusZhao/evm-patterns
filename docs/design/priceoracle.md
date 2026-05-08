@@ -11,3 +11,4 @@ A simple admin-posted price feed with staleness protection.
 ## Trust assumptions
 
 - The admin is a single point of trust; production oracles distribute the
+  update authority and add deviation checks.
