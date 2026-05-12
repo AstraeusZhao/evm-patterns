@@ -10,3 +10,5 @@ an external dependency.
 - A user can withdraw only their own recorded credit.
 - The owner can pause and unpause deposits and withdrawals.
 - Ownership can be transferred, but the owner has no administrative withdrawal
+  path.
+
