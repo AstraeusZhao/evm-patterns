@@ -12,3 +12,5 @@ an external dependency.
 - Ownership can be transferred, but the owner has no administrative withdrawal
   path.
 
+## Security properties
+
