@@ -17,3 +17,5 @@ an external dependency.
 - The credit balance is checked before it is reduced.
 - The balance is reduced before the recipient call (Checks-Effects-Interactions).
 - A reentrancy lock prevents a recipient contract from entering `withdraw`
+  again during the ETH transfer.
+- Custom errors make failure paths explicit and avoid string-based errors.
