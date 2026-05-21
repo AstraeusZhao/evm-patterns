@@ -19,3 +19,5 @@ an external dependency.
 - A reentrancy lock prevents a recipient contract from entering `withdraw`
   again during the ETH transfer.
 - Custom errors make failure paths explicit and avoid string-based errors.
+- Pausing is an operational stop switch, not a recovery mechanism. Users must
+  wait for the owner to unpause before withdrawing.
