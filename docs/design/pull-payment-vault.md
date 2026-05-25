@@ -25,3 +25,7 @@ an external dependency.
 ## Trust assumptions and limitations
 
 - The owner is trusted to manage the pause switch and ownership transfer.
+- ETH transfers can fail if the recipient rejects them; the withdrawal reverts
+  and the user's credit remains unchanged.
+- There is no upgradeability, fee system, token support, or emergency sweep.
+- This example is for learning and review. It has not received an independent
