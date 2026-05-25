@@ -23,3 +23,5 @@ an external dependency.
   wait for the owner to unpause before withdrawing.
 
 ## Trust assumptions and limitations
+
+- The owner is trusted to manage the pause switch and ownership transfer.
