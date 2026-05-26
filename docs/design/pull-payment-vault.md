@@ -29,3 +29,9 @@ an external dependency.
   and the user's credit remains unchanged.
 - There is no upgradeability, fee system, token support, or emergency sweep.
 - This example is for learning and review. It has not received an independent
+  security audit and must not custody production funds.
+
+## Test coverage
+
+The Foundry tests cover normal deposit and withdrawal, owner-only pausing,
+paused deposits, and over-withdrawal protection.
