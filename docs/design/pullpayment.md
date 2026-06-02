@@ -5,3 +5,4 @@ withdraw on their own schedule.
 
 ## Properties
 
+- `receive` credits the sender without forcing any transfer out.
