@@ -8,3 +8,4 @@ withdraw on their own schedule.
 - `receive` credits the sender without forcing any transfer out.
 - Withdrawals follow CEI: the credit is reduced before the external call.
 - The reentrancy lock protects the withdrawal path.
+
