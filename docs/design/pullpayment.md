@@ -9,3 +9,4 @@ withdraw on their own schedule.
 - Withdrawals follow CEI: the credit is reduced before the external call.
 - The reentrancy lock protects the withdrawal path.
 
+## Trust assumptions
