@@ -10,3 +10,5 @@ withdraw on their own schedule.
 - The reentrancy lock protects the withdrawal path.
 
 ## Trust assumptions
+
+- Credit is only created by incoming ETH; there is no inflation path.
