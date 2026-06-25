@@ -9,3 +9,6 @@ A state-lock guard that blocks re-entrant calls during external transfers.
 - Combined with CEI ordering, it prevents the classic withdrawal reentrancy
   attack demonstrated in the tests.
 
+## Trust assumptions
+
+- The guard only protects functions that use it; every external-entry function
