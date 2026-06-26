@@ -12,3 +12,4 @@ A state-lock guard that blocks re-entrant calls during external transfers.
 ## Trust assumptions
 
 - The guard only protects functions that use it; every external-entry function
+  that performs calls must opt in.
