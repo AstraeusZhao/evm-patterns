@@ -10,3 +10,4 @@ A safe transfer library that tolerates tokens returning empty data.
 
 ## Trust assumptions
 
+- The token contract itself is trusted to enforce its own balances.
