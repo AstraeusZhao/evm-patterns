@@ -44,3 +44,5 @@ contract StorageCollisionTest {
         require(proxy.implementation() == implBefore, "implementation slot changed");
     }
 }
+
+// test collision
