@@ -7,3 +7,5 @@ EIP-712 signed claims protected against replay by per-account nonces.
 - Digests are domain-separated and typed-data hashed.
 - `ecrecover` recovers the signer; the recovered account must match the
   configured signer.
+- Each successful claim increments the account nonce, invalidating old
+  signatures.
