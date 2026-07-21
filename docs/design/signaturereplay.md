@@ -11,3 +11,5 @@ EIP-712 signed claims protected against replay by per-account nonces.
   signatures.
 - Deadline checks bound the lifetime of a signature.
 
+## Trust assumptions
+
