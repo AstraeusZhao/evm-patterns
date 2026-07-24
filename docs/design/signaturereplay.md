@@ -13,3 +13,5 @@ EIP-712 signed claims protected against replay by per-account nonces.
 
 ## Trust assumptions
 
+- The signer key must be held off-chain; a leaked key lets anyone claim on
+  behalf of accounts.
