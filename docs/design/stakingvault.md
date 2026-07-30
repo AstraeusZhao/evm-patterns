@@ -9,3 +9,4 @@ A staking vault with principal accounting and time-linear rewards.
 - CEI ordering plus a reentrancy lock protect the payout paths.
 
 ## Trust assumptions
+
