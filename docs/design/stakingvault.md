@@ -10,3 +10,5 @@ A staking vault with principal accounting and time-linear rewards.
 
 ## Trust assumptions
 
+- The demo allows anyone to set the reward rate; production contracts should
+  gate this behind governance.
