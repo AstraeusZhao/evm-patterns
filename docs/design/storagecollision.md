@@ -12,3 +12,4 @@ A demonstration of the proxy storage-collision anti-pattern.
 
 ## Trust assumptions
 
+- This contract is a teaching example of a known pitfall, not a usable proxy.
