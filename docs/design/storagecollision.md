@@ -11,3 +11,4 @@ A demonstration of the proxy storage-collision anti-pattern.
   fix: reserved/fixed slots or EIP-1967 style slots.
 
 ## Trust assumptions
+
