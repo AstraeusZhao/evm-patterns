@@ -9,3 +9,7 @@ delay so users can react before a change takes effect.
   `minDelay` seconds.
 - `execute(...)` — executors run ready operations within the grace window.
 - `cancel(...)` — proposers remove an operation before it becomes ready.
+- `grantRole` / `revokeRole` / `updateDelay` — the admin manages roles and the
+  minimum delay (capped at 30 days).
+
+## State machine
