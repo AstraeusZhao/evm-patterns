@@ -13,3 +13,7 @@ delay so users can react before a change takes effect.
   minimum delay (capped at 30 days).
 
 ## State machine
+
+An operation id is in exactly one of four states:
+
+| State | Condition |
