@@ -17,3 +17,6 @@ delay so users can react before a change takes effect.
 An operation id is in exactly one of four states:
 
 | State | Condition |
+| --- | --- |
+| `Unset` | never scheduled, or deleted after execution/cancellation |
+| `Waiting` | `timestamp` in the future |
