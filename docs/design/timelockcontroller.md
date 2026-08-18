@@ -20,3 +20,5 @@ An operation id is in exactly one of four states:
 | --- | --- |
 | `Unset` | never scheduled, or deleted after execution/cancellation |
 | `Waiting` | `timestamp` in the future |
+| `Ready` | now in `[timestamp, timestamp + GRACE_PERIOD]` |
+| `Expired` | now past `timestamp + GRACE_PERIOD` |
