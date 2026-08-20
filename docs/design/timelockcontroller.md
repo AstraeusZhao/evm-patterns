@@ -22,3 +22,5 @@ An operation id is in exactly one of four states:
 | `Waiting` | `timestamp` in the future |
 | `Ready` | now in `[timestamp, timestamp + GRACE_PERIOD]` |
 | `Expired` | now past `timestamp + GRACE_PERIOD` |
+
+A `predecessor` is accepted only if it is `Unset` (never set or already done),
