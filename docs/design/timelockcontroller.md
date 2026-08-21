@@ -24,3 +24,5 @@ An operation id is in exactly one of four states:
 | `Expired` | now past `timestamp + GRACE_PERIOD` |
 
 A `predecessor` is accepted only if it is `Unset` (never set or already done),
+which builds dependency chains between operations.
+
