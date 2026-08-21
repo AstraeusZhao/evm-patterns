@@ -26,3 +26,7 @@ An operation id is in exactly one of four states:
 A `predecessor` is accepted only if it is `Unset` (never set or already done),
 which builds dependency chains between operations.
 
+## Security properties
+
+- **Role separation** — proposers cannot execute and executors cannot schedule.
+- **Grace period** — operations expire after 14 days instead of staying ready
