@@ -30,3 +30,6 @@ which builds dependency chains between operations.
 
 - **Role separation** — proposers cannot execute and executors cannot schedule.
 - **Grace period** — operations expire after 14 days instead of staying ready
+  forever.
+- **Predecessor checks** — ordering dependencies are enforced on both schedule
+  and execute paths.
