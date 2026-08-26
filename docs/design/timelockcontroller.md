@@ -35,3 +35,5 @@ which builds dependency chains between operations.
   and execute paths.
 
 ## Trust assumptions
+
+- The admin can grant roles and shorten the delay; it must itself be
