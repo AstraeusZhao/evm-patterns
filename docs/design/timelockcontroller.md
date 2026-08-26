@@ -33,3 +33,5 @@ which builds dependency chains between operations.
   forever.
 - **Predecessor checks** — ordering dependencies are enforced on both schedule
   and execute paths.
+
+## Trust assumptions
