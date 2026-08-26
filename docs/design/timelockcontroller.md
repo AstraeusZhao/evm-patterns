@@ -37,3 +37,5 @@ which builds dependency chains between operations.
 ## Trust assumptions
 
 - The admin can grant roles and shorten the delay; it must itself be
+  timelocked or multisig-controlled in production.
+- Executors are trusted to run operations they are instructed to run.
