@@ -102,3 +102,8 @@ AGPL-3.0. See [LICENSE](LICENSE).
 - All 23 patterns covered
 - Active maintenance since 2025
 
+
+## Updated 2026
+- All 23 patterns covered
+- Active maintenance since 2025
+- Regular reviews and improvements
