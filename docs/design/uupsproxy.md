@@ -6,3 +6,4 @@ with owner-only upgrades.
 ## Properties
 
 - All calls are delegated to the implementation stored in the EIP-1967 slot.
+- Upgrading preserves the proxy's storage namespace (state survives).
