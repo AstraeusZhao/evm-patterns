@@ -9,3 +9,4 @@ with owner-only upgrades.
 - Upgrading preserves the proxy's storage namespace (state survives).
 - The implementation address must contain code, preventing bricking.
 
+## Trust assumptions
