@@ -11,3 +11,5 @@ with owner-only upgrades.
 
 ## Trust assumptions
 
+- A single owner controls upgrades; production systems usually move this to
+  a timelock or multisig.
