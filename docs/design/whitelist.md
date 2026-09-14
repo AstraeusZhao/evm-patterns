@@ -11,3 +11,4 @@ An owner-managed allowlist plus a gated sale demonstration.
 ## Trust assumptions
 
 - The owner decides who participates; a hostile owner can list anyone or lock
+  everyone out.
