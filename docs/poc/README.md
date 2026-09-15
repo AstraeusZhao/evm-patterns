@@ -4,3 +4,4 @@ Placeholder for vulnerability reproduction and exploit walk-through documents.
 
 Expected content per PoC:
 
+- Target contract and version (commit or tag).
