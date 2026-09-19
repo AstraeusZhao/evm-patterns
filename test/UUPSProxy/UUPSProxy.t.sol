@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
 
-import {UUPSProxy} from "../../src/UUPSProxy/UUPSProxy.sol";
+import {SimpleProxy} from "../../src/UUPSProxy/UUPSProxy.sol";
 
 
 contract CounterV1 {
@@ -26,13 +26,13 @@ contract CounterV2 {
     }
 }
 
-contract UUPSProxyTest is Test {
+contract SimpleProxyTest is Test {
 
     address private constant ATTACKER = address(0xB0B);
 
     function testCallsThroughProxy() external {
         CounterV1 impl = new CounterV1();
-        UUPSProxy proxy = new UUPSProxy(address(impl));
+        SimpleProxy proxy = new SimpleProxy(address(impl));
 
         CounterV1(address(proxy)).increment();
         require(CounterV1(address(proxy)).count() == 1, "proxy call failed");
@@ -41,7 +41,7 @@ contract UUPSProxyTest is Test {
 
     function testUpgradePreservesState() external {
         CounterV1 impl = new CounterV1();
-        UUPSProxy proxy = new UUPSProxy(address(impl));
+        SimpleProxy proxy = new SimpleProxy(address(impl));
 
         CounterV1(address(proxy)).increment();
         CounterV2 impl2 = new CounterV2();
@@ -53,7 +53,7 @@ contract UUPSProxyTest is Test {
 
     function testOnlyOwnerCanUpgrade() external {
         CounterV1 impl = new CounterV1();
-        UUPSProxy proxy = new UUPSProxy(address(impl));
+        SimpleProxy proxy = new SimpleProxy(address(impl));
         CounterV2 impl2 = new CounterV2();
 
         vm.expectRevert();
@@ -63,7 +63,7 @@ contract UUPSProxyTest is Test {
 
     function testCannotUpgradeToCodeLessAddress() external {
         CounterV1 impl = new CounterV1();
-        UUPSProxy proxy = new UUPSProxy(address(impl));
+        SimpleProxy proxy = new SimpleProxy(address(impl));
 
         vm.expectRevert();
         proxy.upgradeTo(address(0xC0DE));
