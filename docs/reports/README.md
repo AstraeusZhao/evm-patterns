@@ -7,3 +7,4 @@ Expected content per report:
 - Scope: contracts covered and commit/tag.
 - Method: test suites run, tooling, coverage, manual review checklist.
 - Findings: severity, location, status (open / fixed / accepted).
+- Conclusions and follow-ups.
