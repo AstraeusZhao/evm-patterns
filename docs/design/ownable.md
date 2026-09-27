@@ -16,3 +16,7 @@ privileged administrative account.
 
 
 
+
+## 2026 Update
+- Added two-step transfer
+- Reviewed by multiple people
