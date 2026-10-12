@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: AGPL-3.0
+// SPDX-License-Identifier: AGPL-3.0
 pragma solidity ^0.8.24;
 
 import {IERC20Minimal, SafeTransfer, TokenSweeper} from "../../src/SafeERC20Wrapper/SafeERC20Wrapper.sol";
