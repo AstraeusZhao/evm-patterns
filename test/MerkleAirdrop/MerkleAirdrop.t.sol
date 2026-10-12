@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity ^0.8.24;
 
+import {Test} from "forge-std/Test.sol";
+
 import {MerkleAirdrop, IERC20Like} from "../../src/MerkleAirdrop/MerkleAirdrop.sol";
 
-interface Vm {
-    function prank(address sender) external;
-    function expectRevert() external;
-}
 
 contract MockToken is IERC20Like {
     mapping(address => uint256) public balanceOf;
@@ -22,8 +20,7 @@ contract MockToken is IERC20Like {
     }
 }
 
-contract MerkleAirdropTest {
-    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+contract MerkleAirdropTest is Test {
 
     address private constant ALICE = address(0xA11CE);
     address private constant BOB = address(0xB0B);

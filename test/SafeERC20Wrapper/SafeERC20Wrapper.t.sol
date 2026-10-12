@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity ^0.8.24;
 
+import {Test} from "forge-std/Test.sol";
+
 import {IERC20Minimal, SafeTransfer, TokenSweeper} from "../../src/SafeERC20Wrapper/SafeERC20Wrapper.sol";
 
-interface Vm {
-    function prank(address sender) external;
-}
 
 /// A token that returns empty data on transfer (USDT-style quirk).
 contract SilentToken is IERC20Minimal {
@@ -43,8 +42,7 @@ contract SilentToken is IERC20Minimal {
     }
 }
 
-contract SafeERC20WrapperTest {
-    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+contract SafeERC20WrapperTest is Test {
 
     address private constant OWNER = address(0xB055);
     address private constant RECIPIENT = address(0xEC1);

@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity ^0.8.24;
 
+import {Test} from "forge-std/Test.sol";
+
 import {FactoryClone} from "../../src/FactoryClone/FactoryClone.sol";
 
-interface Vm {
-    function expectRevert() external;
-}
 
 contract CloneCounter {
     uint256 public count;
@@ -15,8 +14,7 @@ contract CloneCounter {
     }
 }
 
-contract FactoryCloneTest {
-    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+contract FactoryCloneTest is Test {
 
     function testDeployCloneAndInteract() external {
         CloneCounter impl = new CloneCounter();

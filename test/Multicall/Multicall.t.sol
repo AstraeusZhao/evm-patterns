@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity ^0.8.24;
 
+import {Test} from "forge-std/Test.sol";
+
 import {Multicall} from "../../src/Multicall/Multicall.sol";
 
-interface Vm {
-    function expectRevert() external;
-}
 
 contract Counter is Multicall {
     uint256 public count;
@@ -23,8 +22,7 @@ contract Counter is Multicall {
     }
 }
 
-contract MulticallTest {
-    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+contract MulticallTest is Test {
 
     function testBatchIncrements() external {
         Counter c = new Counter();

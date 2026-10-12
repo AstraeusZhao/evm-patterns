@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity ^0.8.24;
 
+import {Test} from "forge-std/Test.sol";
+
 import {UUPSProxy} from "../../src/UUPSProxy/UUPSProxy.sol";
 
-interface Vm {
-    function prank(address sender) external;
-    function expectRevert() external;
-}
 
 contract CounterV1 {
     uint256 public count;
@@ -28,8 +26,7 @@ contract CounterV2 {
     }
 }
 
-contract UUPSProxyTest {
-    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+contract UUPSProxyTest is Test {
 
     address private constant ATTACKER = address(0xB0B);
 

@@ -1,17 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity ^0.8.24;
 
+import {Test} from "forge-std/Test.sol";
+
 import {StakingVault} from "../../src/StakingVault/StakingVault.sol";
 
-interface Vm {
-    function deal(address account, uint256 newBalance) external;
-    function prank(address sender) external;
-    function warp(uint256 newTimestamp) external;
-    function expectRevert() external;
-}
 
-contract StakingVaultTest {
-    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+contract StakingVaultTest is Test {
 
     address private constant ALICE = address(0xA11CE);
 

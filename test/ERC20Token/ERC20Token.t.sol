@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity ^0.8.24;
 
+import {Test} from "forge-std/Test.sol";
+
 import {ERC20Token} from "../../src/ERC20Token/ERC20Token.sol";
 
-interface Vm {
-    function prank(address sender) external;
-    function expectRevert() external;
-}
 
-contract ERC20TokenTest {
-    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+contract ERC20TokenTest is Test {
 
     address private constant ALICE = address(0xA11CE);
     address private constant BOB = address(0xB0B);

@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity ^0.8.24;
 
+import {Test} from "forge-std/Test.sol";
+
 import {Ownable} from "../../src/Ownable/Ownable.sol";
 
-interface Vm {
-    function prank(address sender) external;
-    function expectRevert() external;
-}
 
-contract OwnableTest {
-    Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+contract OwnableTest is Test {
 
     address private constant OWNER = address(0xB055);
     address private constant OTHER = address(0x07E);
