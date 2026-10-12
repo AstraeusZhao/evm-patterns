@@ -14,9 +14,9 @@ contract StakingVaultTest is Test {
 
     function _vault() internal returns (StakingVault) {
         StakingVault v = new StakingVault();
-        v.setRewardRate(1); // 1 wei per token per second
+        v.setRewardRate(1e16); // 1 wei per token per second
         vm.deal(ALICE, 10 ether);
-        vm.deal(address(v), 1000 ether); // fund the rewards pool
+        vm.deal(address(this), 1000 ether);v.fundRewards{value: 1000 ether}(); // fund the rewards pool
         vm.prank(ALICE);
         v.stake{value: 1 ether}();
         return v;
@@ -33,7 +33,7 @@ contract StakingVaultTest is Test {
         vm.prank(ALICE);
         v.unstake(1 ether); // triggers _update and keeps rewards in storage
         (,, uint256 accrued) = v.stakes(ALICE);
-        require(accrued == 100 * 1 ether, "reward not accrued");
+        require(accrued == 1 ether, "reward not accrued");
     }
 
     function testClaimRewards() external {
@@ -42,7 +42,7 @@ contract StakingVaultTest is Test {
         uint256 before = ALICE.balance;
         vm.prank(ALICE);
         v.claimRewards();
-        require(ALICE.balance - before == 100 * 1 ether, "reward not paid");
+        require(ALICE.balance - before == 1 ether, "reward not paid");
         require(v.stakedOf(ALICE) == 1 ether, "principal must stay");
     }
 
@@ -68,12 +68,12 @@ contract StakingVaultTest is Test {
         // changing the rate; the accrued amount must not be recomputed
         // at the new rate afterwards.
         vm.warp(block.timestamp + 100);
-        v.setRewardRate(2);
+        v.setRewardRate(2e16);
 
         vm.warp(block.timestamp + 100);
         uint256 before = ALICE.balance;
         vm.prank(ALICE);
         v.claimRewards();
-        require(ALICE.balance - before == (100 + 200) * 1 ether, "historical reward mis-accrued");
+        require(ALICE.balance - before == 3 ether, "historical reward mis-accrued");
     }
 }

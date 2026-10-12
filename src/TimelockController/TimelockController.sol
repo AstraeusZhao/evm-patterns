@@ -41,7 +41,8 @@ contract TimelockController {
         Unset,
         Waiting,
         Ready,
-        Expired
+        Expired,
+        Done
     }
 
     struct Operation {
@@ -54,6 +55,7 @@ contract TimelockController {
 
     mapping(bytes32 role => mapping(address account => bool granted)) public roles;
     mapping(bytes32 id => Operation) public operations;
+    mapping(bytes32 => bool) public completed;
 
     address public admin;
     uint256 public minDelay;
@@ -70,6 +72,7 @@ contract TimelockController {
     ) {
         if (initialAdmin == address(0)) revert ZeroAddress();
 
+        if (initialMinDelay < 1 hours || initialMinDelay > 30 days) revert InvalidDelay(initialMinDelay);
         admin = initialAdmin;
         minDelay = initialMinDelay;
 
@@ -115,10 +118,12 @@ contract TimelockController {
         bytes32 id = hashOperation(target, value, data, predecessor, salt);
 
         OperationState state = getOperationState(id);
-        if (state == OperationState.Unset) revert OperationNotScheduled(id);
+        if (state == OperationState.Unset || state == OperationState.Done) revert OperationNotScheduled(id);
         if (state == OperationState.Waiting) revert OperationNotReady(id);
         if (state == OperationState.Expired) revert OperationExpired(id);
 
+        _checkPredecessor(predecessor);
+        completed[id] = true;
         delete operations[id];
 
         emit CallExecuted(id, 0, target, value, data);
@@ -150,6 +155,7 @@ contract TimelockController {
     }
 
     function getOperationState(bytes32 id) public view returns (OperationState) {
+        if (completed[id]) return OperationState.Done;
         Operation storage op = operations[id];
         if (!op.scheduled) {
             return OperationState.Unset;
@@ -175,8 +181,9 @@ contract TimelockController {
     // --- Admin ---
 
     /// @notice Change the minimum delay; only applies to future schedules.
-    function updateDelay(uint256 newDelay) external onlyAdmin {
-        if (newDelay > 30 days) revert InvalidDelay(newDelay);
+    function updateDelay(uint256 newDelay) external {
+        if (msg.sender != address(this)) revert NotAdmin(msg.sender);
+        if (newDelay < 1 hours || newDelay > 30 days) revert InvalidDelay(newDelay);
         emit MinDelayChange(minDelay, newDelay);
         minDelay = newDelay;
     }
@@ -195,7 +202,7 @@ contract TimelockController {
     function _schedule(bytes32 id, address target, uint256 value, bytes memory data, bytes32 predecessor, uint256 delay)
         internal
     {
-        if (operations[id].scheduled) revert OperationAlreadyScheduled(id);
+        if (operations[id].scheduled || completed[id]) revert OperationAlreadyScheduled(id);
         _checkPredecessor(predecessor);
 
         operations[id] = Operation({scheduled: true, timestamp: block.timestamp + delay});
@@ -203,10 +210,9 @@ contract TimelockController {
         emit CallScheduled(id, 0, target, value, data, predecessor, delay);
     }
 
-    /// @dev A predecessor is acceptable only when it was never set or already
-    ///      executed (deleted). Pending, ready or expired predecessors block.
+    /// @dev Only recorded successful execution counts as a completed predecessor.
     function _checkPredecessor(bytes32 predecessor) internal view {
-        if (predecessor != bytes32(0) && getOperationState(predecessor) != OperationState.Unset) {
+        if (predecessor != bytes32(0) && getOperationState(predecessor) != OperationState.Done) {
             revert PredecessorNotDone(predecessor);
         }
     }

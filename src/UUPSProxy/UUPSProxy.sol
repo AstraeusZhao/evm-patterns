@@ -33,6 +33,7 @@ contract SimpleProxy {
     }
 
     function _setImplementation(address impl) internal {
+        if (impl.code.length == 0) revert EmptyImplementation(impl);
         assembly {
             sstore(IMPLEMENTATION_SLOT, impl)
         }

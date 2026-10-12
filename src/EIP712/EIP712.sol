@@ -61,8 +61,9 @@ contract EIP712 {
 
         bytes32 digest = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, structHash));
 
+        if (signer == address(0) || (v != 27 && v != 28) || uint256(s) > 0x7fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a0) revert InvalidSignature();
         address recovered = ecrecover(digest, v, r, s);
-        if (recovered != signer) revert InvalidSignature();
+        if (recovered == address(0) || recovered != signer) revert InvalidSignature();
 
         usedNonces[signer][transfer.nonce] = true;
         emit Executed(signer, transfer.to, transfer.amount);

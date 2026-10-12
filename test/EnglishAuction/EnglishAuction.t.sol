@@ -28,6 +28,8 @@ contract EnglishAuctionTest is Test {
         vm.prank(BOB);
         a.bid{value: 2 ether}();
         require(a.highestBidder() == BOB, "second bidder not recorded");
+        require(a.refunds(ALICE) == 1 ether, "missing refund credit");
+        vm.prank(ALICE);a.withdrawRefund();
         require(ALICE.balance == 10 ether, "outbid bidder not refunded");
         require(a.highestBid() == 2 ether, "highest bid wrong");
     }
@@ -85,18 +87,18 @@ contract EnglishAuctionTest is Test {
 
         vm.prank(BOB);
         a.bid{value: 3 ether}();
-        require(attacker.reentered(), "attacker never re-entered");
+        require(!attacker.reentered(), "bid must not call previous bidder");
 
-        require(a.highestBidder() == address(attacker), "re-entering bid lost");
-        require(a.highestBid() == 4 ether, "re-entering bid not recorded");
-        require(address(a).balance == 4 ether, "contract balance inconsistent");
+        require(a.highestBidder() == BOB, "outbidder must win");
+        require(a.highestBid() == 3 ether, "winning bid not recorded");
+        require(address(a).balance == 6 ether, "contract balance inconsistent");
 
         vm.warp(block.timestamp + 1 days);
         a.end();
         vm.prank(SELLER);
         a.withdraw();
-        require(SELLER.balance == 4 ether, "seller underpaid");
-        require(address(a).balance == 0, "funds stuck in contract");
+        require(SELLER.balance == 3 ether, "seller underpaid");
+        require(address(a).balance == a.refunds(ALICE) + a.refunds(address(attacker)), "refund liabilities mismatch");
     }
 }
 

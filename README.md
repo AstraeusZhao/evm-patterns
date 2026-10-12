@@ -99,7 +99,7 @@ demonstrations.
 AGPL-3.0. See [LICENSE](LICENSE).
 
 ## Updated
-- All 23 patterns covered
+- Current behavioral test suite: 132 passing tests; measured per-file coverage and limitations are in `docs/reports/AUDIT_COVERAGE.md`. Coverage is partial, including examples with zero measured execution.
 - Active maintenance since 2025
 
 

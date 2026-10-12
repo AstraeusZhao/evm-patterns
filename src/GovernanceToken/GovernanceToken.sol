@@ -54,6 +54,8 @@ contract GovernanceToken {
 
     /// @notice Mint new tokens (demo only).
     function mint(address to, uint256 amount) external {
+        if (to == address(0)) revert ZeroAddress();
+        require(amount <= type(uint224).max - totalSupply, "supply overflow");
         balanceOf[to] += amount;
         totalSupply += amount;
         address delegatee = delegates[to];
@@ -81,6 +83,7 @@ contract GovernanceToken {
     }
 
     function _writeCheckpoint(address account, uint256 newVotes) internal {
+        require(newVotes <= type(uint224).max && block.timestamp <= type(uint32).max, "checkpoint overflow");
         votesHistory[account].push(Checkpoint(uint32(block.timestamp), uint224(newVotes)));
     }
 }

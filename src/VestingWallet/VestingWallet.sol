@@ -7,6 +7,7 @@ pragma solidity ^0.8.24;
 /// @dev Common pattern for team tokens, advisor grants, and investor allocations.
 ///      Uses the ERC20 transfer/balanceOf interface loosely (no strict interface).
 ///      Not audited.
+import {IERC20Minimal, SafeTransfer} from "../SafeERC20Wrapper/SafeERC20Wrapper.sol";
 contract VestingWallet {
     error ZeroAddress();
     error NothingToRelease();
@@ -41,13 +42,13 @@ contract VestingWallet {
         released[token] = already + payable_;
         emit ERC20Released(token, payable_);
 
-        (bool ok,) = token.call(abi.encodeWithSignature("transfer(address,uint256)", beneficiary, payable_));
-        if (!ok) revert TransferFailed();
+        SafeTransfer.safeTransfer(IERC20Minimal(token), beneficiary, payable_);
     }
 
     /// @notice How many tokens of `token` have vested up to `timestamp`.
     function vestedAmount(address token, uint64 timestamp) public view returns (uint256) {
-        (, bytes memory balData) = token.staticcall(abi.encodeWithSignature("balanceOf(address)", address(this)));
+        (bool ok, bytes memory balData) = token.staticcall(abi.encodeWithSignature("balanceOf(address)", address(this)));
+        if (!ok || token.code.length == 0 || balData.length != 32) revert TransferFailed();
         uint256 balance = abi.decode(balData, (uint256));
         uint256 total = balance + released[token];
 

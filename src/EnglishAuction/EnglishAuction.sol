@@ -3,8 +3,7 @@ pragma solidity ^0.8.24;
 
 /// @title EnglishAuction
 /// @notice Ascending-price auction with refunds for outbid bidders.
-/// @dev CEI ordering: update the bid state first, then refund the previous
-///      bidder (checks-effects-interactions). Not audited.
+/// @dev Outbid bidders pull their refunds independently. Not audited.
 contract EnglishAuction {
     error NotOwner(address caller);
     error AuctionClosed();
@@ -21,16 +20,14 @@ contract EnglishAuction {
     address public highestBidder;
     uint256 public highestBid;
     bool public ended;
+    mapping(address => uint256) public refunds;
 
     constructor(uint256 biddingTime) {
         seller = msg.sender;
         endAt = block.timestamp + biddingTime;
     }
 
-    /// @notice Place a bid; the previous bidder is refunded immediately.
-    /// @dev Checks-effects-interactions: bidder state is committed before the
-    ///      refund transfer, so a re-entering fallback cannot observe stale
-    ///      state or drain the contract.
+    /// @notice Place a bid; previous bidder receives a withdrawable refund credit.
     function bid() external payable {
         if (block.timestamp >= endAt) revert AuctionClosed();
         if (msg.value <= highestBid) revert BidTooLow(highestBid, msg.value);
@@ -43,11 +40,14 @@ contract EnglishAuction {
         emit Bid(msg.sender, msg.value);
 
         if (previousBidder != address(0)) {
-            (bool ok,) = payable(previousBidder).call{value: refund}("");
-            if (!ok) revert TransferFailed();
+            refunds[previousBidder] += refund;
         }
     }
 
+    function withdrawRefund() external {
+        uint256 amount = refunds[msg.sender];refunds[msg.sender] = 0;
+        (bool ok,) = payable(msg.sender).call{value: amount}("");if (!ok) revert TransferFailed();
+    }
     /// @notice Finalize once the bidding window has closed.
     function end() external {
         if (block.timestamp < endAt) revert AuctionNotEnded();

@@ -63,9 +63,10 @@ contract ERC20Permit {
         ));
 
         bytes32 digest = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, structHash));
+        if (owner == address(0) || (v != 27 && v != 28) || uint256(s) > 0x7fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a0) revert InvalidSignature();
         address recovered = ecrecover(digest, v, r, s);
 
-        if (recovered != owner) revert InvalidSignature();
+        if (recovered == address(0) || recovered != owner) revert InvalidSignature();
 
         nonces[owner]++;
         allowance[owner][spender] = value;

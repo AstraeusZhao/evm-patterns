@@ -4,8 +4,9 @@ pragma solidity ^0.8.24;
 /// @title SelfDestructDemo
 /// @notice Demonstrates the selfdestruct pattern: a contract that can
 ///         destroy itself and send remaining funds to a beneficiary.
-/// @dev Important: in Cancun+, selfdestruct no longer forces ETH to the
-///      recipient if the recipient already has code. Use with care.
+/// @dev EIP-6780 (Cancun): ETH still transfers, including to contract recipients.
+///      Code/storage are deleted only when destruction occurs in the creation transaction.
+///      https://eips.ethereum.org/EIPS/eip-6780
 ///      Not audited.
 contract SelfDestructDemo {
     error NotOwner(address caller);

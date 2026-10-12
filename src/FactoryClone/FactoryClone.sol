@@ -14,7 +14,7 @@ contract FactoryClone {
     address public immutable implementation;
 
     constructor(address implementation_) {
-        if (implementation_ == address(0)) revert ZeroAddress();
+        if (implementation_.code.length == 0) revert ZeroAddress();
         implementation = implementation_;
     }
 

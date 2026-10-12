@@ -30,7 +30,7 @@ library SafeTransfer {
 
     function _callAndVerify(IERC20Minimal token, bytes memory data) private {
         (bool ok, bytes memory ret) = address(token).call(data);
-        if (!ok) revert TransferFailed();
+        if (!ok || address(token).code.length == 0) revert TransferFailed();
         if (ret.length > 0 && !abi.decode(ret, (bool))) {
             revert TransferFailed();
         }

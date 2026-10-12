@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 /// @title ERC721NFT
 /// @notice A minimal non-fungible token with owner-only minting.
 /// @dev Demonstrates ownership accounting, approvals and transfers. Not audited.
+interface IERC721Receiver { function onERC721Received(address,address,uint256,bytes calldata) external returns (bytes4); }
 contract ERC721NFT {
     error NotOwner(address caller);
     error ZeroAddress();
@@ -79,9 +80,17 @@ contract ERC721NFT {
     }
 
     function safeTransferFrom(address from, address to, uint256 tokenId) external {
-        _checkTransfer(from, to, tokenId);
-        _transfer(from, to, tokenId);
+        _safeTransfer(from, to, tokenId, "");
     }
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) external {
+        _safeTransfer(from, to, tokenId, data);
+    }
+    function _safeTransfer(address from, address to, uint256 tokenId, bytes memory data) internal {
+        _checkTransfer(from,to,tokenId);_transfer(from,to,tokenId);
+        if(to.code.length>0) require(IERC721Receiver(to).onERC721Received(msg.sender,from,tokenId,data)==IERC721Receiver.onERC721Received.selector,"unsafe receiver");
+    }
+    function supportsInterface(bytes4 id) external pure returns(bool) {return id==0x01ffc9a7||id==0x80ac58cd;}
+
 
     /// @notice Mint a token to an account; owner-only.
     function mint(address to, uint256 tokenId) external onlyMinter {

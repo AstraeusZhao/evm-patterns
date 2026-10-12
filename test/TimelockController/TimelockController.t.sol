@@ -160,8 +160,9 @@ contract TimelockControllerTest is Test {
     function testUpdateDelay() external {
         TimelockController tl = _timelock();
 
-        vm.prank(ADMIN);
-        tl.updateDelay(1 days);
+        bytes memory data = abi.encodeCall(TimelockController.updateDelay,(1 days));
+        vm.prank(PROPOSER);tl.schedule(address(tl),0,data,bytes32(0),bytes32("delay"));
+        vm.warp(start+DELAY);vm.prank(EXECUTOR);tl.execute(address(tl),0,data,bytes32(0),bytes32("delay"));
         require(tl.minDelay() == 1 days, "delay not updated");
 
         vm.expectRevert();

@@ -1,138 +1,55 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity ^0.8.24;
 
-/// @title StakingVault
-/// @notice A simple staking vault with per-account accounting and linear
-///         rewards accrued over time.
-/// @dev Demonstrates time-based reward accounting and CEI ordering.
-///      Educational: reward-rate changes settle all stakers up front,
-///      which is fine for small staker counts but would hit block gas
-///      limits at scale. Not audited.
+
+/// @notice Teaching ETH vault with lazy, funded rewards. Rate is WAD per staked wei/second.
 contract StakingVault {
-    error ZeroAmount();
-    error NotOwner(address caller);
-    error InsufficientStake(uint256 available, uint256 requested);
-    error TransferFailed();
-    error Reentrancy();
-    error ZeroRate();
-
-    event Staked(address indexed account, uint256 amount);
-    event Withdrawn(address indexed account, uint256 amount);
-    event RewardClaimed(address indexed account, uint256 amount);
-    event RewardRateSet(uint256 ratePerSecond);
-
-    struct StakeInfo {
-        uint256 amount;
-        uint256 lastUpdate;
-        uint256 accumulatedReward;
+    error ZeroAmount();error NotOwner(address caller);error InsufficientStake(uint256 available,uint256 requested);
+    error TransferFailed();error Reentrancy();error InvalidRate();
+    struct StakeInfo{uint256 amount;uint256 lastUpdate;uint256 accumulatedReward;}
+    mapping(address=>StakeInfo) public stakes;mapping(address=>uint256) private paidPerToken;
+    uint256 public totalStaked;uint256 public rewardReserve;uint256 public rewardRemaining;
+    uint256 public rewardPerTokenStored;uint256 public lastUpdate;uint256 public rewardRatePerSecond;
+    uint256 public constant SCALE=1e18;address public immutable owner;uint256 private lock=1;
+    event Staked(address indexed account,uint256 amount);event Withdrawn(address indexed account,uint256 amount);
+    event RewardClaimed(address indexed account,uint256 amount);event RewardRateSet(uint256 ratePerSecond);event RewardsFunded(uint256 amount);
+    modifier onlyOwner(){if(msg.sender!=owner)revert NotOwner(msg.sender);_;}
+    modifier guarded(){if(lock!=1)revert Reentrancy();lock=2;_;lock=1;}
+    constructor(){owner=msg.sender;lastUpdate=block.timestamp;}
+    function _sync() internal {
+        uint256 elapsed=block.timestamp-lastUpdate;lastUpdate=block.timestamp;
+        if(totalStaked==0||rewardRemaining==0||rewardRatePerSecond==0)return;
+        // Rate capped at SCALE; cap before multiplying by an arbitrary elapsed time.
+        uint256 rateTime=elapsed>type(uint256).max/rewardRatePerSecond?type(uint256).max:elapsed*rewardRatePerSecond;
+        uint256 reward=rateTime>=SCALE&&totalStaked>type(uint256).max/rateTime?rewardRemaining:totalStaked*rateTime/SCALE;
+        if(reward>rewardRemaining)reward=rewardRemaining;
+        uint256 increment=(reward/totalStaked)*SCALE+(reward%totalStaked)*SCALE/totalStaked;
+        rewardPerTokenStored+=increment;rewardRemaining-=reward;
     }
-
-    mapping(address account => StakeInfo stake) public stakes;
-
-    /// @dev Accounts with a non-zero stake; lets reward-rate changes settle
-    ///      every account before the new rate applies.
-    address[] private _accounts;
-
-    /// @notice Reward paid per staked token per second.
-    uint256 public rewardRatePerSecond;
-
-    address public immutable owner;
-
-    uint256 private _lock = 1;
-
-    modifier onlyOwner() {
-        if (msg.sender != owner) revert NotOwner(msg.sender);
-        _;
-    }
-
-    modifier nonReentrant() {
-        if (_lock != 1) revert Reentrancy();
-        _lock = 2;
-        _;
-        _lock = 1;
-    }
-
-    constructor() {
-        owner = msg.sender;
-    }
-
-    /// @notice Configure the per-second reward rate (owner only).
-    /// @dev Settles accrued rewards for every staker at the old rate first.
-    ///      Note: this loops over all stakers, so it works for small sets
-    ///      but would exceed block gas limits at scale. For a production
-    ///      system, use the reward-per-token snapshot pattern instead.
-    function setRewardRate(uint256 ratePerSecond) external onlyOwner {
-        if (ratePerSecond == 0) revert ZeroRate();
-        _updateAll();
-        rewardRatePerSecond = ratePerSecond;
-        emit RewardRateSet(ratePerSecond);
-    }
-
-    function stake() external payable nonReentrant {
-        if (msg.value == 0) revert ZeroAmount();
-        _update(msg.sender);
-
-        if (stakes[msg.sender].amount == 0) {
-            _accounts.push(msg.sender);
-        }
-        stakes[msg.sender].amount += msg.value;
-        stakes[msg.sender].lastUpdate = block.timestamp;
-
-        emit Staked(msg.sender, msg.value);
-    }
-
-    /// @notice Withdraw part of the staked principal; accrued rewards stay.
-    function unstake(uint256 amount) external nonReentrant {
-        if (amount == 0) revert ZeroAmount();
-        _update(msg.sender);
-
-        StakeInfo storage s = stakes[msg.sender];
-        if (s.amount < amount) revert InsufficientStake(s.amount, amount);
-
-        s.amount -= amount;
-        s.lastUpdate = block.timestamp;
-
-        emit Withdrawn(msg.sender, amount);
-
-        (bool ok,) = payable(msg.sender).call{value: amount}("");
-        if (!ok) revert TransferFailed();
-    }
-
-    /// @notice Claim accrued rewards without reducing the stake.
-    function claimRewards() external nonReentrant {
-        _update(msg.sender);
-
-        StakeInfo storage s = stakes[msg.sender];
-        uint256 reward = s.accumulatedReward;
-        if (reward == 0) revert ZeroAmount();
-
-        s.accumulatedReward = 0;
-        s.lastUpdate = block.timestamp;
-
-        emit RewardClaimed(msg.sender, reward);
-
-        (bool ok,) = payable(msg.sender).call{value: reward}("");
-        if (!ok) revert TransferFailed();
-    }
-
-    /// @notice Total staked amount for an account.
-    function stakedOf(address account) external view returns (uint256) {
-        return stakes[account].amount;
-    }
-
     function _update(address account) internal {
-        StakeInfo storage s = stakes[account];
-        if (s.amount > 0 && rewardRatePerSecond > 0) {
-            uint256 elapsed = block.timestamp - s.lastUpdate;
-            s.accumulatedReward += elapsed * s.amount * rewardRatePerSecond;
-        }
-        s.lastUpdate = block.timestamp;
+        _sync();StakeInfo storage s=stakes[account];
+        s.accumulatedReward+=s.amount*(rewardPerTokenStored-paidPerToken[account])/SCALE;
+        paidPerToken[account]=rewardPerTokenStored;s.lastUpdate=block.timestamp;
     }
-
-    /// @notice Settle accrued rewards for every account with a stake.
-    function _updateAll() internal {
-        for (uint256 i = 0; i < _accounts.length; i++) {
-            _update(_accounts[i]);
-        }
+    function fundRewards() external payable onlyOwner guarded {
+        if(msg.value==0)revert ZeroAmount();_sync();rewardReserve+=msg.value;rewardRemaining+=msg.value;emit RewardsFunded(msg.value);
     }
+    function setRewardRate(uint256 rate) external onlyOwner guarded {
+        if(rate>SCALE)revert InvalidRate();_sync();rewardRatePerSecond=rate;emit RewardRateSet(rate);
+    }
+    function stake() external payable guarded {
+        if(msg.value==0)revert ZeroAmount();_update(msg.sender);stakes[msg.sender].amount+=msg.value;totalStaked+=msg.value;emit Staked(msg.sender,msg.value);
+    }
+    function unstake(uint256 amount) external guarded {
+        if(amount==0)revert ZeroAmount();_update(msg.sender);StakeInfo storage s=stakes[msg.sender];
+        if(amount>s.amount)revert InsufficientStake(s.amount,amount);s.amount-=amount;totalStaked-=amount;
+        emit Withdrawn(msg.sender,amount);(bool ok,)=payable(msg.sender).call{value:amount}("");if(!ok)revert TransferFailed();
+    }
+    function claimRewards() external guarded {
+        _update(msg.sender);uint256 reward=stakes[msg.sender].accumulatedReward;if(reward==0)revert ZeroAmount();
+        require(reward<=rewardReserve&&reward<=address(this).balance-totalStaked,"unfunded reward");
+        stakes[msg.sender].accumulatedReward=0;rewardReserve-=reward;emit RewardClaimed(msg.sender,reward);
+        (bool ok,)=payable(msg.sender).call{value:reward}("");if(!ok)revert TransferFailed();
+    }
+    function stakedOf(address account) external view returns(uint256){return stakes[account].amount;}
 }

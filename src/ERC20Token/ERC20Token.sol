@@ -74,7 +74,6 @@ contract ERC20Token {
 
     function _transfer(address from, address to, uint256 value) internal {
         if (to == address(0)) revert ZeroAddress();
-        if (value == 0) revert ZeroAmount();
         uint256 available = balanceOf[from];
         if (available < value) revert InsufficientBalance(available, value);
 

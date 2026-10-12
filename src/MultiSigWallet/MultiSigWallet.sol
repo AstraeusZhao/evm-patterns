@@ -19,6 +19,8 @@ contract MultiSigWallet {
     error ZeroAddress();
     error InvalidRequired(uint256 required);
     error Reentrancy();
+    error OnlySelf();
+    error StaleTransaction();
 
     event TransactionSubmitted(uint256 indexed txId, address indexed proposer, address to, uint256 value, bytes data);
     event ConfirmationAdded(uint256 indexed txId, address indexed owner);
@@ -34,6 +36,7 @@ contract MultiSigWallet {
         uint256 value;
         bytes data;
         bool executed;
+        uint256 epoch;
         uint256 confirmationCount;
         mapping(address owner => bool confirmed) confirmed;
     }
@@ -41,6 +44,8 @@ contract MultiSigWallet {
     address[] public owners;
     mapping(address owner => bool isOwner) public isOwner;
     uint256 public required;
+    uint256 public ownerEpoch = 1;
+    modifier onlySelf() { if (msg.sender != address(this)) revert OnlySelf(); _; }
 
     Transaction[] public transactions;
 
@@ -85,6 +90,7 @@ contract MultiSigWallet {
 
         txId = transactions.length;
         Transaction storage t = transactions.push();
+        t.epoch = ownerEpoch;
         t.to = to;
         t.value = value;
         t.data = data;
@@ -154,36 +160,41 @@ contract MultiSigWallet {
         return owners[index];
     }
 
-    // --- Owner management ---
+    // --- Owner management: wallet self-calls approved by the existing quorum.
+    // Any configuration change invalidates pending transactions; resubmit them. ---
 
-    function addOwner(address newOwner) external onlyOwner {
+    function addOwner(address newOwner) external onlySelf {
         if (newOwner == address(0)) revert ZeroAddress();
         _addOwner(newOwner);
+        ownerEpoch++;
         emit OwnerAdded(newOwner);
     }
 
     /// @notice Remove an owner; the required threshold is clamped downwards
     ///         so the wallet can never become ungovernable. The last owner
     ///         cannot be removed, otherwise the wallet would be locked forever.
-    function removeOwner(address owner) external onlyOwner {
+    function removeOwner(address owner) external onlySelf {
         if (owners.length <= 1) revert InvalidRequired(0);
         _removeOwner(owner);
+        ownerEpoch++;
     }
 
     /// @dev Add the replacement before removing the old owner so the wallet
     ///      never passes through a zero-owner state.
-    function replaceOwner(address oldOwner, address newOwner) external onlyOwner {
+    function replaceOwner(address oldOwner, address newOwner) external onlySelf {
         if (newOwner == address(0)) revert ZeroAddress();
         if (oldOwner == newOwner) revert DuplicateOwner(newOwner);
         _addOwner(newOwner);
+        ownerEpoch++;
         _removeOwner(oldOwner);
         emit OwnerReplaced(oldOwner, newOwner);
     }
 
-    function changeRequired(uint256 newRequired) external onlyOwner {
+    function changeRequired(uint256 newRequired) external onlySelf {
         if (newRequired == 0 || newRequired > owners.length) {
             revert InvalidRequired(newRequired);
         }
+        ownerEpoch++;
         required = newRequired;
         emit RequiredChanged(newRequired);
     }
@@ -193,9 +204,11 @@ contract MultiSigWallet {
     function _getTransaction(uint256 txId) internal view returns (Transaction storage t) {
         if (txId >= transactions.length) revert InvalidTransactionId(txId);
         t = transactions[txId];
+        if (!t.executed && t.epoch != ownerEpoch) revert StaleTransaction();
     }
 
     function _addOwner(address owner) internal {
+        if (owner == address(0)) revert ZeroAddress();
         if (isOwner[owner]) revert DuplicateOwner(owner);
         isOwner[owner] = true;
         owners.push(owner);
@@ -210,14 +223,6 @@ contract MultiSigWallet {
                 owners[i] = owners[owners.length - 1];
                 owners.pop();
                 break;
-            }
-        }
-        // Clear this owner's confirmations on all pending transactions
-        for (uint256 i = 0; i < transactions.length; i++) {
-            Transaction storage t = transactions[i];
-            if (!t.executed && t.confirmed[owner]) {
-                t.confirmed[owner] = false;
-                t.confirmationCount -= 1;
             }
         }
         if (required > owners.length) {

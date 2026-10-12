@@ -26,17 +26,19 @@ contract BatchMint {
         if (recipients.length != amounts.length) revert LengthMismatch();
 
         for (uint256 i = 0; i < recipients.length; i++) {
+            require(recipients[i] != address(0), "zero recipient");
             balances[recipients[i]] += amounts[i];
             totalSupply += amounts[i];
             emit Transfer(address(0), recipients[i], amounts[i]);
         }
     }
 
-    /// @notice Batch transfer tokens from the owner to multiple recipients.
+    /// @notice Batch transfer tokens from the caller to multiple recipients.
     function batchTransfer(address[] calldata recipients, uint256[] calldata amounts) external {
         if (recipients.length != amounts.length) revert LengthMismatch();
 
         for (uint256 i = 0; i < recipients.length; i++) {
+            require(recipients[i] != address(0), "zero recipient");
             uint256 amount = amounts[i];
             require(balances[msg.sender] >= amount, "insufficient balance");
             balances[msg.sender] -= amount;

@@ -1,0 +1,3 @@
+# Security scan scope
+
+Dependency alerts, automated security updates, secret scanning and secret push protection are enabled on GitHub. CodeQL is configured for these supported languages: actions. [CodeQL language/build support](https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/manage-your-configuration/codeql-for-compiled-languages). Solidity and Dart are outside CodeQL coverage. Applicable projects use Foundry behavioral tests or Flutter analysis/tests instead. An empty alerts response does not prove absence of vulnerabilities; an unsupported language is not silently counted as scanned. CI and scan results must identify the source commit.

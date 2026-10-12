@@ -5,6 +5,7 @@ pragma solidity ^0.8.24;
 /// @notice Minimal constant-product automated market maker (x * y = k).
 /// @dev Demonstrates the Uniswap V2 formula in its simplest form.
 ///      Not audited.
+/// @dev Virtual-reserve formula simulation only: no asset custody or settlement.
 contract AMM {
     error InsufficientLiquidity();
     error InvalidAmount();
@@ -17,7 +18,7 @@ contract AMM {
     event LiquidityAdded(address indexed provider, uint256 amountA, uint256 amountB);
 
     /// @notice Add liquidity to the pool.
-    function addLiquidity(uint256 amountA, uint256 amountB) external payable {
+    function addLiquidity(uint256 amountA, uint256 amountB) external {
         reserveA += amountA;
         reserveB += amountB;
         emit LiquidityAdded(msg.sender, amountA, amountB);

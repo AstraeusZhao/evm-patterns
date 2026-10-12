@@ -23,11 +23,15 @@ contract BondingCurve {
     uint256 private _reserve;
 
     /// @notice Buy tokens at the current curve price.
-    function buy() external payable returns (uint256 minted) {
+    function buy() external payable returns (uint256 minted) { return _buy(1, block.timestamp); }
+    function buy(uint256 minOut, uint256 deadline) external payable returns (uint256 minted) { return _buy(minOut,deadline); }
+    function _buy(uint256 minOut, uint256 deadline) internal returns (uint256 minted) {
+        require(block.timestamp <= deadline, "expired");
         if (msg.value == 0) revert ZeroAmount();
 
         uint256 newSupply = _sqrt(_supply * _supply + 2 * msg.value);
         minted = newSupply - _supply;
+        require(minted > 0 && minted >= minOut, "insufficient output");
 
         _supply = newSupply;
         _reserve += msg.value;
