@@ -66,12 +66,3 @@ contract ImplValueSlot1 {
         value = v;
     }
 }
-
-// namespaced example
-
-
-
-
-// namespaced example
-
-// review namespaced

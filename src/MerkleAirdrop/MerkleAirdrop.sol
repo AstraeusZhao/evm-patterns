@@ -73,13 +73,3 @@ interface IERC20Like {
     function transfer(address to, uint256 amount) external returns (bool);
     function balanceOf(address account) external view returns (uint256);
 }
-
-// fix double claim
-
-// reviewed
-
-// fix double claim
-
-// review double claim fix
-
-// review again

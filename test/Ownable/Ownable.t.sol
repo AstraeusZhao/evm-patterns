@@ -56,11 +56,3 @@ contract OwnableTest {
         o.transferOwnership(OTHER);
     }
 }
-
-// test two-step ownership
-
-// quick review
-
-// test two-step
-
-// test two-step more

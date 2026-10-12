@@ -54,5 +54,3 @@ contract FactoryClone {
     }
 }
 
-
-// review clone

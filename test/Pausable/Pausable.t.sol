@@ -52,12 +52,3 @@ contract PausableTest {
         p.pause();
     }
 }
-
-// test unpause restriction
-
-
-// quick review
-
-// test unpause
-
-// test unpause more

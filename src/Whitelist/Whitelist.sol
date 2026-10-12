@@ -95,13 +95,3 @@ contract WhitelistSale {
         closed = true;
     }
 }
-
-// merkle pagination
-
-
-
-// reviewed whitelist
-
-// merkle pagination
-
-// review pagination

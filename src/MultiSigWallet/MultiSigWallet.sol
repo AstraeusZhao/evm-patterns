@@ -218,14 +218,3 @@ contract MultiSigWallet {
         }
     }
 }
-
-// add admin role
-
-
-
-
-// reviewed multisig
-
-// admin role
-
-// review admin

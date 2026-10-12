@@ -61,5 +61,3 @@ contract PullPaymentTest {
 
 
 
-
-// test pull

@@ -37,11 +37,3 @@ contract Ownable {
         owner = address(0);
     }
 }
-
-// reviewed: two-step transfer looks good
-
-// reviewed, looks good
-
-// two-step transfer
-
-// review two-step

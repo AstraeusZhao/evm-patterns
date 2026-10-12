@@ -53,5 +53,3 @@ contract FactoryCloneTest {
         require(cloneA != cloneB, "clones share address");
     }
 }
-
-// test factory

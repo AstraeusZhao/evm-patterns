@@ -66,11 +66,3 @@ contract DutchAuction {
         if (!ok) revert TransferFailed();
     }
 }
-
-// floor price
-
-
-
-// floor price
-
-// review floor

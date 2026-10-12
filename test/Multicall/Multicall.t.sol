@@ -51,12 +51,3 @@ contract MulticallTest {
         require(c.count() == 5, "state must roll back on failure");
     }
 }
-
-// test aggregate3
-
-
-
-
-// test aggregate3
-
-// test aggregate3

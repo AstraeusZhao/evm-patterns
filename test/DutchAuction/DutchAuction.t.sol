@@ -60,11 +60,3 @@ contract DutchAuctionTest {
         require(SELLER.balance == 5.5 ether, "seller not paid");
     }
 }
-
-// test floor
-
-
-
-// test floor
-
-// test floor

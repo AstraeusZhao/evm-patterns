@@ -135,5 +135,3 @@ contract EscrowVaultTest {
     }
 }
 
-
-// test escrow

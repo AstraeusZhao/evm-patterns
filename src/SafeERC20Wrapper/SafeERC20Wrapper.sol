@@ -58,5 +58,3 @@ contract TokenSweeper {
     }
 }
 
-
-// review wrapper

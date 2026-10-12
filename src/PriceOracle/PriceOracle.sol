@@ -41,12 +41,3 @@ contract PriceOracle {
         return (f.price, f.updatedAt);
     }
 }
-
-// twap fallback
-
-
-// reviewed
-
-// twap fallback
-
-// review twap

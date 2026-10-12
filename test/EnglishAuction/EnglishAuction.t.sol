@@ -122,10 +122,3 @@ contract ReentrantBidder {
         a.bid{value: msg.value}();
     }
 }
-
-// test reserve
-
-
-// test reserve
-
-// test reserve

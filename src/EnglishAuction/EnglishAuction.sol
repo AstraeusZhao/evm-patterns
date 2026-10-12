@@ -67,10 +67,3 @@ contract EnglishAuction {
         if (!ok) revert TransferFailed();
     }
 }
-
-// reserve price
-
-
-// reserve price
-
-// review reserve

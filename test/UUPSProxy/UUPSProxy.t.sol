@@ -73,5 +73,3 @@ contract UUPSProxyTest {
     }
 }
 
-
-// test uups

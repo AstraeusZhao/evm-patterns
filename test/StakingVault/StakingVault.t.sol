@@ -82,9 +82,3 @@ contract StakingVaultTest {
         require(ALICE.balance - before == (100 + 200) * 1 ether, "historical reward mis-accrued");
     }
 }
-
-// test boundary
-
-// test boundary
-
-// test reward more

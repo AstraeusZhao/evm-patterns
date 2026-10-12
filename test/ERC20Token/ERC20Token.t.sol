@@ -73,11 +73,4 @@ contract ERC20TokenTest {
     }
 }
 
-// test permit and eip-712
-
-
-// tests look good
-
-// test permit
-
-// test permit more
+// tests look good

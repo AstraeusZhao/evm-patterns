@@ -1,4 +1,4 @@
-﻿# EVM Patterns
+# EVM Patterns
 
 EVM Patterns is a focused showcase for Solidity language features and security
 patterns on the EVM. Each example is small, isolated, documented, and backed by
@@ -103,9 +103,5 @@ AGPL-3.0. See [LICENSE](LICENSE).
 - Active maintenance since 2025
 
 
-## Updated 2026
-- All 23 patterns covered
-- Active maintenance since 2025
-- Regular reviews and improvements
 
 // update final

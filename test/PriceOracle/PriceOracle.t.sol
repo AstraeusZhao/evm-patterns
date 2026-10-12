@@ -53,5 +53,3 @@ contract PriceOracleTest {
     }
 }
 
-
-// test twap

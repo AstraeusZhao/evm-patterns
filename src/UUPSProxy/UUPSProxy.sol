@@ -54,9 +54,3 @@ contract UUPSProxy {
         }
     }
 }
-
-// storage slot gap
-
-// storage slot gap
-
-// review storage gap

@@ -190,5 +190,3 @@ contract TimelockControllerTest {
 }
 
 
-
-// test batch

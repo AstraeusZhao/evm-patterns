@@ -17,14 +17,3 @@ contract ReentrancyGuard {
         _lock = 1;
     }
 }
-
-// add transient storage guard
-
-
-// reviewed, good
-
-// transient storage
-
-// review transient
-
-// review again

@@ -44,11 +44,4 @@ contract Pausable {
     }
 }
 
-// reviewed: only owner can unpause
-
-
-// reviewed, good
-
-// only owner can unpause
-
-// review unpause
+// only owner can unpause

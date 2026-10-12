@@ -91,14 +91,3 @@ contract ERC20Token {
         emit Transfer(from, address(0), amount);
     }
 }
-
-// add permit function
-
-
-// reviewed, solid
-
-// permit function
-
-// review permit
-
-// review again

@@ -1,4 +1,4 @@
-﻿# Proof-of-Concept (PoC) Write-ups
+# Proof-of-Concept (PoC) Write-ups
 
 Placeholder for vulnerability reproduction and exploit walk-through documents.
 
@@ -12,10 +12,4 @@ Expected content per PoC:
 
 Naming: `poc-<contract>-<issue>.md`, for example `poc-pull-payment-vault-reentrancy.md`.
 
-## Oracle staleness attack
-- if oracle doesn't update, stale price can be exploited
-- mitigation: staleness check + twap fallback
 
-## Oracle staleness attack
-- if oracle doesn't update, stale price can be exploited
-- mitigation: staleness check + twap fallback

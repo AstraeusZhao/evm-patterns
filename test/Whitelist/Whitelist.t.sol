@@ -101,5 +101,3 @@ contract WhitelistTest {
 }
 
 
-
-// test pagination

@@ -223,13 +223,3 @@ contract TimelockController {
         emit RoleRevoked(role, account);
     }
 }
-
-// batch operations
-
-
-
-// reviewed
-
-// batch operations
-
-// review batch
