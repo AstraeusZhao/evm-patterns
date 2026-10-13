@@ -17,6 +17,8 @@ forge fmt --check
 
 ## Browse
 
+- [Web contract browser](web/README.md): a local React interface for browsing
+  Solidity source files, themes, and design notes.
 - [Contract index](docs/CONTRACT_INDEX.md): source files, available tests, and
   design notes for each example.
 - [Design notes](docs/design/): behavior, assumptions, and limitations for
@@ -37,6 +39,7 @@ forge fmt --check
 | `docs/poc/` | Standalone vulnerability reproductions; see its index for current status. |
 | `docs/reports/` | Test and coverage reports. |
 | `script/` | Local deployment and demonstration scripts. |
+| `web/` | PNPM/Vite frontend for browsing local contract sources and notes. |
 
 ## Scope
 
