@@ -1,6 +1,9 @@
 # Proof-of-Concept (PoC) Write-ups
 
-Placeholder for vulnerability reproduction and exploit walk-through documents.
+No standalone PoC write-ups are currently tracked in this directory. Some
+contracts under [src/](../../src/) are intentionally vulnerable demonstrations;
+their scope and warnings are described in the
+[contract index](../CONTRACT_INDEX.md).
 
 Expected content per PoC:
 
@@ -10,6 +13,5 @@ Expected content per PoC:
   `test/<contract>/` that mirrors the write-up).
 - Root cause, impact, and suggested fix.
 
-Naming: `poc-<contract>-<issue>.md`, for example `poc-pull-payment-vault-reentrancy.md`.
-
-
+Naming: `poc-<contract>-<issue>.md`, for example
+`poc-pull-payment-vault-reentrancy.md`.

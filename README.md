@@ -1,45 +1,13 @@
 # EVM Patterns
 
-EVM Patterns is a focused showcase for Solidity language features and security
-patterns on the EVM. Each example is small, isolated, documented, and backed by
-tests, so the repository stays useful for review and learning rather than
-becoming a collection of opaque production code.
+EVM Patterns is a learning and review repository for Solidity contracts on the
+EVM. It contains small implementations of common patterns alongside examples
+of mistakes and attack surfaces. The examples are not a production framework.
 
-## Direction
+## Start
 
-The first milestone is a security-oriented pattern library covering:
-
-- explicit access control and least-privilege roles;
-- checks-effects-interactions and reentrancy-resistant value flows;
-- pull payments, pausing, and emergency recovery paths;
-- custom errors, events, invariants, and gas-aware data structures;
-- adversarial tests for authorization, accounting, and failure behavior.
-
-The project is a technical demonstration. It is not an audited protocol and must
-not be used to custody real funds without an independent review and deployment
-process.
-
-## Layout
-
-```text
-docs/                  Written records
-  design/              Design notes, threat models, trust assumptions
-  poc/                 Proof-of-concept / vulnerability reproduction write-ups
-  reports/             Test reports, findings, and status write-ups
-src/                   One directory per independent contract family
-  <contract>/          Interfaces, implementations, and libraries of one pattern
-test/                  Mirrors src/ one-to-one
-  <contract>/          Unit, invariant, fuzz, and adversarial tests
-script/                Reproducible local deployment and demonstration scripts
-```
-
-`src/` and `test/` are organized one folder per contract family, so adding a new
-pattern means adding one directory on each side plus a design note.
-
-## Tooling
-
-This repository uses [Foundry](https://book.getfoundry.sh/) for compilation,
-testing, formatting, and local execution.
+Install [Foundry](https://book.getfoundry.sh/) and run these commands from the
+repository root:
 
 ```bash
 forge build
@@ -47,61 +15,48 @@ forge test
 forge fmt --check
 ```
 
-Before a pattern is marked complete, document its assumptions, trust boundaries,
-known limitations, and test coverage under `docs/`.
+## Browse
 
-## Status
+- [Contract index](docs/CONTRACT_INDEX.md): source files, available tests, and
+  design notes for each example.
+- [Design notes](docs/design/): behavior, assumptions, and limitations for
+  selected patterns.
+- [Coverage baseline](docs/reports/AUDIT_COVERAGE.md): measured per-file
+  coverage and its limits.
+- [Audit remediation notes](docs/AUDIT_REMEDIATION.md): findings and changes
+  from the recent review pass.
+- [Security policy](SECURITY.md) and [changelog](CHANGELOG.md).
 
-The repository currently holds 23 contract families, each with its own `src/`
-directory, a mirroring `test/` suite, and a design note under `docs/design/`.
+## Repository map
 
-### Core contracts
-
-| Contract | What it demonstrates |
+| Path | Contents |
 | --- | --- |
-| `MultiSigWallet` | multi-sig confirmations, threshold management, CEI execution |
-| `TimelockController` | role-based governance timelock, operation state machine, predecessors |
-| `EscrowVault` | three-party escrow, state transitions, dispute resolution |
-| `PullPaymentVault` | pull payments, pausing, CEI ordering, reentrancy protection |
+| `src/` | Solidity examples, one directory per pattern or contract family. |
+| `test/` | Focused Foundry suites and cross-cutting regression tests. Coverage varies by example. |
+| `docs/design/` | Design and trust-boundary notes for selected examples. |
+| `docs/poc/` | Standalone vulnerability reproductions; see its index for current status. |
+| `docs/reports/` | Test and coverage reports. |
+| `script/` | Local deployment and demonstration scripts. |
 
-### Pattern library
+## Scope
 
-| Contract | What it demonstrates |
-| --- | --- |
-| `Ownable` | ownership transfer and two-step renounce patterns |
-| `Pausable` | emergency pause/unpause with owner-only control |
-| `ReentrancyGuard` | reentrancy lock plus a malicious re-entry attack demo |
-| `ERC20Token` | ERC-20 mint/burn/allowance semantics |
-| `ERC721NFT` | ERC-721 approvals and transfers |
-| `PullPayment` | async payment ledger decoupled from transfer |
-| `SignatureReplay` | EIP-712 typed signatures, nonce replay and malleability protection |
-| `SafeERC20Wrapper` | safe-transfer wrappers for silent/odd tokens |
-| `Whitelist` | allowlist gating and a gated sale with owner withdrawals |
-| `StorageCollision` | proxy storage-slot collision (slot 0) demo |
-| `MerkleAirdrop` | gas-efficient Merkle-proof claims, double-claim protection |
-| `StakingVault` | rate-change-safe reward accounting, CEI payouts |
-| `Multicall` | batched delegatecalls with atomic rollback |
-| `FactoryClone` | EIP-1167 minimal proxies deployed via CREATE2 |
-| `UUPSProxy` | EIP-1967 proxy with owner-only upgrades |
-| `PriceOracle` | admin-posted feeds with staleness protection |
-| `EnglishAuction` | CEI-ordered ascending bids, reentrancy-safe refunds |
-| `DutchAuction` | descending price, first-accept wins |
-| `BondingCurve` | quadratic price curve, integer square root |
+Some contracts intentionally demonstrate unsafe techniques, including weak
+randomness, `tx.origin` authorization, and unchecked low-level calls. Their
+warnings are part of the example. None of the contracts has been independently
+audited as a production system. Do not deploy an example to custody real assets
+without a separate design review, audit, and deployment process.
 
-`forge test` runs 117 tests across 23 suites; `forge build` and
-`forge fmt --check` are part of the CI pipeline. The source tree compiles with
-zero lint warnings (see `foundry.toml` for the lint profile with per-rule
-rationale); remaining lint findings live in `test/` as intentional attack
-demonstrations.
+Test coverage is uneven: some examples have dedicated suites, some are touched
+by `test/AuditRegression.t.sol`, and some have no behavioral tests yet. A
+passing test suite is not a security certification. The [contract index](docs/CONTRACT_INDEX.md)
+and [coverage report](docs/reports/AUDIT_COVERAGE.md) show the current evidence.
+
+## Adding an example
+
+Add or update the source, focused tests, and a design note describing behavior,
+trust assumptions, and limitations. Then update the [contract index](docs/CONTRACT_INDEX.md)
+and [changelog](CHANGELOG.md).
 
 ## License
 
 AGPL-3.0. See [LICENSE](LICENSE).
-
-## Updated
-- Current behavioral test suite: 132 passing tests; measured per-file coverage and limitations are in `docs/reports/AUDIT_COVERAGE.md`. Coverage is partial, including examples with zero measured execution.
-- Active maintenance since 2025
-
-
-
-// update final

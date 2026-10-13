@@ -1,16 +1,16 @@
-# Reports & Status Write-ups
+# Reports
 
-Placeholder for test reports, audit-style findings, and status write-ups.
+## Available Reports
 
-Expected content per report:
+- [Audit coverage baseline](AUDIT_COVERAGE.md): per-file line, statement,
+  branch, and function coverage, plus known measurement limitations.
 
-- Scope: contracts covered and commit/tag.
-- Method: test suites run, tooling, coverage, manual review checklist.
-- Findings: severity, location, status (open / fixed / accepted).
-- Conclusions and follow-ups.
+Repository-wide findings and remediation details are in
+[docs/AUDIT_REMEDIATION.md](../AUDIT_REMEDIATION.md).
 
-Naming: `report-<topic>-<date>.md`, for example `report-pull-payment-vault-2026-09.md`.
+## Adding a Report
 
-- reentrancy: planning transient storage version
-
-- reentrancy: transient storage version
+Record the source revision, scope, commands and tool versions, results, and
+known gaps. Give dated reports a name such as
+`report-<topic>-YYYY-MM.md`. A report should distinguish automated test results
+from manual review and must not describe coverage as an audit certification.

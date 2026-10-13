@@ -1,6 +1,6 @@
 # Audit coverage baseline
 
-Command: `forge coverage --report summary`, Foundry v1.8.1, solc 0.8.24. The current suite passes 132 tests; a directory name does not establish complete behavioral coverage. The following measured percentages include coverage limitations in assembly and compiler mapping; Foundry reported some source anchors it could not map. A passing suite is not a security audit certification.
+Source baseline: `c4ebe5c` (2026-10-12). Command: `forge coverage --report summary`, Foundry v1.8.1, solc 0.8.24. The suite at that baseline passed 132 tests; a directory name does not establish complete behavioral coverage. The following measured percentages include coverage limitations in assembly and compiler mapping; Foundry reported some source anchors it could not map. A passing suite is not a security audit certification. This report does not measure the later workflow-only change at `ee98f15`.
 
 | File | Lines | Statements | Branches | Functions |
 |---|---|---|---|---|

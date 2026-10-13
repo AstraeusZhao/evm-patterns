@@ -36,11 +36,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Adversarial tests for reentrant bidding, malleable signatures, last-owner
-  removal, rate-change accounting, and sale proceeds withdrawal: 117 tests
-  across 23 suites.
+  removal, rate-change accounting, and sale proceeds withdrawal. The measured
+  baseline at `c4ebe5c` has 132 passing tests; see
+  `docs/reports/AUDIT_COVERAGE.md` for per-file coverage and its limits.
 - `foundry.toml` lint profile documents intentional exclusions (auction
   timestamps, governance transfers, multicall batching, anti-pattern demos)
   with per-rule rationale.
+- Contract catalog and design notes for the AMM simulation and flash-loan
+  receiver, including their test references and trust boundaries.
 
 ### Changed
 
@@ -56,7 +59,9 @@ Licensed under the GNU Affero General Public License v3.0. See
 
 
 ## 2025 Year End
-- All 23 contracts implemented
-- Full test coverage
-- Design docs for all patterns
+
+This is a historical heading, not a current completeness claim. Use the
+[contract index](docs/CONTRACT_INDEX.md) and
+[coverage baseline](docs/reports/AUDIT_COVERAGE.md) for the current inventory
+and measured test results.
 
