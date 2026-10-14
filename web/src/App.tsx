@@ -8,6 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import { fileLanguage } from './components/codeLanguages'
 import ReactMarkdown from 'react-markdown'
 import {
   ArrowLeft,
@@ -29,12 +30,16 @@ import {
 } from 'lucide-react'
 import {
   fetchCatalog,
+  localisedSummary,
   groups,
   type ContractExample,
   type ContractGroup,
   type CatalogResponse,
+  type Framework,
+  type ProjectNode,
 } from './data/contracts'
 import {
+  groupLabel,
   initialLocale,
   languages,
   localiseTag,
@@ -218,8 +223,8 @@ function App() {
           [
             contract.family,
             contract.name,
-            contract.summary,
-            t[contract.group],
+            localisedSummary(contract, locale),
+            groupLabel(contract.group, locale),
             ...contract.tags.map((tag) => localiseTag(tag, t)),
           ]
             .join(' ')
@@ -356,7 +361,7 @@ function App() {
                 onClick={() => setCategory(item.id)}
                 className={`category-link flex shrink-0 items-center justify-between gap-4 whitespace-nowrap rounded-md px-2.5 py-2 text-left text-[13px] md:w-full ${category === item.id ? 'bg-green-soft font-semibold text-green' : 'text-muted hover:bg-mist hover:text-ink'}`}
               >
-                <span>{item.id === 'all' ? t.all : t[item.id]}</span>
+                <span>{groupLabel(item.id, locale)}</span>
                 <span className="tabular-nums opacity-70">
                   {counts.get(item.id) ?? 0}
                 </span>
@@ -437,10 +442,10 @@ function ContractCard({
         </span>
       </div>
       <p className="mt-3 line-clamp-2 min-h-10 text-[12px] leading-[1.55] text-muted">
-        {contract.summary}
+        {localisedSummary(contract, locale)}
       </p>
       <div className="mt-3 flex flex-wrap gap-1.5">
-        <span className="tag tag-category">{t[contract.group]}</span>
+        <span className="tag tag-category">{groupLabel(contract.group, locale)}</span>
         {contract.tags.slice(1, 3).map((tag) => (
           <span className="tag" key={tag}>
             {localiseTag(tag, t)}
@@ -452,81 +457,97 @@ function ContractCard({
 }
 
 function ContractExplorer({
-  contract,
-  selectedPath,
-  onSelect,
-  locale,
+  contract, nodes, loading, error, selectedPath, onSelect, locale,
+  framework, onFrameworkChange,
 }: {
   contract: ContractExample
+  nodes: ProjectNode[]
+  loading: boolean
+  error: boolean
   selectedPath: string
   onSelect: (path: string) => void
   locale: Locale
+  framework: Framework
+  onFrameworkChange: (framework: Framework) => void
 }) {
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set())
-  const files = [contract.path, ...contract.dedicatedTests]
-  const folders = [...new Set(files.map((path) => path.split('/')[0]))]
+  const emptyLabels = {
+    'en-GB': 'No files available', 'zh-CN': '暂无文件', 'zh-TW': '暫無檔案',
+    de: 'Keine Dateien vorhanden', nl: 'Geen bestanden beschikbaar',
+  }
+  const frameworkLabels = {
+    'en-GB': 'Development framework', 'zh-CN': '开发框架', 'zh-TW': '開發框架',
+    de: 'Entwicklungsframework', nl: 'Ontwikkelframework',
+  }
+  function toggleDirectory(path: string) {
+    setCollapsed((previous) => {
+      const next = new Set(previous)
+      if (next.has(path)) next.delete(path)
+      else next.add(path)
+      return next
+    })
+  }
+  function renderNode(node: ProjectNode, depth: number): ReactNode {
+    if (node.kind === 'file') {
+      return (
+        <li key={node.path}>
+          <button
+            type="button"
+            className={`explorer-row explorer-file ${node.path === selectedPath ? 'is-active' : ''}`}
+            style={{ paddingLeft: 20 + depth * 14 }}
+            aria-current={node.path === selectedPath ? 'page' : undefined}
+            onClick={() => onSelect(node.path)}
+            title={node.path}
+          >
+            <FileCode2 size={14} className="shrink-0" />
+            <span>{node.name}</span>
+          </button>
+        </li>
+      )
+    }
+    const open = !collapsed.has(node.path)
+    return (
+      <li key={node.path}>
+        <button
+          type="button"
+          className="explorer-row"
+          style={{ paddingLeft: 10 + depth * 14 }}
+          aria-expanded={open}
+          onClick={() => toggleDirectory(node.path)}
+        >
+          {open ? <ChevronDown size={13} className="shrink-0" /> : <ChevronRight size={13} className="shrink-0" />}
+          {open ? <FolderOpen size={14} className="shrink-0" /> : <Folder size={14} className="shrink-0" />}
+          <span>{node.name}</span>
+        </button>
+        {open && (
+          <ul>
+            {node.children.length ? node.children.map((child) => renderNode(child, depth + 1)) : (
+              <li className="empty-folder" style={{ paddingLeft: 25 + depth * 14 }}>{emptyLabels[locale]}</li>
+            )}
+          </ul>
+        )}
+      </li>
+    )
+  }
   return (
     <aside className="project-explorer">
-      <div className="project-root">
-        <FolderOpen size={15} />
-        <span>{contract.family}</span>
-      </div>
+      <div className="project-root"><FolderOpen size={15} /><span>{contract.family}</span></div>
+      <label className="framework-control">
+        <span>{frameworkLabels[locale]}</span>
+        <select
+          aria-label={frameworkLabels[locale]}
+          value={framework}
+          onChange={(event) => onFrameworkChange(event.target.value as Framework)}
+        >
+          {(['foundry', 'hardhat', 'truffle', 'ape'] as const).map((id) => (
+            <option key={id} value={id}>{id[0].toUpperCase() + id.slice(1)}</option>
+          ))}
+        </select>
+      </label>
       <nav aria-label={translations[locale].files}>
-        <ul>
-          {folders.map((folder) => {
-            const open = !collapsed.has(folder)
-            return (
-              <li key={folder}>
-                <button
-                  className="explorer-row"
-                  type="button"
-                  aria-expanded={open}
-                  onClick={() =>
-                    setCollapsed((previous) => {
-                      const next = new Set(previous)
-                      if (next.has(folder)) next.delete(folder)
-                      else next.add(folder)
-                      return next
-                    })
-                  }
-                >
-                  {open ? (
-                    <ChevronDown size={13} />
-                  ) : (
-                    <ChevronRight size={13} />
-                  )}
-                  {open ? <FolderOpen size={14} /> : <Folder size={14} />}
-                  <span>{folder}</span>
-                </button>
-                {open && (
-                  <ul>
-                    {files
-                      .filter((path) => path.startsWith(`${folder}/`))
-                      .map((path) => (
-                        <li key={path}>
-                          <button
-                            type="button"
-                            className={`explorer-row explorer-file ${path === selectedPath ? 'is-active' : ''}`}
-                            aria-current={
-                              path === selectedPath ? 'page' : undefined
-                            }
-                            onClick={() => onSelect(path)}
-                            title={path}
-                          >
-                            <FileCode2 size={14} />
-                            <span>
-                              {path.split('/').slice(2).join('/') ||
-                                path.split('/').at(-1)}
-                            </span>
-                          </button>
-                        </li>
-                      ))}
-                  </ul>
-                )}
-              </li>
-            )
-          })}
-        </ul>
+        {loading ? <p className="px-4 py-3 text-xs">{translations[locale].codeLoading}</p>
+          : error ? <p className="px-4 py-3 text-xs text-coral">{translations[locale].codeError}</p>
+          : <ul>{nodes.map((node) => renderNode(node, 0))}</ul>}
       </nav>
     </aside>
   )
@@ -549,13 +570,36 @@ function DetailView({
 }) {
   const t = translations[locale]
   const [selectedPath, setSelectedPath] = useState(contract.path)
+  const [framework, setFramework] = useState<Framework>(() => {
+    try {
+      const value = localStorage.getItem(`evm-framework-${contract.id}`)
+      if (['foundry', 'hardhat', 'truffle', 'ape'].includes(value ?? '')) return value as Framework
+    } catch { /* Optional preference. */ }
+    return 'foundry'
+  })
+  const [treeResult, setTreeResult] = useState<{ framework: Framework; nodes: ProjectNode[] } | null>(null)
+  const [treeFailure, setTreeFailure] = useState<Framework | null>(null)
+  const treeLoading = treeResult?.framework !== framework && treeFailure !== framework
+  useEffect(() => {
+    let current = true
+    contract.loadTree(framework)
+      .then((nodes) => { if (current) setTreeResult({ framework, nodes }) })
+      .catch(() => { if (current) setTreeFailure(framework) })
+    return () => { current = false }
+  }, [contract, framework])
+  function changeFramework(next: Framework) {
+    setFramework(next)
+    setSelectedPath(contract.path)
+    try { localStorage.setItem(`evm-framework-${contract.id}`, next) } catch { /* Optional preference. */ }
+  }
   const [fileResult, setFileResult] = useState<{
     path: string
     content: string
   } | null>(null)
   const [failedPath, setFailedPath] = useState<string | null>(null)
-  const [designResult, setDesignResult] = useState<string | null>(null)
-  const [designError, setDesignError] = useState(false)
+  const [designResult, setDesignResult] = useState<{ locale: Locale; content: string } | null>(null)
+  const [designFailure, setDesignFailure] = useState<Locale | null>(null)
+  const designError = designFailure === locale && designResult?.locale !== locale
   const [copiedPath, setCopiedPath] = useState<string | null>(null)
   const editorRef = useRef<HTMLDivElement>(null)
   const content = fileResult?.path === selectedPath ? fileResult.content : ''
@@ -567,7 +611,7 @@ function DetailView({
     if (!editor) return
     const scrollEditor = (event: WheelEvent) => {
       if (event.ctrlKey || !event.deltaY) return
-      const code = editor.querySelector<HTMLElement>('.code-scroll')
+      const code = editor.classList.contains('document-panel') ? editor : editor.querySelector<HTMLElement>('.code-scroll')
       const delta =
         event.deltaY *
         (event.deltaMode === 1
@@ -597,7 +641,7 @@ function DetailView({
   useEffect(() => {
     let current = true
     contract
-      .loadFile(selectedPath)
+      .loadFile(selectedPath, framework)
       .then((text) => {
         if (current) setFileResult({ path: selectedPath, content: text })
       })
@@ -607,21 +651,21 @@ function DetailView({
     return () => {
       current = false
     }
-  }, [contract, selectedPath])
+  }, [contract, selectedPath, framework])
   useEffect(() => {
     let current = true
     contract
-      .loadDesignNote?.()
+      .loadDesignNote?.(locale)
       .then((text) => {
-        if (current) setDesignResult(text)
+        if (current) setDesignResult({ locale, content: text })
       })
       .catch(() => {
-        if (current) setDesignError(true)
+        if (current) setDesignFailure(locale)
       })
     return () => {
       current = false
     }
-  }, [contract])
+  }, [contract, locale])
   async function copyFile() {
     if (!content) return
     try {
@@ -671,7 +715,7 @@ function DetailView({
         </div>
       </header>
       <main
-        className={`project-main ${activeTab === 'source' ? 'source-view' : ''}`}
+        className="project-main source-view"
       >
         <div className="project-heading">
           <div className="eyebrow mb-2">SOLIDITY / CONTRACT</div>
@@ -679,7 +723,7 @@ function DetailView({
             {contract.family}
           </h1>
           <p className="mt-2 max-w-[1000px] text-[13px] leading-[1.65] text-muted">
-            {contract.summary}
+            {localisedSummary(contract, locale)}
           </p>
         </div>
         <div className="workspace-tools">
@@ -726,6 +770,11 @@ function DetailView({
               selectedPath={selectedPath}
               onSelect={setSelectedPath}
               locale={locale}
+              framework={framework}
+              onFrameworkChange={changeFramework}
+              nodes={treeResult?.framework === framework ? treeResult.nodes : []}
+              loading={treeLoading}
+              error={treeFailure === framework && treeResult?.framework !== framework}
             />
             <section className="code-panel min-w-0 flex-1">
               <div className="file-toolbar">
@@ -766,7 +815,7 @@ function DetailView({
                     <SolidityCode
                       source={content}
                       language={
-                        selectedPath.endsWith('.ts') ? 'typescript' : 'solidity'
+                        fileLanguage(selectedPath)
                       }
                     />
                   </Suspense>
@@ -776,10 +825,10 @@ function DetailView({
           </div>
         )}
         {activeTab === 'design' && (
-          <div className="design-panel min-h-[420px] rounded-md border border-line bg-paper px-5 py-5 md:px-8 md:py-7">
+          <div ref={editorRef} className="design-panel document-panel rounded-md border border-line bg-paper px-5 py-5 md:px-8 md:py-7">
             {designError ? (
               <p className="text-sm text-coral">{t.designError}</p>
-            ) : designResult !== null ? (
+            ) : designResult?.locale === locale ? (
               <article className="markdown-body">
                 <ReactMarkdown
                   components={{
@@ -794,7 +843,7 @@ function DetailView({
                     ),
                   }}
                 >
-                  {designResult}
+                  {designResult.content}
                 </ReactMarkdown>
               </article>
             ) : (
@@ -805,10 +854,10 @@ function DetailView({
           </div>
         )}
         {activeTab === 'overview' && (
-          <div className="overview-panel min-h-[420px] rounded-md border border-line bg-paper p-5 md:p-7">
+          <div ref={editorRef} className="overview-panel document-panel rounded-md border border-line bg-paper p-5 md:p-7">
             <h2 className="text-[15px] font-semibold">{contract.family}</h2>
             <p className="mt-2 text-[13px] leading-6 text-muted">
-              {contract.summary}
+              {localisedSummary(contract, locale)}
             </p>
             <dl className="mt-5 grid gap-5 border-t border-line py-5 sm:grid-cols-2">
               <div>

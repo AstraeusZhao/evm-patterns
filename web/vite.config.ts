@@ -7,6 +7,15 @@ const repositoryRoot = fileURLToPath(new URL('..', import.meta.url))
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  optimizeDeps: {
+    include: [
+      'react-syntax-highlighter/dist/esm/prism-light',
+      'react-syntax-highlighter/dist/esm/styles/prism/one-dark',
+      ...['solidity', 'typescript', 'javascript', 'python', 'json', 'toml', 'bash', 'markdown'].map(
+        (language) => `react-syntax-highlighter/dist/esm/languages/prism/${language}`,
+      ),
+    ],
+  },
   server: {
     host: '127.0.0.1',
     fs: { allow: [repositoryRoot] },

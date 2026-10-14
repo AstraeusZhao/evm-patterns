@@ -39,6 +39,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Recursive project trees with `src`, `test` and `script` roots, tracked empty
+  directories and explicit Foundry, Hardhat, Truffle or Ape test filtering.
+- Fourteen browser categories, additional syntax languages, and translated
+  summaries and design-note bodies for all five interface languages. Design
+  and introduction panels now match the editor dimensions and scroll internally.
+
 - Rust API for discovering contracts, design notes and project-specific test
   files, with a file endpoint restricted to the selected project.
 - Project source and test explorer, file copying, and persistent interface

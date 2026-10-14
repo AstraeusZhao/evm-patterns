@@ -1,0 +1,248 @@
+{
+  "AMM": {
+    "zh-CN": "恒定乘积自动做市商的最小示例（x × y = k）。",
+    "de": "Konstantes Produkt als minimales AMM-Beispiel (x × y = k).",
+    "nl": "Minimaal AMM-voorbeeld met constant product (x × y = k).",
+    "zh-TW": "恆定乘積自動做市商的最小示例（x × y = k）。"
+  },
+  "BatchMint": {
+    "zh-CN": "在单笔交易中向多个接收者铸造代币，比逐次铸造节省 gas。",
+    "de": "Prägt Token für mehrere Empfänger in einer Transaktion und spart Gas gegenüber einzelnen Prägungen.",
+    "nl": "Mint tokens voor meerdere ontvangers in één transactie en bespaart gas ten opzichte van afzonderlijke minttransacties.",
+    "zh-TW": "在單筆交易中向多個接收者鑄造代幣，比逐次鑄造節省 gas。"
+  },
+  "BlockTimestamp": {
+    "zh-CN": "演示区块时间戳依赖：出块者可微调 block.timestamp，影响执行结果。",
+    "de": "Zeigt die Abhängigkeit vom Blockzeitstempel: Blockproduzenten können block.timestamp geringfügig beeinflussen.",
+    "nl": "Toont afhankelijkheid van de bloktijdstempel: blokproducenten kunnen block.timestamp beperkt beïnvloeden.",
+    "zh-TW": "演示區塊時間戳依賴：出塊者可微調 block.timestamp，影響執行結果。"
+  },
+  "BondingCurve": {
+    "zh-CN": "代币价格随供应量线性上升：price = supply，reserve = supply² / 2。",
+    "de": "Der Tokenpreis steigt linear mit dem Angebot: price = supply, reserve = supply² / 2.",
+    "nl": "De tokenprijs stijgt lineair met het aanbod: price = supply, reserve = supply² / 2.",
+    "zh-TW": "代幣價格隨供應量線性上升：price = supply，reserve = supply² / 2。"
+  },
+  "Counter": {
+    "zh-CN": "最小递增与递减计数器，用于检查智能合约工具和部署流程。",
+    "de": "Minimaler Zähler zum Erhöhen und Verringern eines Werts sowie zum Prüfen von Werkzeugen und Bereitstellung.",
+    "nl": "Minimale teller voor verhogen en verlagen, bedoeld om hulpmiddelen en implementatie te controleren.",
+    "zh-TW": "最小遞增與遞減計數器，用於檢查智能合約工具和部署流程。"
+  },
+  "Crowdfunding": {
+    "zh-CN": "支持者在截止前投入 ETH；达标后发起人领取，否则支持者可退款。",
+    "de": "Unterstützer zahlen vor einer Frist ETH ein; bei erreichtem Ziel erhält der Initiator die Mittel, andernfalls sind Rückzahlungen möglich.",
+    "nl": "Deelnemers storten ETH vóór een deadline; bij succes ontvangt de initiatiefnemer het geld, anders kunnen deelnemers terugbetaling aanvragen.",
+    "zh-TW": "支持者在截止前投入 ETH；達標後發起人領取，否則支持者可退款。"
+  },
+  "DutchAuction": {
+    "zh-CN": "价格随时间线性下降的荷兰式拍卖。",
+    "de": "Eine Auktion mit einem linear über die Zeit sinkenden Preis.",
+    "nl": "Een veiling waarvan de prijs lineair daalt in de tijd.",
+    "zh-TW": "價格隨時間線性下降的荷蘭式拍賣。"
+  },
+  "EIP712": {
+    "zh-CN": "EIP-712 类型化签名示例：用户在链下授权转账，任何人可提交上链。",
+    "de": "EIP-712-Beispiel: Nutzer genehmigen eine Übertragung durch eine Signatur außerhalb der Blockchain; jeder kann sie einreichen.",
+    "nl": "EIP-712-voorbeeld: gebruikers ondertekenen een overdracht buiten de blockchain; iedereen kan deze indienen.",
+    "zh-TW": "EIP-712 類型化簽名示例：用戶在鏈下授權轉賬，任何人可提交上鍊。"
+  },
+  "EnglishAuction": {
+    "zh-CN": "价格递增的英式拍卖，被超价的竞标者可领取退款。",
+    "de": "Auktion mit steigenden Geboten und Rückzahlungen für überbotene Teilnehmer.",
+    "nl": "Veiling met oplopende biedingen en terugbetalingen voor overboden deelnemers.",
+    "zh-TW": "價格遞增的英式拍賣，被超價的競標者可領取退款。"
+  },
+  "ERC1155": {
+    "zh-CN": "ERC1155 核心转账教学示例，未实现可选 URI 元数据。",
+    "de": "ERC1155-Lehrbeispiel für grundlegende Übertragungen; optionale URI-Metadaten fehlen.",
+    "nl": "ERC1155-leervoorbeeld voor basisoverdrachten; optionele URI-metadata ontbreken.",
+    "zh-TW": "ERC1155 核心轉賬教學示例，未實現可選 URI 元數據。"
+  },
+  "ERC20Permit": {
+    "zh-CN": "支持 EIP-2612 的 ERC20：使用链下签名授权，无需直接发送 approve 交易。",
+    "de": "ERC20 mit EIP-2612: Freigaben per Signatur statt einer direkten approve-Transaktion.",
+    "nl": "ERC20 met EIP-2612: toestemming via een handtekening in plaats van een directe approve-transactie.",
+    "zh-TW": "支持 EIP-2612 的 ERC20：使用鏈下簽名授權，無需直接發送 approve 交易。"
+  },
+  "ERC20Token": {
+    "zh-CN": "仅所有者可铸造的最小标准 ERC20 代币。",
+    "de": "Minimale standardkonforme ERC20-Implementierung; nur der Eigentümer darf prägen.",
+    "nl": "Minimale standaardconforme ERC20-implementatie; alleen de eigenaar kan minten.",
+    "zh-TW": "僅所有者可鑄造的最小標準 ERC20 代幣。"
+  },
+  "ERC721NFT": {
+    "zh-CN": "仅所有者可铸造的最小非同质化代币。",
+    "de": "Minimaler nicht fungibler Token; nur der Eigentümer darf prägen.",
+    "nl": "Minimale niet-fungibele token; alleen de eigenaar kan minten.",
+    "zh-TW": "僅所有者可鑄造的最小非同質化代幣。"
+  },
+  "EscrowVault": {
+    "zh-CN": "三方 ETH 托管：存款人入金，代理人放款或退款，交易双方均可发起争议冻结资金。",
+    "de": "ETH-Escrow mit drei Parteien: Einzahler finanziert, Agent gibt frei oder erstattet; beide Gegenparteien können Mittel durch einen Streit einfrieren.",
+    "nl": "ETH-escrow met drie partijen: de storter financiert, de agent geeft vrij of betaalt terug; beide tegenpartijen kunnen geld via een geschil blokkeren.",
+    "zh-TW": "三方 ETH 託管：存款人入金，代理人放款或退款，交易雙方均可發起爭議凍結資金。"
+  },
+  "FactoryClone": {
+    "zh-CN": "部署低成本 EIP-1167 最小代理克隆。",
+    "de": "Stellt kostengünstige minimale EIP-1167-Proxy-Klone bereit.",
+    "nl": "Implementeert goedkope minimale EIP-1167-proxyklonen.",
+    "zh-TW": "部署低成本 EIP-1167 最小代理克隆。"
+  },
+  "FlashLoanReceiver": {
+    "zh-CN": "ERC-3156 闪电贷接收器教学示例，仅允许所有者向指定贷款方发起借款。",
+    "de": "ERC-3156-Lehrbeispiel eines Empfängers: nur der Eigentümer kann Kredite bei einem festgelegten Kreditgeber anfordern.",
+    "nl": "ERC-3156-leervoorbeeld van een ontvanger: alleen de eigenaar kan lenen bij één ingestelde kredietgever.",
+    "zh-TW": "ERC-3156 閃電貸接收器教學示例，僅允許所有者向指定貸款方發起借款。"
+  },
+  "FrontRunning": {
+    "zh-CN": "按发送者隔离的提交与揭示示例，绑定发送者、链和域。",
+    "de": "Commit-Reveal-Lehrbeispiel mit Bindung an Absender, Blockchain und Domäne.",
+    "nl": "Commit-reveal-leervoorbeeld met binding aan afzender, blockchain en domein.",
+    "zh-TW": "按發送者隔離的提交與揭示示例，綁定發送者、鏈和域。"
+  },
+  "GovernanceToken": {
+    "zh-CN": "通过检查点记录投票权的 ERC20 风格代币，可把投票权委托给自己或代表。",
+    "de": "ERC20-ähnlicher Token mit protokollierten Stimmrechten; Stimmen lassen sich an sich selbst oder Vertreter delegieren.",
+    "nl": "ERC20-achtige token met vastgelegde stemrechten; stemmen kunnen aan jezelf of een vertegenwoordiger worden gedelegeerd.",
+    "zh-TW": "通過檢查點記錄投票權的 ERC20 風格代幣，可把投票權委託給自己或代表。"
+  },
+  "MerkleAirdrop": {
+    "zh-CN": "使用 Merkle 证明验证领取资格、节省 gas 的代币空投。",
+    "de": "Gaseffizienter Token-Airdrop mit Anspruchsprüfung durch Merkle-Beweise.",
+    "nl": "Gaszuinige token-airdrop met claimcontrole via Merkle-bewijzen.",
+    "zh-TW": "使用 Merkle 證明驗證領取資格、節省 gas 的代幣空投。"
+  },
+  "Multicall": {
+    "zh-CN": "在单笔交易中批量执行多次自身调用。",
+    "de": "Bündelt mehrere Aufrufe des eigenen Vertrags in einer Transaktion.",
+    "nl": "Bundelt meerdere aanroepen van hetzelfde contract in één transactie.",
+    "zh-TW": "在單筆交易中批量執行多次自身調用。"
+  },
+  "MultiSigWallet": {
+    "zh-CN": "达到所有者确认阈值后才执行交易的多签钱包。",
+    "de": "Wallet mit mehreren Signaturen, die Transaktionen erst nach genügend Eigentümerbestätigungen ausführt.",
+    "nl": "Multisignature-wallet die transacties pas uitvoert na voldoende bevestigingen van eigenaars.",
+    "zh-TW": "達到所有者確認閾值後才執行交易的多籤錢包。"
+  },
+  "NFTMarketplace": {
+    "zh-CN": "使用已授权 ERC721 交付的固定价格 NFT 市场教学示例。",
+    "de": "Lehrbeispiel eines NFT-Marktplatzes mit Festpreisen und genehmigter ERC721-Übertragung.",
+    "nl": "Leervoorbeeld van een NFT-marktplaats met vaste prijzen en goedgekeurde ERC721-overdracht.",
+    "zh-TW": "使用已授權 ERC721 交付的固定價格 NFT 市場教學示例。"
+  },
+  "Ownable": {
+    "zh-CN": "支持所有权转移与放弃的单一所有者权限控制。",
+    "de": "Zugriffskontrolle durch einen Eigentümer mit Übertragung und Verzicht auf Eigentum.",
+    "nl": "Toegangsbeheer door één eigenaar met overdracht en afstand van eigendom.",
+    "zh-TW": "支持所有權轉移與放棄的單一所有者權限控制。"
+  },
+  "Pausable": {
+    "zh-CN": "所有者控制的暂停开关，用于紧急停止操作。",
+    "de": "Vom Eigentümer gesteuerter Pausenschalter für Notfälle.",
+    "nl": "Door de eigenaar beheerde pauzeschakelaar voor noodgevallen.",
+    "zh-TW": "所有者控制的暫停開關，用於緊急停止操作。"
+  },
+  "PriceOracle": {
+    "zh-CN": "管理员发布价格，并拒绝过期价格的预言机。",
+    "de": "Vom Administrator veröffentlichte Preisdaten mit Schutz vor veralteten Werten.",
+    "nl": "Door de beheerder gepubliceerde prijsgegevens met bescherming tegen verouderde waarden.",
+    "zh-TW": "管理員發佈價格，並拒絕過期價格的預言機。"
+  },
+  "PullPayment": {
+    "zh-CN": "收到 ETH 后记录发送者的额度，由接收者稍后主动提取。",
+    "de": "Erfasst eingehendes ETH als Guthaben, das Empfänger später selbst abheben.",
+    "nl": "Registreert ontvangen ETH als tegoed dat ontvangers later zelf opnemen.",
+    "zh-TW": "收到 ETH 後記錄發送者的額度，由接收者稍後主動提取。"
+  },
+  "PullPaymentVault": {
+    "zh-CN": "通过记账与主动提取演示安全资金流转的小型 ETH 金库。",
+    "de": "Kleiner ETH-Tresor zur Demonstration sicherer Geldflüsse mit Guthaben und selbstständigen Abhebungen.",
+    "nl": "Kleine ETH-kluis die veilige geldstromen demonstreert via tegoeden en zelfstandige opnames.",
+    "zh-TW": "通過記賬與主動提取演示安全資金流轉的小型 ETH 金庫。"
+  },
+  "Randomness": {
+    "zh-CN": "演示基于 blockhash 的随机数风险：出块者可能影响区块哈希与结果。",
+    "de": "Zeigt Risiken von Zufallszahlen aus blockhash: Blockproduzenten können Hash und Ergebnis beeinflussen.",
+    "nl": "Toont risico’s van willekeur op basis van blockhash: blokproducenten kunnen hash en uitkomst beïnvloeden.",
+    "zh-TW": "演示基於 blockhash 的隨機數風險：出塊者可能影響區塊哈希與結果。"
+  },
+  "ReentrancyGuard": {
+    "zh-CN": "使用状态锁阻止重入调用。",
+    "de": "Verhindert Wiedereintritt durch eine Zustandssperre.",
+    "nl": "Voorkomt herintreding via een statusvergrendeling.",
+    "zh-TW": "使用狀態鎖阻止重入調用。"
+  },
+  "Royalty": {
+    "zh-CN": "EIP-2981 版税查询：市场可根据代币和成交价查询创作者版税。",
+    "de": "EIP-2981-Lizenzgebühren: Marktplätze fragen die Vergütung des Urhebers anhand von Token und Verkaufspreis ab.",
+    "nl": "EIP-2981-royalty’s: marktplaatsen vragen de vergoeding voor de maker op basis van token en verkoopprijs op.",
+    "zh-TW": "EIP-2981 版稅查詢：市場可根據代幣和成交價查詢創作者版稅。"
+  },
+  "SafeERC20Wrapper": {
+    "zh-CN": "最小 ERC20 接口与安全转账库，兼容不返回数据的代币。",
+    "de": "Minimale ERC20-Schnittstelle und sichere Übertragungsbibliothek für Token ohne Rückgabedaten.",
+    "nl": "Minimale ERC20-interface en veilige overdrachtsbibliotheek voor tokens zonder retourgegevens.",
+    "zh-TW": "最小 ERC20 接口與安全轉賬庫，兼容不返回數據的代幣。"
+  },
+  "SelfDestructDemo": {
+    "zh-CN": "演示 selfdestruct 与剩余 ETH 转移；是否删除代码取决于链的 EVM 规则。",
+    "de": "Demonstriert selfdestruct und die Übertragung verbleibenden ETH; die Codelöschung hängt von den EVM-Regeln ab.",
+    "nl": "Demonstreert selfdestruct en overdracht van resterende ETH; verwijdering van code hangt af van de EVM-regels.",
+    "zh-TW": "演示 selfdestruct 與剩餘 ETH 轉移；是否刪除代碼取決於鏈的 EVM 規則。"
+  },
+  "SignatureReplay": {
+    "zh-CN": "使用每账户 nonce 防止 EIP-712 签名领取被重放。",
+    "de": "Verhindert die Wiederverwendung von EIP-712-Ansprüchen durch Nonces pro Konto.",
+    "nl": "Voorkomt hergebruik van EIP-712-claims via een nonce per account.",
+    "zh-TW": "使用每賬戶 nonce 防止 EIP-712 簽名領取被重放。"
+  },
+  "StakingVault": {
+    "zh-CN": "使用延迟结算和已注资奖励的 ETH 质押金库教学示例。",
+    "de": "ETH-Staking-Lehrbeispiel mit verzögerter Abrechnung und vorfinanzierten Belohnungen.",
+    "nl": "ETH-staking-leervoorbeeld met uitgestelde afrekening en vooraf gefinancierde beloningen.",
+    "zh-TW": "使用延遲結算和已注資獎勵的 ETH 質押金庫教學示例。"
+  },
+  "StorageCollision": {
+    "zh-CN": "演示代理存储冲突：代理与实现同时使用槽 0 时，delegatecall 可覆盖实现地址。",
+    "de": "Zeigt Speicherkollisionen: verwenden Proxy und Implementierung denselben Slot 0, kann delegatecall die Implementierungsadresse überschreiben.",
+    "nl": "Toont opslagbotsingen: als proxy en implementatie dezelfde slot 0 gebruiken, kan delegatecall het implementatieadres overschrijven.",
+    "zh-TW": "演示代理存儲衝突：代理與實現同時使用槽 0 時，delegatecall 可覆蓋實現地址。"
+  },
+  "TimelockController": {
+    "zh-CN": "排队并延迟执行特权调用，让用户在变更生效前有时间反应。",
+    "de": "Stellt privilegierte Aufrufe in eine Warteschlange und verzögert sie, damit Nutzer vor Änderungen reagieren können.",
+    "nl": "Plaatst bevoorrechte aanroepen in een wachtrij en vertraagt ze zodat gebruikers vóór wijzigingen kunnen reageren.",
+    "zh-TW": "排隊並延遲執行特權調用，讓用戶在變更生效前有時間反應。"
+  },
+  "TxOriginAuth": {
+    "zh-CN": "演示 tx.origin 鉴权风险：钓鱼合约可借助所有者调用冒充所有者。",
+    "de": "Zeigt Risiken der Authentifizierung mit tx.origin: Phishing-Verträge können den Eigentümer bei Aufrufen imitieren.",
+    "nl": "Toont risico’s van authenticatie met tx.origin: phishingcontracten kunnen de eigenaar tijdens aanroepen nabootsen.",
+    "zh-TW": "演示 tx.origin 鑑權風險：釣魚合約可藉助所有者調用冒充所有者。"
+  },
+  "UncheckedCall": {
+    "zh-CN": "演示未检查底层调用结果的风险：调用失败后继续执行可造成状态不一致。",
+    "de": "Zeigt Risiken ungeprüfter Low-Level-Aufrufe: Weiterlaufen nach einem Fehler kann inkonsistente Zustände erzeugen.",
+    "nl": "Toont risico’s van ongecontroleerde low-level-aanroepen: doorgaan na een fout kan een inconsistente toestand veroorzaken.",
+    "zh-TW": "演示未檢查底層調用結果的風險：調用失敗後繼續執行可造成狀態不一致。"
+  },
+  "UUPSProxy": {
+    "zh-CN": "仅所有者可升级的最小 EIP-1967 代理。",
+    "de": "Minimaler EIP-1967-Proxy mit Upgrades durch den Eigentümer.",
+    "nl": "Minimale EIP-1967-proxy met upgrades door de eigenaar.",
+    "zh-TW": "僅所有者可升級的最小 EIP-1967 代理。"
+  },
+  "VestingWallet": {
+    "zh-CN": "线性代币归属：经过等待期后逐步向受益人释放代币。",
+    "de": "Lineare Token-Freigabe: nach einer Wartezeit werden Token schrittweise an den Begünstigten ausgezahlt.",
+    "nl": "Lineaire tokenvesting: na een wachtperiode worden tokens geleidelijk aan de begunstigde vrijgegeven.",
+    "zh-TW": "線性代幣歸屬：經過等待期後逐步向受益人釋放代幣。"
+  },
+  "Whitelist": {
+    "zh-CN": "所有者管理的允许名单，用于限制参与资格。",
+    "de": "Vom Eigentümer verwaltete Zulassungsliste zur Teilnahmebeschränkung.",
+    "nl": "Door de eigenaar beheerde toelatingslijst om deelname te beperken.",
+    "zh-TW": "所有者管理的允許名單，用於限制參與資格。"
+  }
+}

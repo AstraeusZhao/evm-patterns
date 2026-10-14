@@ -365,7 +365,20 @@ select:focus-visible {
 
 .project-explorer nav {
   padding: 8px 0;
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+  overscroll-behavior: contain;
 }
+
+.project-explorer { display: flex; flex-direction: column; }
+.project-root { flex: 0 0 42px; }
+.empty-folder { padding-top: 4px; padding-bottom: 9px; font-size: 10px; color: var(--color-code-muted); }
+.framework-control { padding: 12px; font-size: 10px; border-bottom: 1px solid var(--color-code-line); }
+.framework-control span { display: block; margin-bottom: 5px; overflow-wrap: anywhere; }
+.framework-control select { width: 100%; padding: 5px; border: 1px solid var(--color-code-line); border-radius: 4px; color: #cfe2d2; background: var(--color-code); }
+.document-panel { max-width: 1500px; height: calc(100dvh - 60px); margin: 0 auto; overflow: auto; overscroll-behavior: contain; }
+.document-panel .markdown-body { max-width: 100%; }
 .project-explorer .explorer-row {
   color: var(--color-code-muted);
 }

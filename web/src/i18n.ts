@@ -55,6 +55,26 @@ const english = {
 }
 export type Messages = typeof english
 
+const groupNames: Record<string, Record<Locale, string>> = {
+  all: { 'en-GB': 'All examples', 'zh-CN': '全部示例', 'zh-TW': '全部範例', de: 'Alle Beispiele', nl: 'Alle voorbeelden' },
+  core: { 'en-GB': 'Core patterns', 'zh-CN': '基础模式', 'zh-TW': '基礎模式', de: 'Grundmuster', nl: 'Basispatronen' },
+  token: { 'en-GB': 'Tokens', 'zh-CN': '代币', 'zh-TW': '代幣', de: 'Token', nl: 'Tokens' },
+  nft: { 'en-GB': 'NFTs', 'zh-CN': 'NFT', 'zh-TW': 'NFT', de: 'NFTs', nl: 'NFT’s' },
+  defi: { 'en-GB': 'DeFi & markets', 'zh-CN': 'DeFi 与市场', 'zh-TW': 'DeFi 與市場', de: 'DeFi & Märkte', nl: 'DeFi & markten' },
+  staking: { 'en-GB': 'Staking', 'zh-CN': '质押', 'zh-TW': '質押', de: 'Staking', nl: 'Staking' },
+  auctionGroup: { 'en-GB': 'Auctions', 'zh-CN': '拍卖', 'zh-TW': '拍賣', de: 'Auktionen', nl: 'Veilingen' },
+  distribution: { 'en-GB': 'Distribution', 'zh-CN': '分发', 'zh-TW': '分發', de: 'Verteilung', nl: 'Distributie' },
+  payments: { 'en-GB': 'Payments & escrow', 'zh-CN': '支付与托管', 'zh-TW': '支付與託管', de: 'Zahlungen & Escrow', nl: 'Betalingen & escrow' },
+  access: { 'en-GB': 'Access control', 'zh-CN': '权限控制', 'zh-TW': '權限控制', de: 'Zugriffsrechte', nl: 'Toegangsbeheer' },
+  governance: { 'en-GB': 'Governance', 'zh-CN': '治理', 'zh-TW': '治理', de: 'Governance', nl: 'Bestuur' },
+  architecture: { 'en-GB': 'Architecture', 'zh-CN': '架构与工厂', 'zh-TW': '架構與工廠', de: 'Architektur', nl: 'Architectuur' },
+  cryptography: { 'en-GB': 'Cryptography', 'zh-CN': '密码学', 'zh-TW': '密碼學', de: 'Kryptografie', nl: 'Cryptografie' },
+  flashloans: { 'en-GB': 'Flash loans', 'zh-CN': '闪电贷', 'zh-TW': '閃電貸', de: 'Flash Loans', nl: 'Flashleningen' },
+  security: { 'en-GB': 'Security', 'zh-CN': '安全', 'zh-TW': '安全', de: 'Sicherheit', nl: 'Beveiliging' },
+}
+
+export function groupLabel(id: string, locale: Locale) { return groupNames[id]?.[locale] ?? id }
+
 export const translations: Record<Locale, Messages> = {
   'en-GB': english,
   'zh-CN': {

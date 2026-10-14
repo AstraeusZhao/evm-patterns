@@ -1,5 +1,7 @@
-export type ContractGroup =
-  'core' | 'token' | 'defi' | 'governance' | 'security'
+import summaries from './localisedSummaries.json'
+import type { Locale } from '../i18n'
+
+export type ContractGroup = 'core' | 'token' | 'nft' | 'defi' | 'staking' | 'auctionGroup' | 'distribution' | 'payments' | 'access' | 'governance' | 'architecture' | 'cryptography' | 'flashloans' | 'security'
 
 type ContractRecord = {
   id: string
@@ -17,9 +19,13 @@ type ContractRecord = {
 
 export type ContractExample = ContractRecord & {
   loadSource: () => Promise<string>
-  loadFile: (path: string) => Promise<string>
-  loadDesignNote: (() => Promise<string>) | null
+  loadFile: (path: string, framework?: Framework) => Promise<string>
+  loadTree: (framework: Framework) => Promise<ProjectNode[]>
+  loadDesignNote: ((locale: Locale) => Promise<string>) | null
 }
+
+export type Framework = 'foundry' | 'hardhat' | 'truffle' | 'ape'
+export type ProjectNode = { name: string; path: string; kind: 'directory' | 'file'; children: ProjectNode[] }
 
 export type CoverageBaseline = {
   revision: string
@@ -41,14 +47,9 @@ export type CatalogResponse = {
   contracts: ContractExample[]
 }
 
-export const groups: { id: ContractGroup | 'all'; label: string }[] = [
-  { id: 'all', label: '全部示例' },
-  { id: 'core', label: '基础模式' },
-  { id: 'token', label: '代币与 NFT' },
-  { id: 'defi', label: 'DeFi 与市场' },
-  { id: 'governance', label: '治理与权限' },
-  { id: 'security', label: '安全示例' },
-]
+export const groups: { id: ContractGroup | 'all' }[] = [
+  'all', 'core', 'token', 'nft', 'defi', 'staking', 'auctionGroup', 'distribution', 'payments', 'access', 'governance', 'architecture', 'cryptography', 'flashloans', 'security',
+].map((id) => ({ id: id as ContractGroup | 'all' }))
 
 async function readContent(url: string) {
   const response = await fetch(url)
@@ -77,16 +78,26 @@ export async function fetchCatalog(): Promise<CatalogResponse> {
       return {
         ...contract,
         loadSource: () => readContent(`/api/contracts/${id}/source`),
-        loadFile: (path: string) =>
+        loadFile: (path: string, framework: Framework = 'foundry') =>
           readContent(
-            `/api/contracts/${id}/file?path=${encodeURIComponent(path)}`,
+            `/api/contracts/${id}/file?path=${encodeURIComponent(path)}&framework=${framework}`,
           ),
+        loadTree: (framework: Framework) =>
+          fetch(`/api/contracts/${id}/files?framework=${framework}`, { cache: 'no-store' }).then(async (response) => {
+            if (!response.ok) throw new Error(`Repository API returned ${response.status}`)
+            return response.json() as Promise<ProjectNode[]>
+          }),
         loadDesignNote: contract.designPath
-          ? () => readContent(`/api/contracts/${id}/design`)
+          ? (locale: Locale) => readContent(`/api/contracts/${id}/design?locale=${locale}`)
           : null,
       }
     }),
   }
+}
+
+export function localisedSummary(contract: ContractExample, locale: Locale): string {
+  const entry = (summaries as Record<string, Partial<Record<Locale, string>>>)[contract.family]
+  return entry?.[locale] ?? contract.summary
 }
 
 export function extractNotice(source: string) {

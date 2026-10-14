@@ -66,9 +66,52 @@ struct Content {
     content: String,
 }
 
+#[derive(Clone, Copy, Default, Deserialize, Serialize)]
+#[serde(rename_all = "lowercase")]
+enum Framework {
+    #[default]
+    Foundry,
+    Hardhat,
+    Truffle,
+    Ape,
+}
+
+impl Framework {
+    fn supports_test(self, path: &FsPath) -> bool {
+        match path.extension().and_then(|value| value.to_str()) {
+            Some("sol") => matches!(self, Self::Foundry),
+            Some("ts" | "js") => matches!(self, Self::Hardhat | Self::Truffle),
+            Some("py") => matches!(self, Self::Ape),
+            _ => false,
+        }
+    }
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct ProjectNode {
+    name: String,
+    path: String,
+    kind: &'static str,
+    children: Vec<ProjectNode>,
+}
+
+#[derive(Default, Deserialize)]
+struct TreeQuery {
+    #[serde(default)]
+    framework: Framework,
+}
+
+#[derive(Default, Deserialize)]
+struct LocaleQuery {
+    #[serde(default)]
+    locale: String,
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let root = find_repo_root()?;
+    initialise_project_directories(&root)?;
     let address: SocketAddr = env::var("EVM_PATTERNS_API_ADDR")
         .unwrap_or_else(|_| "127.0.0.1:3001".to_owned())
         .parse()?;
@@ -79,6 +122,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/api/contracts/{id}/source", get(contract_source))
         .route("/api/contracts/{id}/design", get(contract_design))
         .route("/api/contracts/{id}/file", get(contract_file))
+        .route("/api/contracts/{id}/files", get(project_files))
         .with_state(state);
     let listener = TcpListener::bind(address).await?;
     println!("EVM Patterns API listening on http://{address}");
@@ -113,6 +157,7 @@ async fn contract_source(
 
 async fn contract_design(
     Path(id): Path<String>,
+    Query(query): Query<LocaleQuery>,
     State(state): State<AppState>,
 ) -> Result<Json<Content>, ApiError> {
     let catalog = build_catalog(&state.root).map_err(|_| internal_error())?;
@@ -122,7 +167,24 @@ async fn contract_design(
         .find(|contract| contract.id == id)
         .ok_or_else(not_found)?;
     let design_path = contract.design_path.as_ref().ok_or_else(not_found)?;
-    let content = fs::read_to_string(state.root.join(design_path)).map_err(|_| internal_error())?;
+    let locale = match query.locale.as_str() {
+        "zh-CN" | "zh-TW" | "de" | "nl" => query.locale.as_str(),
+        _ => "en-GB",
+    };
+    let path = if locale == "en-GB" {
+        state.root.join(design_path)
+    } else {
+        state
+            .root
+            .join("docs")
+            .join("i18n")
+            .join(locale)
+            .join("design")
+            .join(FsPath::new(design_path).file_name().ok_or_else(not_found)?)
+    };
+    let content = fs::read_to_string(&path)
+        .or_else(|_| fs::read_to_string(state.root.join(design_path)))
+        .map_err(|_| internal_error())?;
     Ok(Json(Content { content }))
 }
 
@@ -131,6 +193,8 @@ type ApiError = (StatusCode, &'static str);
 #[derive(Deserialize)]
 struct FileQuery {
     path: String,
+    #[serde(default)]
+    framework: Framework,
 }
 
 async fn contract_file(
@@ -144,11 +208,124 @@ async fn contract_file(
         .iter()
         .find(|contract| contract.id == id)
         .ok_or_else(not_found)?;
-    if query.path != contract.path && !contract.dedicated_tests.contains(&query.path) {
+    let tree = project_tree(&state.root, &contract.family, query.framework)
+        .map_err(|_| internal_error())?;
+    if !tree_contains(&tree, &query.path) {
         return Err(not_found());
     }
     let content = fs::read_to_string(state.root.join(query.path)).map_err(|_| internal_error())?;
     Ok(Json(Content { content }))
+}
+
+async fn project_files(
+    Path(id): Path<String>,
+    Query(query): Query<TreeQuery>,
+    State(state): State<AppState>,
+) -> Result<Json<Vec<ProjectNode>>, ApiError> {
+    let catalog = build_catalog(&state.root).map_err(|_| internal_error())?;
+    let contract = catalog
+        .contracts
+        .iter()
+        .find(|contract| contract.id == id)
+        .ok_or_else(not_found)?;
+    project_tree(&state.root, &contract.family, query.framework)
+        .map(Json)
+        .map_err(|_| internal_error())
+}
+
+fn tree_contains(nodes: &[ProjectNode], path: &str) -> bool {
+    nodes.iter().any(|node| {
+        (node.kind == "file" && node.path == path) || tree_contains(&node.children, path)
+    })
+}
+
+fn hidden_entry(name: &str) -> bool {
+    name.starts_with('.') || matches!(name, "lib" | "out" | "cache" | "broadcast")
+}
+
+fn project_tree(root: &FsPath, family: &str, framework: Framework) -> io::Result<Vec<ProjectNode>> {
+    ["src", "test", "script"]
+        .into_iter()
+        .map(|name| {
+            let directory = root.join(name).join(family);
+            let children = read_project_directory(root, &directory, name == "test", framework)?;
+            Ok(ProjectNode {
+                name: name.to_owned(),
+                path: relative_path(root, &directory),
+                kind: "directory",
+                children,
+            })
+        })
+        .collect()
+}
+
+fn read_project_directory(
+    root: &FsPath,
+    directory: &FsPath,
+    tests: bool,
+    framework: Framework,
+) -> io::Result<Vec<ProjectNode>> {
+    if !directory.is_dir() {
+        return Ok(Vec::new());
+    }
+    let mut nodes = Vec::new();
+    for entry in fs::read_dir(directory)? {
+        let entry = entry?;
+        let name = entry.file_name().to_string_lossy().into_owned();
+        let kind = entry.file_type()?;
+        if hidden_entry(&name) || kind.is_symlink() {
+            continue;
+        }
+        let path = entry.path();
+        if kind.is_dir() {
+            nodes.push(ProjectNode {
+                name,
+                path: relative_path(root, &path),
+                kind: "directory",
+                children: read_project_directory(root, &path, tests, framework)?,
+            });
+        } else if kind.is_file() && (!tests || framework.supports_test(&path)) {
+            nodes.push(ProjectNode {
+                name,
+                path: relative_path(root, &path),
+                kind: "file",
+                children: Vec::new(),
+            });
+        }
+    }
+    nodes.sort_by(|a, b| {
+        (a.kind != "directory", a.name.to_lowercase())
+            .cmp(&(b.kind != "directory", b.name.to_lowercase()))
+    });
+    Ok(nodes)
+}
+
+fn initialise_project_directories(root: &FsPath) -> io::Result<()> {
+    for entry in fs::read_dir(root.join("src"))? {
+        let entry = entry?;
+        if !entry.file_type()?.is_dir() || hidden_entry(&entry.file_name().to_string_lossy()) {
+            continue;
+        }
+        for name in ["src", "test", "script"] {
+            let directory = root.join(name).join(entry.file_name());
+            fs::create_dir_all(&directory)?;
+            preserve_empty_directories(&directory)?;
+        }
+    }
+    Ok(())
+}
+
+fn preserve_empty_directories(directory: &FsPath) -> io::Result<()> {
+    let entries = fs::read_dir(directory)?.collect::<Result<Vec<_>, _>>()?;
+    if entries.is_empty() {
+        fs::write(directory.join(".gitkeep"), "")?;
+    }
+    for entry in entries {
+        if entry.file_type()?.is_dir() && !hidden_entry(&entry.file_name().to_string_lossy()) {
+            preserve_empty_directories(&entry.path())?;
+        }
+    }
+    Ok(())
 }
 
 fn internal_error() -> ApiError {
@@ -196,15 +373,28 @@ fn build_catalog(root: &FsPath) -> io::Result<Catalog> {
     let coverage = parse_coverage(&coverage_report);
     let mut contracts = Vec::with_capacity(sources.len());
 
-    for source_path in sources {
-        let source = fs::read_to_string(&source_path)?;
-        let family = source_path
-            .parent()
-            .and_then(FsPath::file_name)
-            .or_else(|| source_path.file_stem())
-            .unwrap_or_default()
-            .to_string_lossy()
-            .into_owned();
+    let mut projects: HashMap<String, Vec<PathBuf>> = HashMap::new();
+    for path in sources {
+        if let Some(family) = path
+            .strip_prefix(root.join("src"))
+            .ok()
+            .and_then(|path| path.components().next())
+        {
+            projects
+                .entry(family.as_os_str().to_string_lossy().into_owned())
+                .or_default()
+                .push(path);
+        }
+    }
+    for (family, mut paths) in projects {
+        paths.sort_by_key(|path| {
+            (
+                path.file_stem().and_then(|name| name.to_str()) != Some(family.as_str()),
+                path.clone(),
+            )
+        });
+        let source_path = &paths[0];
+        let source = fs::read_to_string(source_path)?;
         let id = family.clone();
         let source_text = source.to_ascii_lowercase();
         let group = contract_group(&family, &source_text);
@@ -258,6 +448,9 @@ fn collect_files(directory: &FsPath, suffix: &str, files: &mut Vec<PathBuf>) -> 
     for entry in fs::read_dir(directory)? {
         let entry = entry?;
         let path = entry.path();
+        if hidden_entry(&entry.file_name().to_string_lossy()) || entry.file_type()?.is_symlink() {
+            continue;
+        }
         if entry.file_type()?.is_dir() {
             collect_files(&path, suffix, files)?;
         } else if path
@@ -286,67 +479,23 @@ fn normalize(value: &str) -> String {
         .collect()
 }
 
-fn contract_group(family: &str, source: &str) -> &'static str {
-    let name = normalize(family);
-    if [
-        "blocktimestamp",
-        "randomness",
-        "txoriginauth",
-        "uncheckedcall",
-        "reentrancyguard",
-        "signaturereplay",
-        "storagecollision",
-        "selfdestruct",
-        "frontrunning",
-        "eip712",
-    ]
-    .iter()
-    .any(|word| name.contains(word))
-    {
-        "security"
-    } else if [
-        "ownable",
-        "pausable",
-        "timelock",
-        "multisig",
-        "governance",
-        "whitelist",
-    ]
-    .iter()
-    .any(|word| name.contains(word))
-    {
-        "governance"
-    } else if [
-        "erc20",
-        "erc721",
-        "erc1155",
-        "batchmint",
-        "vesting",
-        "royalty",
-        "merkleairdrop",
-        "safeerc20",
-    ]
-    .iter()
-    .any(|word| name.contains(word))
-    {
-        "token"
-    } else if [
-        "amm",
-        "bondingcurve",
-        "auction",
-        "flashloan",
-        "staking",
-        "marketplace",
-        "priceoracle",
-    ]
-    .iter()
-    .any(|word| name.contains(word))
-    {
-        "defi"
-    } else if source.contains("tx.origin") || source.contains("selfdestruct") {
-        "security"
-    } else {
-        "core"
+fn contract_group(family: &str, _source: &str) -> &'static str {
+    match family {
+        "ERC20Token" | "ERC20Permit" | "SafeERC20Wrapper" => "token",
+        "ERC721NFT" | "ERC1155" | "BatchMint" | "Royalty" | "NFTMarketplace" => "nft",
+        "AMM" | "BondingCurve" | "PriceOracle" => "defi",
+        "StakingVault" => "staking",
+        "DutchAuction" | "EnglishAuction" => "auctionGroup",
+        "VestingWallet" | "TokenVesting" | "MerkleAirdrop" => "distribution",
+        "EscrowVault" | "PullPayment" | "PullPaymentVault" | "Crowdfunding" => "payments",
+        "Ownable" | "Pausable" | "Whitelist" => "access",
+        "GovernanceToken" | "MultiSigWallet" | "TimelockController" => "governance",
+        "UUPSProxy" | "FactoryClone" => "architecture",
+        "SignatureReplay" | "EIP712" => "cryptography",
+        "FlashLoanReceiver" => "flashloans",
+        "BlockTimestamp" | "Randomness" | "TxOriginAuth" | "UncheckedCall" | "ReentrancyGuard"
+        | "StorageCollision" | "SelfDestructDemo" | "FrontRunning" => "security",
+        _ => "core",
     }
 }
 
@@ -377,8 +526,17 @@ fn contract_tags(family: &str, source: &str, group: &str) -> Vec<String> {
 fn group_label(group: &str) -> &'static str {
     match group {
         "token" => "代币与 NFT",
+        "nft" => "NFT",
         "defi" => "DeFi 与市场",
+        "staking" => "质押",
+        "auctionGroup" => "拍卖",
+        "distribution" => "分发",
+        "payments" => "支付与托管",
+        "access" => "权限控制",
         "governance" => "治理与权限",
+        "architecture" => "架构与工厂",
+        "cryptography" => "密码学",
+        "flashloans" => "闪电贷",
         "security" => "安全示例",
         _ => "基础模式",
     }
@@ -496,4 +654,146 @@ fn git_output(root: &FsPath, arguments: &[&str]) -> Option<String> {
         return None;
     }
     Some(String::from_utf8_lossy(&output.stdout).trim().to_owned())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    struct Fixture(PathBuf);
+
+    impl Fixture {
+        fn new() -> Self {
+            let suffix = SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_nanos();
+            let root = env::temp_dir().join(format!("evm-patterns-tree-{suffix}"));
+            fs::create_dir_all(&root).unwrap();
+            Self(root)
+        }
+
+        fn write(&self, path: &str, content: &str) {
+            let path = self.0.join(path);
+            fs::create_dir_all(path.parent().unwrap()).unwrap();
+            fs::write(path, content).unwrap();
+        }
+    }
+
+    impl Drop for Fixture {
+        fn drop(&mut self) {
+            let root = self.0.canonicalize().unwrap();
+            let temporary = env::temp_dir().canonicalize().unwrap();
+            assert!(root.starts_with(&temporary) && root != temporary);
+            assert!(root
+                .file_name()
+                .unwrap()
+                .to_string_lossy()
+                .starts_with("evm-patterns-tree-"));
+            fs::remove_dir_all(root).unwrap();
+        }
+    }
+
+    #[test]
+    fn framework_filters_test_extensions() {
+        assert!(Framework::Foundry.supports_test(FsPath::new("Counter.t.sol")));
+        assert!(!Framework::Foundry.supports_test(FsPath::new("Counter.ts")));
+        assert!(Framework::Hardhat.supports_test(FsPath::new("Counter.ts")));
+        assert!(Framework::Truffle.supports_test(FsPath::new("counter.test.js")));
+        assert!(Framework::Ape.supports_test(FsPath::new("test_counter.py")));
+        assert!(!Framework::Ape.supports_test(FsPath::new("README.md")));
+    }
+
+    #[test]
+    fn tree_keeps_empty_directories_and_hides_generated_files() {
+        let fixture = Fixture::new();
+        let root = &fixture.0;
+        fs::create_dir_all(root.join("src/Example/nested/empty")).expect("src");
+        fs::create_dir_all(root.join("test/Example")).expect("test");
+        fs::create_dir_all(root.join("script/Example/lib")).expect("script");
+        fs::write(root.join("src/Example/Main.sol"), "contract Main {}").expect("source");
+        fs::write(root.join("src/Example/.gitkeep"), "").expect("placeholder");
+        fs::write(root.join("test/Example/Counter.t.sol"), "").expect("foundry test");
+        fs::write(root.join("test/Example/Counter.ts"), "").expect("hardhat test");
+        fs::write(root.join("script/Example/Deploy.s.sol"), "").expect("script");
+        fs::write(root.join("script/Example/lib/Hidden.sol"), "").expect("generated");
+
+        let foundry = project_tree(&root, "Example", Framework::Foundry).expect("tree");
+        assert!(tree_contains(&foundry, "src/Example/Main.sol"));
+        assert_eq!(foundry[0].children[0].name, "nested");
+        assert_eq!(foundry[0].children[0].children[0].name, "empty");
+        assert!(foundry[0].children[0].children[0].children.is_empty());
+        assert!(tree_contains(&foundry, "test/Example/Counter.t.sol"));
+        assert!(!tree_contains(&foundry, "test/Example/Counter.ts"));
+        assert!(!tree_contains(&foundry, "src/Example/.gitkeep"));
+        assert!(!tree_contains(&foundry, "script/Example/lib/Hidden.sol"));
+
+        let hardhat = project_tree(&root, "Example", Framework::Hardhat).expect("tree");
+        assert!(tree_contains(&hardhat, "test/Example/Counter.ts"));
+        assert!(!tree_contains(&hardhat, "test/Example/Counter.t.sol"));
+
+        assert!(!tree_contains(&foundry, "src/Other/Main.sol"));
+        assert!(!tree_contains(&foundry, "src/Example/../../Other/Main.sol"));
+    }
+
+    #[test]
+    fn skeleton_preserves_empty_nested_folders_without_creating_test_files() {
+        let fixture = Fixture::new();
+        fixture.write("src/Example/Example.sol", "contract Example {}");
+        fs::create_dir_all(fixture.0.join("src/Example/helpers/empty")).unwrap();
+        initialise_project_directories(&fixture.0).unwrap();
+        for path in [
+            "src/Example/helpers/empty/.gitkeep",
+            "test/Example/.gitkeep",
+            "script/Example/.gitkeep",
+        ] {
+            assert!(fixture.0.join(path).is_file());
+        }
+        let tree = project_tree(&fixture.0, "Example", Framework::Foundry).unwrap();
+        assert!(tree[1].children.is_empty() && tree[2].children.is_empty());
+    }
+
+    #[tokio::test]
+    async fn nested_helpers_do_not_create_projects_and_file_access_is_scoped() {
+        let fixture = Fixture::new();
+        fixture.write("src/Example/Example.sol", "contract Example {}");
+        fixture.write("src/Example/helpers/Helper.sol", "contract Helper {}");
+        fixture.write("src/Other/Other.sol", "contract Other {}");
+        fixture.write("test/Example/test_example.py", "pass");
+        let catalog = build_catalog(&fixture.0).unwrap();
+        assert_eq!(catalog.contracts.len(), 2);
+        assert_eq!(catalog.contracts[0].path, "src/Example/Example.sol");
+        for path in [
+            "src/Other/Other.sol",
+            "src/Example/../../Other/Other.sol",
+            "test/Example/test_example.py",
+        ] {
+            let result = contract_file(
+                Path("Example".into()),
+                Query(FileQuery {
+                    path: path.into(),
+                    framework: Framework::Foundry,
+                }),
+                State(AppState {
+                    root: fixture.0.clone(),
+                }),
+            )
+            .await;
+            assert_eq!(result.err().unwrap().0, StatusCode::NOT_FOUND);
+        }
+        let result = contract_file(
+            Path("Example".into()),
+            Query(FileQuery {
+                path: "test/Example/test_example.py".into(),
+                framework: Framework::Ape,
+            }),
+            State(AppState {
+                root: fixture.0.clone(),
+            }),
+        )
+        .await
+        .unwrap();
+        assert_eq!(result.0.content, "pass");
+    }
 }
