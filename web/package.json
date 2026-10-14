@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently --kill-others-on-fail --names api,web \"pnpm dev:api\" \"pnpm dev:web\"",
+    "dev:api": "cargo run --manifest-path backend/Cargo.toml",
+    "dev:web": "vite --host 127.0.0.1",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"
@@ -24,6 +26,7 @@
     "@types/react-dom": "^19.2.7",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@vitejs/plugin-react": "^6.1.1",
+    "concurrently": "^10.0.6",
     "oxlint": "^1.81.0",
     "typescript": "~6.0.2",
     "vite": "^8.3.0"

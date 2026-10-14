@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed the contract browser's empty initial catalogue, search focus border,
+  language selector hit area, and editor scrolling. Long source lines now wrap
+  without adding line numbers to their continuations.
+
 - `EnglishAuction.bid` reordered to checks-effects-interactions: bidder
   state is committed before the refund transfer, closing a reentrancy
   vector that could corrupt auction state. Covered by a new malicious
@@ -35,6 +39,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Rust API for discovering contracts, design notes and project-specific test
+  files, with a file endpoint restricted to the selected project.
+- Project source and test explorer, file copying, and persistent interface
+  language selection for British English, Simplified Chinese, Traditional
+  Chinese, German and Dutch.
+
 - Adversarial tests for reentrant bidding, malleable signatures, last-owner
   removal, rate-change accounting, and sale proceeds withdrawal. The measured
   baseline at `c4ebe5c` has 132 passing tests; see
@@ -47,6 +57,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Simplified contract details to source, design notes and introduction. Added
+  Smart Dolphin Studio file headers to project Solidity sources and tests,
+  retaining the existing AGPL-3.0 licence.
+
 - `ReentrancyGuard` ships with a malicious re-entry attack demonstration.
 - Contracts prefer custom errors, events, and gas-aware data structures over
   silent fallbacks.
@@ -55,8 +69,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Licensed under the GNU Affero General Public License v3.0. See
 [LICENSE](LICENSE).
-
-
 
 ## 2025 Year End
 

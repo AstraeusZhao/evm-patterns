@@ -1,4 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0
+/*
+ * File: src/EIP712/EIP712.sol
+ * Studio: Smart Dolphin Studio
+ * Author: AstraeusZhao
+ * Email: AstraeusZhao@gmail.com
+ * Description: A minimal EIP-712 typed-data signing demo: users sign an off-chain
+ * Solidity: ^0.8.24
+ * Updated: 2026-10-14
+ * License: AGPL-3.0
+ */
 pragma solidity ^0.8.24;
 
 /// @title EIP712

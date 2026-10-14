@@ -1,4 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0
+/*
+ * File: src/VestingWallet/VestingWallet.sol
+ * Studio: Smart Dolphin Studio
+ * Author: AstraeusZhao
+ * Email: AstraeusZhao@gmail.com
+ * Description: Linear token vesting: tokens release gradually to a beneficiary
+ * Solidity: ^0.8.24
+ * Updated: 2026-10-14
+ * License: AGPL-3.0
+ */
 pragma solidity ^0.8.24;
 
 /// @title VestingWallet

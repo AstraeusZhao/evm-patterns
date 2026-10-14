@@ -1,4 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0
+/*
+ * File: src/FactoryClone/FactoryClone.sol
+ * Studio: Smart Dolphin Studio
+ * Author: AstraeusZhao
+ * Email: AstraeusZhao@gmail.com
+ * Description: Deploys cheap EIP-1167 minimal proxy clones of an implementation.
+ * Solidity: ^0.8.24
+ * Updated: 2026-10-14
+ * License: AGPL-3.0
+ */
 pragma solidity ^0.8.24;
 
 /// @title FactoryClone

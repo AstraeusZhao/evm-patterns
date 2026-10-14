@@ -1,4 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0
+/*
+ * File: src/Ownable/Ownable.sol
+ * Studio: Smart Dolphin Studio
+ * Author: AstraeusZhao
+ * Email: AstraeusZhao@gmail.com
+ * Description: Single-owner access control with transfer and renounce paths.
+ * Solidity: ^0.8.24
+ * Updated: 2026-10-14
+ * License: AGPL-3.0
+ */
 pragma solidity ^0.8.24;
 
 /// @title Ownable

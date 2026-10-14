@@ -1,4 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0
+/*
+ * File: src/ERC1155/ERC1155.sol
+ * Studio: Smart Dolphin Studio
+ * Author: AstraeusZhao
+ * Email: AstraeusZhao@gmail.com
+ * Description: Educational ERC1155 core transfers; optional URI metadata is not implemented.
+ * Solidity: ^0.8.24
+ * Updated: 2026-10-14
+ * License: AGPL-3.0
+ */
 pragma solidity ^0.8.24;
 
 
